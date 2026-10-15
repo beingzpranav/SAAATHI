@@ -1,0 +1,30 @@
+{
+  "name": "saathi-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev --workspace=@saathi/api",
+    "dev:web": "npm run dev --workspace=@saathi/web",
+    "build": "npm run build --workspace=@saathi/shared && npm run build --workspace=@saathi/api && npm run build --workspace=@saathi/web",
+    "typecheck": "tsc --build --verbose",
+    "lint": "eslint .",
+    "test": "npm run test --workspaces --if-present",
+    "format:check": "prettier --check .",
+    "format:write": "prettier --write .",
+    "knip": "knip",
+    "clean": "rimraf dist coverage && npm run clean --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.14.0",
+    "eslint": "^9.14.0",
+    "knip": "^5.36.0",
+    "prettier": "^3.3.3",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.13.0"
+  }
+}
