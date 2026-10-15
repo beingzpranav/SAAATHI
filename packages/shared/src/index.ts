@@ -15,3 +15,5 @@ export * from './types/counselling.types.js';
 export * from './types/decision-card.types.js';
 export * from './schemas/counselling.schema.js';
 export * from './schemas/decision-card.schema.js';
+export * from './types/admin.types.js';
+export * from './schemas/admin.schema.js';

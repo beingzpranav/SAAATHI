@@ -19,6 +19,7 @@ import { bhavishyaRouter } from './modules/bhavishya/bhavishya.routes.js';
 import { aiRouter } from './modules/ai/ai.routes.js';
 import { counsellingRouter } from './modules/counselling/counselling.routes.js';
 import { decisionCardRouter } from './modules/decision-card/decision-card.routes.js';
+import { adminRouter } from './modules/admin/admin.routes.js';
 
 
 import { standardRateLimiter } from './middleware/rateLimit.js';
@@ -138,6 +139,8 @@ app.use(`${API_PREFIX}/ai`, aiRouter);
 // Phase 6 – WebRTC video counselling & Family Decision Card
 app.use(`${API_PREFIX}/counselling`, counsellingRouter);
 app.use(`${API_PREFIX}/decision-card`, decisionCardRouter);
+// Phase 7 – Admin Dashboard with k-anonymity aggregation
+app.use(`${API_PREFIX}/admin`, adminRouter);
 
 
 

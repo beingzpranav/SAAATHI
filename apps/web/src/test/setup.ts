@@ -327,6 +327,80 @@ globalThis.fetch = async (input: RequestInfo | URL): Promise<Response> => {
     );
   }
 
+  // Admin dashboard endpoints (Phase 7)
+  if (url.includes('/admin/dashboard/overview')) {
+    return new Response(
+      JSON.stringify({
+        data: {
+          totalHouseholds: 248, totalLearners: 248, totalParents: 231,
+          totalJointSessions: 189, totalDecisionCards: 142,
+          totalCounsellorBookings: 67, pendingEscalations: 12,
+          averageReadinessScore: 74, decisionCardCompletionRate: 57,
+          reportGeneratedAt: new Date().toISOString(),
+        },
+      }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    );
+  }
+
+  if (url.includes('/admin/dashboard/concerns')) {
+    return new Response(
+      JSON.stringify({
+        data: {
+          totalConcerns: 843, suppressedBuckets: 2, reportDate: new Date().toISOString(),
+          items: [
+            { category: 'FINANCIAL_WORRY', count: 312, preScoreMedian: 4.5, postScoreMedian: 2.1, sentimentShift: -2.4, resolutionRate: 78, suppressed: false },
+            { category: 'DISTANCE_TRAVEL', count: null, preScoreMedian: null, postScoreMedian: null, sentimentShift: null, resolutionRate: null, suppressed: true },
+          ],
+        },
+      }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    );
+  }
+
+  if (url.includes('/admin/dashboard/heatmap')) {
+    return new Response(
+      JSON.stringify({
+        data: {
+          cells: [{ state: 'Uttar Pradesh', district: 'Varanasi', householdCount: 42, decisionCardCount: 28, averageReadiness: null, suppressed: false }],
+          suppressedCells: 0, totalCells: 1, reportDate: new Date().toISOString(),
+        },
+      }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    );
+  }
+
+  if (url.includes('/admin/dashboard/funnel')) {
+    return new Response(
+      JSON.stringify({
+        data: {
+          overallCompletionRate: 57, reportDate: new Date().toISOString(),
+          stages: [
+            { stage: 'HOUSEHOLD_INTAKE', labelEn: 'Household Intake Completed', labelHi: 'पारिवारिक जानकारी दर्ज', count: 248, dropoffFromPrevious: null },
+            { stage: 'JOINT_SESSION', labelEn: 'Joint Session Started', labelHi: 'संयुक्त सत्र शुरू', count: 189, dropoffFromPrevious: 24 },
+            { stage: 'COUNSELLOR_ESCALATION', labelEn: 'Counsellor Booking Made', labelHi: 'परामर्शदाता नियुक्ति', count: 67, dropoffFromPrevious: 65 },
+            { stage: 'DECISION_CARD', labelEn: 'Family Decision Card Issued', labelHi: 'परिवार निर्णय पत्र जारी', count: 142, dropoffFromPrevious: null },
+          ],
+        },
+      }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    );
+  }
+
+  if (url.includes('/admin/dashboard/escalations')) {
+    return new Response(
+      JSON.stringify({
+        data: {
+          totalEscalations: 67, reportDate: new Date().toISOString(),
+          pending: [{ bookingId: 'b1', householdId: 'h1', status: 'REQUESTED', mode: 'VIDEO', scheduledAt: null, counsellorName: null, district: 'Varanasi', state: 'UP', daysWaiting: 3 }],
+          confirmed: [{ bookingId: 'b3', householdId: 'h3', status: 'CONFIRMED', mode: 'VIDEO', scheduledAt: new Date().toISOString(), counsellorName: 'Dr. Priya Varma', district: 'Varanasi', state: 'UP', daysWaiting: 1 }],
+          completed: [], cancelled: [],
+        },
+      }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    );
+  }
+
   return new Response(JSON.stringify({ data: null }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },

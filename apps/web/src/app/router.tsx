@@ -65,6 +65,11 @@ const DecisionCardPage = lazy(() =>
     default: module.DecisionCardPage,
   })),
 );
+const AdminDashboardPage = lazy(() =>
+  import('../pages/AdminDashboardPage.js').then((module) => ({
+    default: module.AdminDashboardPage,
+  })),
+);
 
 const RouteSuspenseFallback = () => (
   <div className="flex flex-col gap-6 py-8">
@@ -203,6 +208,14 @@ export const router = createBrowserRouter(
                 <DecisionCardPage />
               </Suspense>
             </ProtectedRoute>
+          ),
+        },
+        {
+          path: 'admin',
+          element: (
+            <Suspense fallback={<RouteSuspenseFallback />}>
+              <AdminDashboardPage />
+            </Suspense>
           ),
         },
         {

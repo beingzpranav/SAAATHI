@@ -35,6 +35,7 @@ export const Header: React.FC = () => {
           { to: '/joint-room', label: i18n.language === 'hi' ? 'संयुक्त कक्ष' : 'Joint Room' },
           { to: '/consent-ledger', label: i18n.language === 'hi' ? 'सहमति खाता' : 'Ledger' },
           { to: '/decision-card', label: i18n.language === 'hi' ? 'निर्णय कार्ड' : 'Decision Card' },
+          { to: '/admin', label: i18n.language === 'hi' ? 'एडमिन' : 'Admin' },
         ]
       : []),
   ];
