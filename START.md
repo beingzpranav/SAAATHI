@@ -120,8 +120,11 @@ npm run lint
 # Strict TypeScript typechecking across all packages
 npm run typecheck
 
-# Full Vitest unit & integration test suites
+# Full Vitest unit & integration test suites (179 tests)
 npm run test
+
+# Full Playwright E2E smoke and responsive audit suites (25 tests)
+npm run test:e2e
 
 # Dead code and unused dependency audit (Knip)
 npm run knip
