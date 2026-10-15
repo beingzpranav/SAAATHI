@@ -43,13 +43,13 @@ SAATHI is an AI counselling platform for vocational training in India (Smart Ind
 
 ### Phase 3: Household intake and verified data layer
 
-- [ ] Household intake flow (location, income, class level)
-- [ ] Verified outcome data model and retrieval service
-- [ ] Confidence labels (High, Medium, Low, None) and fallback ladder (block -> district -> state -> national)
-- [ ] Median and range calculations (no averages)
-- [ ] Seed script with DEMO data for 1 district and 4 trades
-- [ ] NSQF ladder SVG builder and Trade Explorer
-- [ ] Unit tests for confidence rules, fallback, and NSQF ladder
+- [x] Household intake flow (location, income, class level)
+- [x] Verified outcome data model and retrieval service
+- [x] Confidence labels (High, Medium, Low, None) and fallback ladder (block -> district -> state -> national)
+- [x] Median and range calculations (no averages)
+- [x] Seed script with DEMO data for 1 district and 4 trades
+- [x] NSQF ladder SVG builder and Trade Explorer
+- [x] Unit tests for confidence rules, fallback, and NSQF ladder
 
 ### Phase 4: Private windows, PIN rooms and consent ledger
 

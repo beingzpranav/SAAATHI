@@ -24,6 +24,21 @@ const DashboardPreviewPage = lazy(() =>
     default: module.DashboardPreviewPage,
   })),
 );
+const HouseholdIntakePage = lazy(() =>
+  import('../pages/HouseholdIntakePage.js').then((module) => ({
+    default: module.HouseholdIntakePage,
+  })),
+);
+const TradeExplorerPage = lazy(() =>
+  import('../pages/TradeExplorerPage.js').then((module) => ({
+    default: module.TradeExplorerPage,
+  })),
+);
+const TradeDetailPage = lazy(() =>
+  import('../pages/TradeDetailPage.js').then((module) => ({
+    default: module.TradeDetailPage,
+  })),
+);
 const NotFoundPage = lazy(() =>
   import('../pages/NotFoundPage.js').then((module) => ({ default: module.NotFoundPage })),
 );
@@ -80,6 +95,32 @@ export const router = createBrowserRouter(
           element: (
             <Suspense fallback={<RouteSuspenseFallback />}>
               <RegisterPage />
+            </Suspense>
+          ),
+        },
+        {
+          path: 'intake',
+          element: (
+            <ProtectedRoute>
+              <Suspense fallback={<RouteSuspenseFallback />}>
+                <HouseholdIntakePage />
+              </Suspense>
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: 'trades',
+          element: (
+            <Suspense fallback={<RouteSuspenseFallback />}>
+              <TradeExplorerPage />
+            </Suspense>
+          ),
+        },
+        {
+          path: 'trades/:code',
+          element: (
+            <Suspense fallback={<RouteSuspenseFallback />}>
+              <TradeDetailPage />
             </Suspense>
           ),
         },

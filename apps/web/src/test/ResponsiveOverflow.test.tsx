@@ -5,6 +5,8 @@ import { LandingPage } from '../pages/LandingPage.js';
 import { DesignSystemPage } from '../pages/DesignSystemPage.js';
 import { LoginPage } from '../pages/LoginPage.js';
 import { RegisterPage } from '../pages/RegisterPage.js';
+import { HouseholdIntakePage } from '../pages/HouseholdIntakePage.js';
+import { TradeExplorerPage } from '../pages/TradeExplorerPage.js';
 import '../lib/i18n.js';
 
 describe('Responsive Layout and Horizontal Overflow Check', () => {
@@ -70,6 +72,40 @@ describe('Responsive Layout and Horizontal Overflow Check', () => {
         <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <div style={{ width: `${width}px`, maxWidth: '100vw' }}>
             <RegisterPage />
+          </div>
+        </BrowserRouter>,
+      );
+
+      const wrapper = container.firstElementChild as HTMLElement;
+      expect(wrapper).toBeDefined();
+      expect(wrapper.scrollWidth).toBeLessThanOrEqual(width + 1);
+    });
+
+    it(`verifies HouseholdIntakePage renders without overflow at ${width}px`, () => {
+      window.innerWidth = width;
+      window.dispatchEvent(new Event('resize'));
+
+      const { container } = render(
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <div style={{ width: `${width}px`, maxWidth: '100vw' }}>
+            <HouseholdIntakePage />
+          </div>
+        </BrowserRouter>,
+      );
+
+      const wrapper = container.firstElementChild as HTMLElement;
+      expect(wrapper).toBeDefined();
+      expect(wrapper.scrollWidth).toBeLessThanOrEqual(width + 1);
+    });
+
+    it(`verifies TradeExplorerPage renders without overflow at ${width}px`, () => {
+      window.innerWidth = width;
+      window.dispatchEvent(new Event('resize'));
+
+      const { container } = render(
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <div style={{ width: `${width}px`, maxWidth: '100vw' }}>
+            <TradeExplorerPage />
           </div>
         </BrowserRouter>,
       );

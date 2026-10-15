@@ -155,5 +155,129 @@ export const openApiSpec = {
         },
       },
     },
+    '/locations/states': {
+      get: {
+        summary: 'List available states',
+        responses: {
+          '200': { description: 'List of states' },
+        },
+      },
+    },
+    '/locations/districts': {
+      get: {
+        summary: 'List districts by state',
+        parameters: [
+          {
+            name: 'state',
+            in: 'query',
+            required: false,
+            schema: { type: 'string' },
+          },
+        ],
+        responses: {
+          '200': { description: 'List of districts' },
+        },
+      },
+    },
+    '/locations/blocks': {
+      get: {
+        summary: 'List blocks by district',
+        parameters: [
+          {
+            name: 'district',
+            in: 'query',
+            required: false,
+            schema: { type: 'string' },
+          },
+        ],
+        responses: {
+          '200': { description: 'List of blocks' },
+        },
+      },
+    },
+    '/households': {
+      get: {
+        summary: 'Get current household intake',
+        security: [{ cookieAuth: [] }, { bearerAuth: [] }],
+        responses: {
+          '200': { description: 'Household intake summary with cost framing' },
+          '404': { description: 'Intake not yet completed' },
+        },
+      },
+      post: {
+        summary: 'Submit or update household intake',
+        security: [{ cookieAuth: [] }, { bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['name', 'state', 'district', 'block', 'incomeBand', 'learnerClassLevel'],
+                properties: {
+                  name: { type: 'string' },
+                  state: { type: 'string' },
+                  district: { type: 'string' },
+                  block: { type: 'string' },
+                  incomeBand: {
+                    type: 'string',
+                    enum: ['BELOW_1_5L', '1_5L_TO_3L', '3L_TO_5L', 'ABOVE_5L'],
+                  },
+                  learnerClassLevel: {
+                    type: 'string',
+                    enum: ['CLASS_8_PASS', 'CLASS_10_PASS', 'CLASS_12_PASS', 'GRADUATE'],
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': { description: 'Household intake recorded' },
+          '422': { description: 'Validation error' },
+        },
+      },
+    },
+    '/trades': {
+      get: {
+        summary: 'List vocational trades with optional filtering',
+        parameters: [
+          { name: 'minEducation', in: 'query', schema: { type: 'string' } },
+          { name: 'sector', in: 'query', schema: { type: 'string' } },
+        ],
+        responses: {
+          '200': { description: 'List of vocational trades' },
+        },
+      },
+    },
+    '/trades/{code}': {
+      get: {
+        summary: 'Get trade details with NSQF ladder and approved providers',
+        parameters: [
+          { name: 'code', in: 'path', required: true, schema: { type: 'string' } },
+          { name: 'classLevel', in: 'query', required: false, schema: { type: 'string' } },
+        ],
+        responses: {
+          '200': { description: 'Trade detail' },
+          '404': { description: 'Trade not found' },
+        },
+      },
+    },
+    '/trades/{code}/outcomes': {
+      get: {
+        summary: 'Retrieve verified outcome record with fallback ladder resolution',
+        parameters: [
+          { name: 'code', in: 'path', required: true, schema: { type: 'string' } },
+          { name: 'state', in: 'query', required: true, schema: { type: 'string' } },
+          { name: 'district', in: 'query', required: false, schema: { type: 'string' } },
+          { name: 'block', in: 'query', required: false, schema: { type: 'string' } },
+        ],
+        responses: {
+          '200': {
+            description: 'Verified outcome response with confidence and fallback transparency',
+          },
+        },
+      },
+    },
   },
 };

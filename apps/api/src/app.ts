@@ -9,6 +9,9 @@ import { env } from './config/env.js';
 import { HTTP_STATUS, API_PREFIX, API_VERSION } from './config/constants.js';
 import { authRouter } from './modules/auth/auth.routes.js';
 import { usersRouter } from './modules/users/users.routes.js';
+import { locationsRouter } from './modules/locations/locations.routes.js';
+import { householdRouter } from './modules/households/household.routes.js';
+import { tradeRouter } from './modules/trades/trade.routes.js';
 import { standardRateLimiter } from './middleware/rateLimit.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { openApiSpec } from './docs/openapi.js';
@@ -113,6 +116,9 @@ app.get(
 // Mount feature routers under versioned prefix
 app.use(`${API_PREFIX}/auth`, authRouter);
 app.use(`${API_PREFIX}/users`, usersRouter);
+app.use(`${API_PREFIX}/locations`, locationsRouter);
+app.use(`${API_PREFIX}/households`, householdRouter);
+app.use(`${API_PREFIX}/trades`, tradeRouter);
 
 // 404 handler with standard error envelope
 app.use((req: Request, res: Response<ApiErrorResponse>) => {

@@ -8,6 +8,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  asChild?: boolean;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -22,6 +23,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       disabled,
       children,
       type = 'button',
+      asChild = false,
       ...props
     },
     ref,
@@ -52,13 +54,26 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       lg: 'px-6 py-3.5 text-lg gap-2.5 min-h-[52px]',
     };
 
+    const combinedClasses = cn(baseStyles, variantStyles[variant], sizeStyles[size], className);
+
+    if (asChild && React.isValidElement(children)) {
+      const child = children as React.ReactElement<{
+        className?: string;
+        ref?: React.Ref<unknown>;
+      }>;
+      return React.cloneElement(child, {
+        className: cn(combinedClasses, child.props.className),
+        ...props,
+      });
+    }
+
     return (
       <button
         ref={ref}
         type={type}
         disabled={disabled || isLoading}
         aria-busy={isLoading}
-        className={cn(baseStyles, variantStyles[variant], sizeStyles[size], className)}
+        className={combinedClasses}
         {...props}
       >
         {isLoading ? (

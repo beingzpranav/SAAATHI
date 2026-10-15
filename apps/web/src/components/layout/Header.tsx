@@ -24,6 +24,8 @@ export const Header: React.FC = () => {
 
   const navLinks = [
     { to: '/', label: t('nav.home') },
+    { to: '/trades', label: i18n.language === 'hi' ? 'ट्रेड एक्सप्लोरर' : 'Trades' },
+    { to: '/intake', label: i18n.language === 'hi' ? 'पारिवारिक इनटेक' : 'Intake' },
     { to: '/design', label: t('nav.design') },
     ...(isAuthenticated ? [{ to: '/dashboard', label: 'Dashboard' }] : []),
   ];

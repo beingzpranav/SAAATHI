@@ -1,12 +1,14 @@
 import { create } from 'zustand';
-import type { UserProfile } from '@saathi/shared';
+import type { UserProfile, HouseholdSummary } from '@saathi/shared';
 import { apiClient } from '../lib/apiClient.js';
 
 interface SessionState {
   user: UserProfile | null;
+  household: HouseholdSummary | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   setUser: (user: UserProfile) => void;
+  setHousehold: (household: HouseholdSummary | null) => void;
   clearUser: () => void;
   checkSession: () => Promise<void>;
   logout: () => Promise<void>;
@@ -14,6 +16,7 @@ interface SessionState {
 
 export const useSessionStore = create<SessionState>((set) => ({
   user: null,
+  household: null,
   isAuthenticated: false,
   isLoading: false,
 
@@ -24,9 +27,15 @@ export const useSessionStore = create<SessionState>((set) => ({
       isLoading: false,
     }),
 
+  setHousehold: (household: HouseholdSummary | null) =>
+    set({
+      household,
+    }),
+
   clearUser: () =>
     set({
       user: null,
+      household: null,
       isAuthenticated: false,
       isLoading: false,
     }),
