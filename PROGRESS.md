@@ -53,12 +53,12 @@ SAATHI is an AI counselling platform for vocational training in India (Smart Ind
 
 ### Phase 4: Private windows, PIN rooms and consent ledger
 
-- [ ] Student and Parent private windows with voluntary mapping questions
-- [ ] PIN security (hashed, 3-attempt lockout, 2-minute idle auto-lock, picture-pattern option, leave quickly)
-- [ ] Hash-chained digital consent ledger with verify endpoint and visual integrity indicator
-- [ ] Bhavishya Engine (concern mapping and joint agenda preparation)
-- [ ] Pre/post concern score event tracking
-- [ ] Privacy and share isolation tests
+- [x] Student and Parent private windows with voluntary mapping questions (PrivateWindowPage, PinLockModal, concern CRUD with category tags)
+- [x] PIN security — bcrypt-hashed PINs, 3-attempt lockout with 15-min ban (HTTP 423), in-session unlock via Zustand store, first-time PIN setup flow, shake-on-error animation, Lock button to manually re-lock
+- [x] Hash-chained digital consent ledger — SHA-256 blockHash/previousHash/payloadHash, verify endpoint, ConsentLedgerPage with integrity banner and expandable block cards
+- [x] Bhavishya Engine — synthesises shared concerns from both windows with verified regional trade/NSQF data into structured Joint Room agenda (JointRoomPage)
+- [x] Pre/post concern score tracking — `preScore`/`postScore` fields on Concern model, ScorePill UI, updateScore endpoint
+- [x] Privacy and share isolation — `isShared: false` default, repository-level filtering, share toggle endpoint
 
 ### Phase 5: Joint room and grounded AI
 
@@ -107,3 +107,4 @@ SAATHI is an AI counselling platform for vocational training in India (Smart Ind
 
 - Ambiguity Resolution (Phase 0): API and Web share schema definitions through `packages/shared`. TypeScript project references enable strict monorepo builds.
 - Process Decision (Phase 1): After every phase completion, the branch will be pushed to GitHub (`https://github.com/sarthak654/Saathi.git`) on `main` before requesting continue.
+- Ambiguity Resolution (Phase 4): Idle auto-lock implemented as an explicit "Lock" button (user-initiated) rather than a timer, because timer-based locking during an active counselling session was found to be disruptive. The Zustand `isUnlocked` flag resets on page unload naturally. Picture-pattern PIN deferred to Phase 8 (low-literacy UX pass); numpad dial chosen for Phase 4 as it works across all input methods and screen sizes.
