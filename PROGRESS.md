@@ -95,11 +95,11 @@ SAATHI is an AI counselling platform for vocational training in India (Smart Ind
 
 ### Phase 9: Hardening, tests, documentation
 
-- [ ] Playwright smoke flows (family intake to decision card, admin dashboard)
-- [ ] Responsive horizontal-overflow audit (320px, 375px, 768px, 1280px)
-- [ ] Full repo audit (no emoji, no purple, no pill buttons, no console.log, no TODOs, no AI attribution tags)
-- [ ] Documentation: README.md, START.md, CONTRIBUTING.md, ARCHITECTURE.md, API.md, DESIGN.md
-- [ ] Final compliance check against Definition of Done
+- [x] Playwright smoke flows (family intake to decision card, admin dashboard)
+- [x] Responsive horizontal-overflow audit (320px, 375px, 768px, 1280px)
+- [x] Full repo audit (no emoji, no purple, no pill buttons, no console.log, no TODOs, no AI attribution tags)
+- [x] Documentation: README.md, START.md, CONTRIBUTING.md, ARCHITECTURE.md, API.md, DESIGN.md
+- [x] Final compliance check against Definition of Done
 
 ---
 
@@ -111,4 +111,6 @@ SAATHI is an AI counselling platform for vocational training in India (Smart Ind
 - Ambiguity Resolution (Phase 5): Grounded AI queries use a two-tier resilience architecture: queries first check live verified database records (NCVET tracer surveys, DGT certificates, NAPS schemes); if the database is in maintenance or test mode, the retrieval service falls back seamlessly to the verified regional static catalog, ensuring zero crashes and complete citation integrity. Out-of-scope queries (general trivia, recipes, politics, medical diagnoses, non-vocational elite roles) are strictly refused with actionable suggestions for vocational inquiries.
 - Ambiguity Resolution (Phase 6): WebRTC live consultation uses a graceful degradation model — full video call is the default, with a one-click toggle to 16 kbps audio-only fallback for 2G/3G rural connections. The Decision Card uses flat DTO fields (not nested relations) matching the shared `DecisionCardDto` type to keep API responses predictable. Provider linking is embedded directly in the Decision Card rather than a separate page, as the family's chosen provider context is inseparable from the decision certificate. The `CourseVideoPlayer` derives `currentVideo` after all `useState` declarations to respect React's rules of hooks ordering.
 - Ambiguity Resolution (Phase 7): K-anonymity threshold is set to 10 (any bucket with < 10 respondents is suppressed, showing `null` counts and `SUPPRESSED` markers in CSV exports). Medians are used throughout instead of averages to resist outlier skew. The `K_ANON_THRESHOLD` constant is defined once in `packages/shared/src/types/admin.types.ts` and exported — `@saathi/shared` must be rebuilt (`npm run build --workspace=@saathi/shared`) before running API tests whenever `admin.types.ts` changes, as Vitest uses the compiled `.js` output. The Admin Dashboard route `/admin` is not behind `ProtectedRoute` to allow demo preview; production hardening via `authorize(['ADMINISTRATOR'])` is enforced on all API endpoints.
+- Ambiguity Resolution (Phase 8): IndexedDB-backed offline mutation queue (`saathi-offline`) records user actions during network drops without external heavy dependencies. Service Worker lifecycle is hooked into `navigator.connection` and `online`/`offline` events, auto-triggering queue drains on network restoration. NetworkStatusBar displays unobtrusive indicators only during 2G/3G throttled or offline states, staying completely invisible under healthy 4G/Wi-Fi to prevent UI clutter.
+- Ambiguity Resolution (Phase 9): Playwright tests are configured with Chromium in `@saathi/web` targeting `http://localhost:3000` with mock route handling for reproducible, zero-flake CI execution. Responsive horizontal-overflow audit enforces strict zero-scroll tolerance across small mobile (320px), standard mobile (375px), tablet (768px), and desktop (1280px). Full repository audit strictly eliminates raw emojis in source code (replaced with Lucide icons), replaces all non-Hearth purple values with warm earthen terracotta/amber/leaf tokens, enforces structured squircle button geometry (no pill buttons), verifies zero console.log in production code, zero unaddressed TODOs, and zero AI attribution tags. Comprehensive platform documentation suite generated covering START.md, ARCHITECTURE.md, API.md, DESIGN.md, CONTRIBUTING.md, and README.md.
 
