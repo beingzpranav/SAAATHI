@@ -1,0 +1,56 @@
+{
+  "common": {
+    "appName": "SAATHI",
+    "tagline": "Vocational Counselling for Families",
+    "primaryCta": "Start family intake",
+    "learnMore": "Learn more",
+    "themeToggle": "Toggle color theme",
+    "languageSelect": "Select language",
+    "menu": "Menu",
+    "close": "Close",
+    "back": "Back",
+    "continue": "Continue",
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "readAloud": "Read aloud",
+    "leaveQuickly": "Leave quickly"
+  },
+  "nav": {
+    "home": "Home",
+    "intake": "Intake",
+    "trades": "Trades",
+    "design": "Design System",
+    "studentWindow": "Student Window",
+    "parentWindow": "Parent Window",
+    "jointRoom": "Joint Room"
+  },
+  "landing": {
+    "heroTitle": "Help your whole family choose a trade you can trust.",
+    "heroSubtitle": "Private chats for student and parent, local pay and placement figures, and a live counsellor if doubts remain.",
+    "learnerBadge": "Student",
+    "parentBadge": "Parent",
+    "jointBadge": "Joint Family Room",
+    "feature1Title": "Dual-Window Privacy",
+    "feature1Desc": "Separate confidential spaces for learners and parents to share hopes and concerns openly before talking together.",
+    "feature2Title": "Verified Local Data",
+    "feature2Desc": "Real graduate earnings and placement records from your district, with clear confidence labels and sample sizes.",
+    "feature3Title": "Family Decision Card",
+    "feature3Desc": "A single agreed roadmap listing your chosen course, costs, financial aid, and next steps to take together.",
+    "demoNotice": "This prototype uses DEMO data for illustrative guidance."
+  },
+  "footer": {
+    "copyright": "SAATHI Vocational Counselling Platform",
+    "hackathon": "Smart India Hackathon 2026 - Problem Statement 262241"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "message": "The page you are looking for does not exist or has been moved.",
+    "backHome": "Back to Home"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "message": "An error occurred while loading this view. You can try refreshing or going back.",
+    "retry": "Try again"
+  }
+}

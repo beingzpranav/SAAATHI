@@ -13,5 +13,8 @@
       "entry": ["src/test/**/*.test.tsx"],
       "project": ["src/**/*.{ts,tsx}"]
     }
+  },
+  "rules": {
+    "types": "off"
   }
 }

@@ -1,0 +1,87 @@
+:root {
+  /* Brand Hearth Palette - Light */
+  --color-primary: #c4562b;
+  --color-primary-hover: #af4a23;
+  --color-primary-active: #993e1b;
+  --color-primary-light: #f8ede7;
+
+  --color-student: #efa531;
+  --color-student-hover: #e59922;
+  --color-student-active: #d48a14;
+  --color-student-light: #fdf4e5;
+
+  --color-parent: #2f7d5c;
+  --color-parent-hover: #266a4e;
+  --color-parent-active: #1e573f;
+  --color-parent-light: #ebf4f0;
+
+  /* Neutrals - Light */
+  --color-bg: #fffdf9;
+  --color-surface: #ffffff;
+  --color-raised: #f9f4ee;
+  --color-border: #e8ddd2;
+  --color-text: #3a2e2a;
+  --color-subtext: #6a5b55;
+  --color-muted: #f3ece4;
+
+  /* State Alerts */
+  --color-error: #b83226;
+  --color-error-bg: #fdf2f0;
+  --color-success: #287a52;
+  --color-success-bg: #eaf5ef;
+
+  /* Geometry & Grid */
+  --radius-btn: 8px;
+  --radius-card: 12px;
+  --radius-input: 8px;
+  --radius-badge: 6px;
+
+  /* Fonts */
+  --font-heading: 'Source Serif 4', Georgia, serif;
+  --font-body: 'Public Sans', system-ui, -apple-system, sans-serif;
+
+  /* Focus & Elevation */
+  --focus-ring: 0 0 0 2px #fffdf9, 0 0 0 4px #c4562b;
+  --shadow-sm: 0 1px 2px rgba(58, 46, 42, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(58, 46, 42, 0.08), 0 2px 4px -2px rgba(58, 46, 42, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(58, 46, 42, 0.1), 0 4px 6px -4px rgba(58, 46, 42, 0.05);
+}
+
+.dark {
+  /* Brand Hearth Palette - Warm Charcoal Dark Mode */
+  --color-primary: #d86a3e;
+  --color-primary-hover: #e27e53;
+  --color-primary-active: #c4562b;
+  --color-primary-light: #32211b;
+
+  --color-student: #f4b34c;
+  --color-student-hover: #f8c26e;
+  --color-student-active: #efa531;
+  --color-student-light: #342817;
+
+  --color-parent: #419b74;
+  --color-parent-hover: #50af85;
+  --color-parent-active: #2f7d5c;
+  --color-parent-light: #1b2f25;
+
+  /* Neutrals - Dark (Warm Charcoal, never blue or black) */
+  --color-bg: #171311;
+  --color-surface: #1f1a17;
+  --color-raised: #2a2320;
+  --color-border: #3d3430;
+  --color-text: #f5efeb;
+  --color-subtext: #b8aaa3;
+  --color-muted: #28211d;
+
+  /* State Alerts - Dark */
+  --color-error: #e56658;
+  --color-error-bg: #2e1c1a;
+  --color-success: #49a578;
+  --color-success-bg: #182e22;
+
+  /* Focus & Elevation - Dark */
+  --focus-ring: 0 0 0 2px #171311, 0 0 0 4px #d86a3e;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+}

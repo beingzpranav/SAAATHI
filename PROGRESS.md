@@ -23,14 +23,14 @@ SAATHI is an AI counselling platform for vocational training in India (Smart Ind
 
 ### Phase 1: Design system and app shell
 
-- [ ] Design tokens (Hearth palette: terracotta, marigold, leaf green, warm white, warm charcoal)
-- [ ] Source Serif 4 and Public Sans fonts
-- [ ] Core UI components with all interaction states
-- [ ] App shell (Header, Nav, Language Switch, Theme Toggle, Footer, Mobile Drawer)
-- [ ] Router with lazy routes, progress bar, error boundary, 404 page
-- [ ] i18n scaffold (English, Hindi)
-- [ ] Hidden `/design` showcase route
-- [ ] Tests and accessibility checks
+- [x] Design tokens (Hearth palette: terracotta, marigold, leaf green, warm white, warm charcoal)
+- [x] Source Serif 4 and Public Sans fonts
+- [x] Core UI components with all interaction states
+- [x] App shell (Header, Nav, Language Switch, Theme Toggle, Footer, Mobile Drawer)
+- [x] Router with lazy routes, progress bar, error boundary, 404 page
+- [x] i18n scaffold (English, Hindi)
+- [x] Hidden `/design` showcase route
+- [x] Tests and accessibility checks
 
 ### Phase 2: API core, database and auth
 

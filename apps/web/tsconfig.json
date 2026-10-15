@@ -19,5 +19,5 @@
     "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo"
   },
   "references": [{ "path": "../../packages/shared" }, { "path": "./tsconfig.node.json" }],
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "src/**/*.json"]
 }

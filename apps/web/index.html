@@ -8,8 +8,28 @@
       content="SAATHI is an AI-powered vocational counselling platform for Indian families, helping learners and parents choose verified career pathways."
     />
     <title>SAATHI - Vocational Counselling for Families</title>
+    <!-- Prevent dark mode theme flash before DOM paints -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('saathi-theme');
+          var isDark =
+            stored === 'dark' ||
+            (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+          var storedLang = localStorage.getItem('saathi-language') || 'en';
+          document.documentElement.setAttribute('lang', storedLang);
+        } catch (_) {}
+      })();
+    </script>
   </head>
-  <body>
+  <body
+    class="bg-hearth-warm-bg text-hearth-warm-text dark:bg-hearth-dark-bg dark:text-hearth-dark-text antialiased"
+  >
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
