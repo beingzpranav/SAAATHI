@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Compass, Moon, Sun, Globe, Menu } from 'lucide-react';
+import { Compass, Moon, Sun, Globe, Menu, User, LogOut } from 'lucide-react';
 import { useUiStore } from '../../stores/ui.store.js';
+import { useSessionStore } from '../../stores/session.store.js';
 import { Drawer } from '../ui/Drawer.js';
 import { Button } from '../ui/Button.js';
+import { Badge } from '../ui/Badge.js';
 
 export const Header: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -13,6 +15,7 @@ export const Header: React.FC = () => {
   const toggleTheme = useUiStore((state) => state.toggleTheme);
   const isMobileMenuOpen = useUiStore((state) => state.isMobileMenuOpen);
   const setMobileMenuOpen = useUiStore((state) => state.setMobileMenuOpen);
+  const { user, isAuthenticated, logout } = useSessionStore();
 
   const toggleLanguage = () => {
     const nextLang = i18n.language === 'hi' ? 'en' : 'hi';
@@ -22,6 +25,7 @@ export const Header: React.FC = () => {
   const navLinks = [
     { to: '/', label: t('nav.home') },
     { to: '/design', label: t('nav.design') },
+    ...(isAuthenticated ? [{ to: '/dashboard', label: 'Dashboard' }] : []),
   ];
 
   return (
@@ -67,7 +71,7 @@ export const Header: React.FC = () => {
         </nav>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           {/* Language Switch */}
           <button
             type="button"
@@ -93,6 +97,51 @@ export const Header: React.FC = () => {
               <Moon className="w-5 h-5 text-[#6A5B55]" aria-hidden="true" />
             )}
           </button>
+
+          {/* Auth State Button */}
+          {isAuthenticated && user ? (
+            <div className="hidden sm:flex items-center gap-2">
+              <Link to="/dashboard">
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-[8px] border border-[#E8DDD2] bg-white dark:bg-[#1F1A17] dark:border-[#3D3430]">
+                  <User className="w-4 h-4 text-[#C4562B]" />
+                  <span className="text-xs font-semibold">{user.name.split(' ')[0]}</span>
+                  <Badge
+                    size="sm"
+                    variant={
+                      user.role === 'LEARNER'
+                        ? 'student'
+                        : user.role === 'PARENT'
+                          ? 'parent'
+                          : 'primary'
+                    }
+                  >
+                    {user.role}
+                  </Badge>
+                </div>
+              </Link>
+              <button
+                type="button"
+                onClick={() => logout()}
+                aria-label="Sign out"
+                className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] rounded-[8px] border border-[#E8DDD2] text-[#6A5B55] hover:text-[#B83226] hover:bg-[#FDF2F0] dark:border-[#3D3430] dark:text-[#B8AAA3] dark:hover:text-[#E56658] dark:hover:bg-[#2E1C1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C4562B]"
+              >
+                <LogOut className="w-4 h-4" aria-hidden="true" />
+              </button>
+            </div>
+          ) : (
+            <div className="hidden sm:flex items-center gap-2">
+              <Link to="/login">
+                <Button variant="ghost" size="sm">
+                  Sign in
+                </Button>
+              </Link>
+              <Link to="/register">
+                <Button variant="primary" size="sm">
+                  Register
+                </Button>
+              </Link>
+            </div>
+          )}
 
           {/* Mobile Menu Hamburger Button */}
           <button
@@ -126,9 +175,43 @@ export const Header: React.FC = () => {
               {link.label}
             </Link>
           ))}
-          <div className="pt-4 mt-2 border-t border-[#E8DDD2] dark:border-[#3D3430] flex flex-col gap-3">
+
+          {/* Mobile Auth Actions */}
+          <div className="pt-4 mt-2 border-t border-[#E8DDD2] dark:border-[#3D3430] flex flex-col gap-2">
+            {isAuthenticated && user ? (
+              <>
+                <div className="px-4 py-2 text-sm text-[#6A5B55] dark:text-[#B8AAA3]">
+                  Signed in as <span className="font-bold">{user.name}</span> ({user.role})
+                </div>
+                <Button
+                  variant="outline"
+                  size="md"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    logout();
+                  }}
+                  leftIcon={<LogOut className="w-4 h-4" />}
+                >
+                  Sign out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="outline" size="md" className="w-full">
+                    Sign in
+                  </Button>
+                </Link>
+                <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="primary" size="md" className="w-full">
+                    Register
+                  </Button>
+                </Link>
+              </>
+            )}
+
             <Button
-              variant="outline"
+              variant="secondary"
               size="md"
               onClick={toggleLanguage}
               leftIcon={<Globe className="w-4 h-4" />}
@@ -136,7 +219,7 @@ export const Header: React.FC = () => {
               {i18n.language === 'hi' ? 'Switch to English' : 'हिंदी में बदलें'}
             </Button>
             <Button
-              variant="outline"
+              variant="secondary"
               size="md"
               onClick={toggleTheme}
               leftIcon={

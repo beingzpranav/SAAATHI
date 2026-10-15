@@ -6,7 +6,7 @@
     },
     "apps/api": {
       "entry": ["src/__tests__/**/*.test.ts"],
-      "project": ["src/**/*.ts"],
+      "project": ["src/**/*.ts", "prisma/**/*.ts"],
       "ignoreDependencies": ["pino-pretty"]
     },
     "apps/web": {

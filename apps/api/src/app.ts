@@ -1,14 +1,21 @@
 import express, { type Request, type Response, type NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
+import swaggerUi from 'swagger-ui-express';
 import { randomUUID } from 'node:crypto';
 import type { ApiResponse, ApiErrorResponse, HealthStatus } from '@saathi/shared';
 import { env } from './config/env.js';
 import { HTTP_STATUS, API_PREFIX, API_VERSION } from './config/constants.js';
+import { authRouter } from './modules/auth/auth.routes.js';
+import { usersRouter } from './modules/users/users.routes.js';
+import { standardRateLimiter } from './middleware/rateLimit.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import { openApiSpec } from './docs/openapi.js';
 
 export const app = express();
 
-// Security middleware
+// Security and transport middleware
 app.use(helmet());
 app.use(
   cors({
@@ -16,9 +23,9 @@ app.use(
     credentials: true,
   }),
 );
-
-// Body parser
+app.use(cookieParser());
 app.use(express.json());
+app.use(standardRateLimiter);
 
 // Request ID tracking middleware
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -27,6 +34,12 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   req.headers['x-request-id'] = requestId;
   res.setHeader('X-Request-Id', requestId);
   next();
+});
+
+// Interactive OpenAPI Documentation
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openApiSpec));
+app.get('/api/docs/json', (_req: Request, res: Response) => {
+  res.json(openApiSpec);
 });
 
 /**
@@ -97,6 +110,10 @@ app.get(
   },
 );
 
+// Mount feature routers under versioned prefix
+app.use(`${API_PREFIX}/auth`, authRouter);
+app.use(`${API_PREFIX}/users`, usersRouter);
+
 // 404 handler with standard error envelope
 app.use((req: Request, res: Response<ApiErrorResponse>) => {
   const requestId = req.headers['x-request-id'] as string;
@@ -110,13 +127,4 @@ app.use((req: Request, res: Response<ApiErrorResponse>) => {
 });
 
 // Central error handler
-app.use((err: Error, req: Request, res: Response<ApiErrorResponse>, _next: NextFunction) => {
-  const requestId = req.headers['x-request-id'] as string;
-  res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-    error: {
-      code: 'INTERNAL_SERVER_ERROR',
-      message: env.NODE_ENV === 'production' ? 'An unexpected error occurred' : err.message,
-      requestId,
-    },
-  });
-});
+app.use(errorHandler);

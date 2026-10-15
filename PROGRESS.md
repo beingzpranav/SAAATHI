@@ -34,12 +34,12 @@ SAATHI is an AI counselling platform for vocational training in India (Smart Ind
 
 ### Phase 2: API core, database and auth
 
-- [ ] Express layered architecture and `/api/v1` routes
-- [ ] Prisma schema, migrations, seed skeleton
-- [ ] Auth system: learner & parent registration, minor consent, JWT cookies, role authorization
-- [ ] OpenAPI documentation at `/api/docs`
-- [ ] Web auth integration, session store, protected routes
-- [ ] Integration tests
+- [x] Express layered architecture and `/api/v1` routes
+- [x] Prisma schema, migrations, seed skeleton
+- [x] Auth system: learner & parent registration, minor consent, JWT cookies, role authorization
+- [x] OpenAPI documentation at `/api/docs`
+- [x] Web auth integration, session store, protected routes
+- [x] Integration tests
 
 ### Phase 3: Household intake and verified data layer
 

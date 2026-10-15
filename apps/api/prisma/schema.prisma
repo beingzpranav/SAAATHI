@@ -1,0 +1,294 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  LEARNER
+  PARENT
+  COUNSELLOR
+  ADMINISTRATOR
+}
+
+enum RoomType {
+  STUDENT_WINDOW
+  PARENT_WINDOW
+  JOINT_ROOM
+}
+
+enum RoomStatus {
+  ACTIVE
+  LOCKED
+  COMPLETED
+}
+
+enum ConfidenceLabel {
+  HIGH
+  MEDIUM
+  LOW
+  NONE
+}
+
+enum GeographicLevel {
+  BLOCK
+  DISTRICT
+  STATE
+  NATIONAL
+}
+
+enum ProviderType {
+  GOVERNMENT_ITI
+  PRIVATE_ITI
+  POLYTECHNIC
+  VOCATIONAL_TRAINING_CENTRE
+}
+
+enum BookingStatus {
+  REQUESTED
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum BookingMode {
+  VIDEO
+  AUDIO_ONLY
+}
+
+enum LedgerEventType {
+  MINOR_CONSENT
+  SHARE_CONCERN
+  SHARE_PREFERENCE
+  DECISION_AGREEMENT
+}
+
+model User {
+  id                  String          @id @default(uuid())
+  email               String          @unique
+  phone               String?
+  name                String
+  role                UserRole        @default(LEARNER)
+  passwordHash        String
+  pinHash             String?
+  pinFailedAttempts   Int             @default(0)
+  pinLockedUntil      DateTime?
+  language            String          @default("en")
+  isMinor             Boolean         @default(false)
+  parentConsentGiven  Boolean         @default(false)
+  householdId         String?
+  household           Household?      @relation(fields: [householdId], references: [id], onDelete: SetNull)
+  concerns            Concern[]
+  bookings            Booking[]       @relation("CounsellorBookings")
+  ledgerEntries       ConsentLedger[]
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  @@index([email])
+  @@index([householdId])
+}
+
+model Household {
+  id                String          @id @default(uuid())
+  name              String
+  state             String
+  district          String
+  block             String
+  incomeBand        String
+  learnerClassLevel String
+  members           User[]
+  rooms             Room[]
+  concerns          Concern[]
+  bookings          Booking[]
+  decisionCard      DecisionCard?
+  ledgerEntries     ConsentLedger[]
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@index([state, district, block])
+}
+
+model Room {
+  id          String      @id @default(uuid())
+  householdId String
+  household   Household   @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  type        RoomType
+  status      RoomStatus  @default(ACTIVE)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@unique([householdId, type])
+}
+
+model Trade {
+  id              String          @id @default(uuid())
+  code            String          @unique
+  titleEn         String
+  titleHi         String
+  sector          String
+  descriptionEn   String
+  descriptionHi   String
+  nsqfLevel       Int
+  durationMonths  Int
+  minEducation    String
+  entryStep       String
+  courses         Course[]
+  outcomeRecords  OutcomeRecord[]
+  decisionCards   DecisionCard[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([code])
+}
+
+model Provider {
+  id              String          @id @default(uuid())
+  name            String
+  type            ProviderType
+  state           String
+  district        String
+  block           String
+  address         String
+  contactEmail    String?
+  contactPhone    String?
+  affiliation     String
+  courses         Course[]
+  outcomeRecords  OutcomeRecord[]
+  decisionCards   DecisionCard[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([state, district, block])
+}
+
+model OutcomeRecord {
+  id                      String          @id @default(uuid())
+  tradeId                 String
+  trade                   Trade           @relation(fields: [tradeId], references: [id], onDelete: Cascade)
+  providerId              String?
+  provider                Provider?       @relation(fields: [providerId], references: [id], onDelete: SetNull)
+  geographicLevel         GeographicLevel
+  state                   String
+  district                String
+  block                   String?
+  verifiedGraduatesCount  Int
+  medianSalaryMonthly     Int
+  salaryRangeMin          Int
+  salaryRangeMax          Int
+  placementRatePercent    Float
+  sampleSize              Int
+  sources                 String[]
+  dataDate                DateTime
+  confidenceLabel         ConfidenceLabel
+  createdAt               DateTime        @default(now())
+  updatedAt               DateTime        @updatedAt
+
+  @@index([tradeId, geographicLevel])
+  @@index([state, district, block])
+}
+
+model Course {
+  id                String    @id @default(uuid())
+  tradeId           String
+  trade             Trade     @relation(fields: [tradeId], references: [id], onDelete: Cascade)
+  providerId        String
+  provider          Provider  @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  titleEn           String
+  titleHi           String
+  feeInr            Int
+  stipendMonthlyInr Int       @default(0)
+  durationMonths    Int
+  videoUrl1         String
+  videoUrl2         String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([tradeId, providerId])
+}
+
+model Concern {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  householdId String
+  household   Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  category    String
+  questionKey String
+  answerValue String
+  isShared    Boolean   @default(false)
+  sharedAt    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([householdId, userId])
+}
+
+model Booking {
+  id            String        @id @default(uuid())
+  householdId   String
+  household     Household     @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  counsellorId  String?
+  counsellor    User?         @relation("CounsellorBookings", fields: [counsellorId], references: [id], onDelete: SetNull)
+  requestedSlot DateTime
+  scheduledAt   DateTime?
+  status        BookingStatus @default(REQUESTED)
+  mode          BookingMode   @default(VIDEO)
+  meetingRoomId String?
+  notes         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([householdId])
+  @@index([counsellorId])
+}
+
+model DecisionCard {
+  id                String    @id @default(uuid())
+  householdId       String    @unique
+  household         Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  chosenTradeId     String
+  chosenTrade       Trade     @relation(fields: [chosenTradeId], references: [id], onDelete: Restrict)
+  chosenProviderId  String
+  chosenProvider    Provider  @relation(fields: [chosenProviderId], references: [id], onDelete: Restrict)
+  agreedActions     String[]
+  openConcerns      String[]
+  counsellorNotes   String?
+  counsellorContact String?
+  verificationHash  String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([householdId])
+}
+
+model ConsentLedger {
+  id              String          @id @default(uuid())
+  householdId     String
+  household       Household       @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventType       LedgerEventType
+  payloadHash     String
+  previousHash    String
+  blockHash       String
+  sequenceNumber  Int
+  createdAt       DateTime        @default(now())
+
+  @@index([householdId, sequenceNumber])
+}
+
+model SystemEvent {
+  id              String    @id @default(uuid())
+  eventType       String
+  aggregateId     String?
+  district        String?
+  tradeCode       String?
+  concernCode     String?
+  sentimentShift  Float?
+  createdAt       DateTime  @default(now())
+
+  @@index([district, tradeCode, concernCode])
+}

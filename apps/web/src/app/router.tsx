@@ -3,6 +3,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import { AppLayout } from '../components/layout/AppLayout.js';
 import { ErrorBoundary } from './ErrorBoundary.js';
 import { RouteProgressBar } from './ProgressBar.js';
+import { ProtectedRoute } from '../components/layout/ProtectedRoute.js';
 import { Skeleton } from '../components/ui/Skeleton.js';
 
 // Lazy-loaded routes for optimized code splitting
@@ -11,6 +12,17 @@ const LandingPage = lazy(() =>
 );
 const DesignSystemPage = lazy(() =>
   import('../pages/DesignSystemPage.js').then((module) => ({ default: module.DesignSystemPage })),
+);
+const LoginPage = lazy(() =>
+  import('../pages/LoginPage.js').then((module) => ({ default: module.LoginPage })),
+);
+const RegisterPage = lazy(() =>
+  import('../pages/RegisterPage.js').then((module) => ({ default: module.RegisterPage })),
+);
+const DashboardPreviewPage = lazy(() =>
+  import('../pages/DashboardPreviewPage.js').then((module) => ({
+    default: module.DashboardPreviewPage,
+  })),
 );
 const NotFoundPage = lazy(() =>
   import('../pages/NotFoundPage.js').then((module) => ({ default: module.NotFoundPage })),
@@ -53,6 +65,32 @@ export const router = createBrowserRouter(
             <Suspense fallback={<RouteSuspenseFallback />}>
               <DesignSystemPage />
             </Suspense>
+          ),
+        },
+        {
+          path: 'login',
+          element: (
+            <Suspense fallback={<RouteSuspenseFallback />}>
+              <LoginPage />
+            </Suspense>
+          ),
+        },
+        {
+          path: 'register',
+          element: (
+            <Suspense fallback={<RouteSuspenseFallback />}>
+              <RegisterPage />
+            </Suspense>
+          ),
+        },
+        {
+          path: 'dashboard',
+          element: (
+            <ProtectedRoute>
+              <Suspense fallback={<RouteSuspenseFallback />}>
+                <DashboardPreviewPage />
+              </Suspense>
+            </ProtectedRoute>
           ),
         },
         {
