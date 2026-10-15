@@ -34,6 +34,11 @@ export class ConflictError extends AppError {
   public readonly code = 'CONFLICT';
 }
 
+export class BadRequestError extends AppError {
+  public readonly statusCode = HTTP_STATUS.BAD_REQUEST;
+  public readonly code = 'BAD_REQUEST';
+}
+
 export class ValidationError extends AppError {
   public readonly statusCode = HTTP_STATUS.UNPROCESSABLE_ENTITY;
   public readonly code = 'VALIDATION_ERROR';

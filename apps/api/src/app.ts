@@ -12,6 +12,10 @@ import { usersRouter } from './modules/users/users.routes.js';
 import { locationsRouter } from './modules/locations/locations.routes.js';
 import { householdRouter } from './modules/households/household.routes.js';
 import { tradeRouter } from './modules/trades/trade.routes.js';
+import { roomRouter } from './modules/rooms/room.routes.js';
+import { ledgerRouter } from './modules/ledger/ledger.routes.js';
+import { concernRouter } from './modules/concerns/concern.routes.js';
+import { bhavishyaRouter } from './modules/bhavishya/bhavishya.routes.js';
 import { standardRateLimiter } from './middleware/rateLimit.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { openApiSpec } from './docs/openapi.js';
@@ -119,6 +123,11 @@ app.use(`${API_PREFIX}/users`, usersRouter);
 app.use(`${API_PREFIX}/locations`, locationsRouter);
 app.use(`${API_PREFIX}/households`, householdRouter);
 app.use(`${API_PREFIX}/trades`, tradeRouter);
+// Phase 4 – private windows, consent ledger, Bhavishya Engine
+app.use(`${API_PREFIX}/rooms`, roomRouter);
+app.use(`${API_PREFIX}/ledger`, ledgerRouter);
+app.use(`${API_PREFIX}/concerns`, concernRouter);
+app.use(`${API_PREFIX}/bhavishya`, bhavishyaRouter);
 
 // 404 handler with standard error envelope
 app.use((req: Request, res: Response<ApiErrorResponse>) => {

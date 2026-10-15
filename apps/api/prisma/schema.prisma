@@ -218,8 +218,11 @@ model Concern {
   category    String
   questionKey String
   answerValue String
+  preScore    Int       @default(3)
+  postScore   Int?
   isShared    Boolean   @default(false)
   sharedAt    DateTime?
+  resolvedAt  DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -271,6 +274,7 @@ model ConsentLedger {
   userId          String
   user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   eventType       LedgerEventType
+  payload         String?
   payloadHash     String
   previousHash    String
   blockHash       String

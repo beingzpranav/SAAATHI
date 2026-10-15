@@ -27,7 +27,14 @@ export const Header: React.FC = () => {
     { to: '/trades', label: i18n.language === 'hi' ? 'ट्रेड एक्सप्लोरर' : 'Trades' },
     { to: '/intake', label: i18n.language === 'hi' ? 'पारिवारिक इनटेक' : 'Intake' },
     { to: '/design', label: t('nav.design') },
-    ...(isAuthenticated ? [{ to: '/dashboard', label: 'Dashboard' }] : []),
+    ...(isAuthenticated
+      ? [
+          { to: '/dashboard', label: 'Dashboard' },
+          { to: '/private', label: i18n.language === 'hi' ? 'निजी विंडो' : 'My Window' },
+          { to: '/joint-room', label: i18n.language === 'hi' ? 'संयुक्त कक्ष' : 'Joint Room' },
+          { to: '/consent-ledger', label: i18n.language === 'hi' ? 'सहमति खाता' : 'Ledger' },
+        ]
+      : []),
   ];
 
   return (

@@ -42,6 +42,19 @@ const TradeDetailPage = lazy(() =>
 const NotFoundPage = lazy(() =>
   import('../pages/NotFoundPage.js').then((module) => ({ default: module.NotFoundPage })),
 );
+const PrivateWindowPage = lazy(() =>
+  import('../pages/PrivateWindowPage.js').then((module) => ({
+    default: module.PrivateWindowPage,
+  })),
+);
+const JointRoomPage = lazy(() =>
+  import('../pages/JointRoomPage.js').then((module) => ({ default: module.JointRoomPage })),
+);
+const ConsentLedgerPage = lazy(() =>
+  import('../pages/ConsentLedgerPage.js').then((module) => ({
+    default: module.ConsentLedgerPage,
+  })),
+);
 
 const RouteSuspenseFallback = () => (
   <div className="flex flex-col gap-6 py-8">
@@ -130,6 +143,36 @@ export const router = createBrowserRouter(
             <ProtectedRoute>
               <Suspense fallback={<RouteSuspenseFallback />}>
                 <DashboardPreviewPage />
+              </Suspense>
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: 'private',
+          element: (
+            <ProtectedRoute>
+              <Suspense fallback={<RouteSuspenseFallback />}>
+                <PrivateWindowPage />
+              </Suspense>
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: 'joint-room',
+          element: (
+            <ProtectedRoute>
+              <Suspense fallback={<RouteSuspenseFallback />}>
+                <JointRoomPage />
+              </Suspense>
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: 'consent-ledger',
+          element: (
+            <ProtectedRoute>
+              <Suspense fallback={<RouteSuspenseFallback />}>
+                <ConsentLedgerPage />
               </Suspense>
             </ProtectedRoute>
           ),
