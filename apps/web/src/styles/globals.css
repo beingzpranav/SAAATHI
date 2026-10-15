@@ -98,3 +98,23 @@
 .animate-shake {
   animation: shake 0.55s ease-in-out;
 }
+
+/* ─── Lite Mode: strip GPU-heavy effects on 2G / offline devices ─────────── */
+.lite-mode *,
+.lite-mode *::before,
+.lite-mode *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
+.lite-mode [class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+}
+.lite-mode [class*="shadow"] {
+  box-shadow: none !important;
+}
+.lite-mode [class*="animate-ping"],
+.lite-mode [class*="animate-pulse"],
+.lite-mode [class*="animate-spin"] {
+  animation: none !important;
+}

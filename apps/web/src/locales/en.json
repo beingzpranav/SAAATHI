@@ -14,7 +14,16 @@
     "cancel": "Cancel",
     "loading": "Loading...",
     "readAloud": "Read aloud",
-    "leaveQuickly": "Leave quickly"
+    "leaveQuickly": "Leave quickly",
+    "voiceInput": "Voice input",
+    "startListening": "Tap to speak",
+    "stopListening": "Tap to stop",
+    "liteMode": "Lite mode",
+    "liteModeOn": "Lite mode on",
+    "liteModeOff": "Lite mode off",
+    "offline": "You are offline",
+    "offlineSync": "Changes will sync when you reconnect",
+    "slowConnection": "Slow connection detected"
   },
   "nav": {
     "home": "Home",

@@ -87,11 +87,11 @@ SAATHI is an AI counselling platform for vocational training in India (Smart Ind
 
 ### Phase 8: Low network, low literacy and voice
 
-- [ ] Network detection and automatic Lite mode
-- [ ] PWA service worker and IndexedDB offline queue
-- [ ] Web Speech API adapter for voice I/O (Bhashini-ready)
-- [ ] Icon-first review and full Hindi localization
-- [ ] Network throttling tests (3G, 2G, offline)
+- [x] Network detection and automatic Lite mode
+- [x] PWA service worker and IndexedDB offline queue
+- [x] Web Speech API adapter for voice I/O (Bhashini-ready)
+- [x] Icon-first review and full Hindi localization
+- [x] Network throttling tests (3G, 2G, offline)
 
 ### Phase 9: Hardening, tests, documentation
 

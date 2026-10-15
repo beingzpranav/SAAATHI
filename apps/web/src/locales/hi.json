@@ -14,7 +14,16 @@
     "cancel": "रद्द करें",
     "loading": "लोड हो रहा है...",
     "readAloud": "बोलकर सुनें",
-    "leaveQuickly": "तुरंत बाहर निकलें"
+    "leaveQuickly": "तुरंत बाहर निकलें",
+    "voiceInput": "आवाज़ से इनपुट",
+    "startListening": "बोलने के लिए टैप करें",
+    "stopListening": "रोकने के लिए टैप करें",
+    "liteMode": "लाइट मोड",
+    "liteModeOn": "लाइट मोड चालू",
+    "liteModeOff": "लाइट मोड बंद",
+    "offline": "आप ऑफलाइन हैं",
+    "offlineSync": "दोबारा जुड़ने पर बदलाव सहेजे जाएंगे",
+    "slowConnection": "धीमा इंटरनेट कनेक्शन"
   },
   "nav": {
     "home": "मुख्य पृष्ठ",
