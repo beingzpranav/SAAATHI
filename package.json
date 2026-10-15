@@ -13,6 +13,7 @@
     "typecheck": "tsc --build --verbose",
     "lint": "eslint .",
     "test": "npm run test --workspaces --if-present",
+    "test:e2e": "npm run test:e2e --workspace=@saathi/web",
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
     "knip": "knip",

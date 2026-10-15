@@ -31,6 +31,7 @@ export const TradeCard: React.FC<TradeCardProps> = ({ trade, outcome, household,
 
   return (
     <Card
+      data-testid="trade-card"
       className={cn(
         'flex flex-col justify-between hover:shadow-md transition-shadow border-[#E8DDD2] dark:border-[#3D3430] bg-[#FFFDF9] dark:bg-[#1F1A17]',
         className,

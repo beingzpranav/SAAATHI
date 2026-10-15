@@ -42,18 +42,18 @@ export const Header: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-[#E8DDD2] bg-[#FFFDF9]/95 dark:bg-[#1F1A17]/95 dark:border-[#3D3430] backdrop-blur-sm">
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      <div className="max-w-[1200px] mx-auto px-2 sm:px-6 h-16 flex items-center justify-between gap-2 sm:gap-4">
         {/* Brand Logo */}
         <Link
           to="/"
-          className="flex items-center gap-2.5 text-[#3A2E2A] dark:text-[#F5EFEB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C4562B] rounded-[8px] p-1"
+          className="flex items-center gap-2 text-[#3A2E2A] dark:text-[#F5EFEB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C4562B] rounded-[8px] p-1 shrink-0"
           aria-label="SAATHI home"
         >
-          <div className="w-9 h-9 rounded-[8px] bg-[#C4562B] flex items-center justify-center text-white shadow-sm">
-            <Compass className="w-5 h-5" aria-hidden="true" />
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-[8px] bg-[#C4562B] flex items-center justify-center text-white shadow-sm shrink-0">
+            <Compass className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
           </div>
           <div className="flex flex-col">
-            <span className="font-heading text-xl font-bold tracking-tight leading-none">
+            <span className="font-heading text-lg sm:text-xl font-bold tracking-tight leading-none">
               SAATHI
             </span>
             <span className="text-[10px] tracking-wider uppercase font-semibold text-[#6A5B55] dark:text-[#B8AAA3]">
@@ -63,7 +63,7 @@ export const Header: React.FC = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6" aria-label="Main navigation">
+        <nav className="hidden lg:flex items-center gap-6" aria-label="Main navigation">
           {navLinks.map((link) => {
             const isActive = location.pathname === link.to;
             return (
@@ -83,15 +83,15 @@ export const Header: React.FC = () => {
         </nav>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-1 sm:gap-2.5 shrink-0">
           {/* Language Switch */}
           <button
             type="button"
             onClick={toggleLanguage}
             aria-label={`${t('common.languageSelect')}: currently ${i18n.language.toUpperCase()}`}
-            className="inline-flex items-center gap-1.5 min-h-[44px] px-3 py-2 text-sm font-semibold rounded-[8px] border border-[#E8DDD2] text-[#3A2E2A] hover:bg-[#F3ECE4] dark:border-[#3D3430] dark:text-[#F5EFEB] dark:hover:bg-[#2A2320] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C4562B]"
+            className="inline-flex items-center gap-1 min-h-[38px] sm:min-h-[44px] px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold rounded-[8px] border border-[#E8DDD2] text-[#3A2E2A] hover:bg-[#F3ECE4] dark:border-[#3D3430] dark:text-[#F5EFEB] dark:hover:bg-[#2A2320] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C4562B]"
           >
-            <Globe className="w-4 h-4 text-[#C4562B] dark:text-[#D86A3E]" aria-hidden="true" />
+            <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#C4562B] dark:text-[#D86A3E]" aria-hidden="true" />
             <span>{i18n.language === 'hi' ? 'EN' : 'हिन्दी'}</span>
           </button>
 
@@ -101,12 +101,12 @@ export const Header: React.FC = () => {
             onClick={toggleTheme}
             aria-label={t('common.themeToggle')}
             aria-pressed={theme === 'dark'}
-            className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] rounded-[8px] border border-[#E8DDD2] text-[#3A2E2A] hover:bg-[#F3ECE4] dark:border-[#3D3430] dark:text-[#F5EFEB] dark:hover:bg-[#2A2320] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C4562B]"
+            className="inline-flex items-center justify-center min-w-[38px] min-h-[38px] sm:min-w-[44px] sm:min-h-[44px] rounded-[8px] border border-[#E8DDD2] text-[#3A2E2A] hover:bg-[#F3ECE4] dark:border-[#3D3430] dark:text-[#F5EFEB] dark:hover:bg-[#2A2320] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C4562B]"
           >
             {theme === 'dark' ? (
-              <Sun className="w-5 h-5 text-[#EFA531]" aria-hidden="true" />
+              <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-[#EFA531]" aria-hidden="true" />
             ) : (
-              <Moon className="w-5 h-5 text-[#6A5B55]" aria-hidden="true" />
+              <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-[#6A5B55]" aria-hidden="true" />
             )}
           </button>
 
@@ -135,7 +135,7 @@ export const Header: React.FC = () => {
                 type="button"
                 onClick={() => logout()}
                 aria-label="Sign out"
-                className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] rounded-[8px] border border-[#E8DDD2] text-[#6A5B55] hover:text-[#B83226] hover:bg-[#FDF2F0] dark:border-[#3D3430] dark:text-[#B8AAA3] dark:hover:text-[#E56658] dark:hover:bg-[#2E1C1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C4562B]"
+                className="inline-flex items-center justify-center min-w-[38px] min-h-[38px] sm:min-w-[44px] sm:min-h-[44px] rounded-[8px] border border-[#E8DDD2] text-[#6A5B55] hover:text-[#B83226] hover:bg-[#FDF2F0] dark:border-[#3D3430] dark:text-[#B8AAA3] dark:hover:text-[#E56658] dark:hover:bg-[#2E1C1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C4562B]"
               >
                 <LogOut className="w-4 h-4" aria-hidden="true" />
               </button>
@@ -162,7 +162,7 @@ export const Header: React.FC = () => {
             aria-label={t('common.menu')}
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-nav-drawer"
-            className="md:hidden inline-flex items-center justify-center min-w-[44px] min-h-[44px] rounded-[8px] border border-[#E8DDD2] text-[#3A2E2A] hover:bg-[#F3ECE4] dark:border-[#3D3430] dark:text-[#F5EFEB] dark:hover:bg-[#2A2320] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C4562B]"
+            className="lg:hidden inline-flex items-center justify-center min-w-[38px] min-h-[38px] sm:min-w-[44px] sm:min-h-[44px] rounded-[8px] border border-[#E8DDD2] text-[#3A2E2A] hover:bg-[#F3ECE4] dark:border-[#3D3430] dark:text-[#F5EFEB] dark:hover:bg-[#2A2320] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C4562B]"
           >
             <Menu className="w-5 h-5" aria-hidden="true" />
           </button>

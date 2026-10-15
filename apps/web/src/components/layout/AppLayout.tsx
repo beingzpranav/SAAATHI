@@ -12,12 +12,12 @@ export const AppLayout: React.FC = () => {
 
   return (
     <div className={cn(
-      'min-h-screen flex flex-col bg-[#FFFDF9] text-[#3A2E2A] dark:bg-[#171311] dark:text-[#F5EFEB] antialiased',
+      'min-h-screen flex flex-col bg-[#FFFDF9] text-[#3A2E2A] dark:bg-[#171311] dark:text-[#F5EFEB] antialiased overflow-x-hidden w-full max-w-full',
       liteMode && 'lite-mode',
     )}>
       <NetworkStatusBar />
       <Header />
-      <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 sm:px-6 py-8">
+      <main className="flex-1 w-full max-w-[1200px] mx-auto px-3 sm:px-6 py-6 sm:py-8 overflow-x-hidden">
         <Outlet />
       </main>
       <Footer />
