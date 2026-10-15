@@ -106,3 +106,4 @@ SAATHI is an AI counselling platform for vocational training in India (Smart Ind
 ## Decisions and Ambiguity Resolutions
 
 - Ambiguity Resolution (Phase 0): API and Web share schema definitions through `packages/shared`. TypeScript project references enable strict monorepo builds.
+- Process Decision (Phase 1): After every phase completion, the branch will be pushed to GitHub (`https://github.com/sarthak654/Saathi.git`) on `main` before requesting continue.
