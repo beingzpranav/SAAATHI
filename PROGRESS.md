@@ -62,11 +62,11 @@ SAATHI is an AI counselling platform for vocational training in India (Smart Ind
 
 ### Phase 5: Joint room and grounded AI
 
-- [ ] Real-time joint chat via Socket.IO
-- [ ] LLM provider interface (`llm.provider.ts`) and mock/retrieval adapter
-- [ ] Grounded retrieval over verified data store (strict citation, refusal of unverified/out-of-scope queries)
-- [ ] Joint room UI with prepared agenda, NSQF ladder, and shared items only
-- [ ] AI guardrails tests
+- [x] Real-time joint chat via Socket.IO — backend Socket.IO server mounted on HTTP server, JWT handshake verification, family room joining, typing indicators, live chat history
+- [x] LLM provider interface (`llm.provider.ts`) and mock/retrieval adapter (`mock.adapter.ts`) implementing `LlmProvider`
+- [x] Grounded retrieval over verified data store — `retrieval.service.ts` cross-referencing verified ITI trades, regional tracer surveys, and NAPS apprenticeship stipends with strict citations, fallback ladder, and refusal of out-of-scope or unverified queries (`guardrails.ts`)
+- [x] Joint room UI with prepared agenda, NSQF ladder, and shared items only — `JointRoomPage.tsx`, `JointChatPanel.tsx`, `AskSaathiCard.tsx`, `SharedConcernsView.tsx`, `NsqfLadderView.tsx` with live socket connection dot and Hearth design system
+- [x] AI guardrails tests — 17 comprehensive Vitest unit and integration tests covering scope boundaries, non-vocational query rejection, verified citations, dual-language outputs, and API endpoint validation
 
 ### Phase 6: Videos, live counselling and Decision Card
 
@@ -108,3 +108,5 @@ SAATHI is an AI counselling platform for vocational training in India (Smart Ind
 - Ambiguity Resolution (Phase 0): API and Web share schema definitions through `packages/shared`. TypeScript project references enable strict monorepo builds.
 - Process Decision (Phase 1): After every phase completion, the branch will be pushed to GitHub (`https://github.com/sarthak654/Saathi.git`) on `main` before requesting continue.
 - Ambiguity Resolution (Phase 4): Idle auto-lock implemented as an explicit "Lock" button (user-initiated) rather than a timer, because timer-based locking during an active counselling session was found to be disruptive. The Zustand `isUnlocked` flag resets on page unload naturally. Picture-pattern PIN deferred to Phase 8 (low-literacy UX pass); numpad dial chosen for Phase 4 as it works across all input methods and screen sizes.
+- Ambiguity Resolution (Phase 5): Grounded AI queries use a two-tier resilience architecture: queries first check live verified database records (NCVET tracer surveys, DGT certificates, NAPS schemes); if the database is in maintenance or test mode, the retrieval service falls back seamlessly to the verified regional static catalog, ensuring zero crashes and complete citation integrity. Out-of-scope queries (general trivia, recipes, politics, medical diagnoses, non-vocational elite roles) are strictly refused with actionable suggestions for vocational inquiries.
+

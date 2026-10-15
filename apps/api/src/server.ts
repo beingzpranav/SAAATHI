@@ -1,10 +1,16 @@
+import http from 'node:http';
 import { app } from './app.js';
 import { env } from './config/env.js';
 import { logger } from './lib/logger.js';
+import { initSocketServer } from './lib/socket.js';
 
-const server = app.listen(env.PORT, () => {
-  logger.info({ port: env.PORT, env: env.NODE_ENV }, 'SAATHI API server started successfully');
+const httpServer = http.createServer(app);
+initSocketServer(httpServer);
+
+const server = httpServer.listen(env.PORT, () => {
+  logger.info({ port: env.PORT, env: env.NODE_ENV }, 'SAATHI API & Socket.IO server started successfully');
 });
+
 
 // Graceful shutdown handling
 const shutdown = (signal: string) => {

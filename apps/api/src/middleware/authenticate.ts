@@ -40,3 +40,25 @@ export const authenticate = (req: Request, _res: Response, next: NextFunction): 
     }
   }
 };
+
+export const optionalAuthenticate = (req: Request, _res: Response, next: NextFunction): void => {
+  try {
+    let token: string | undefined;
+
+    if (req.cookies && req.cookies[ACCESS_COOKIE_NAME]) {
+      token = req.cookies[ACCESS_COOKIE_NAME];
+    } else if (req.headers.authorization?.startsWith('Bearer ')) {
+      token = req.headers.authorization.split(' ')[1];
+    }
+
+    if (token) {
+      const payload = verifyAccessToken(token);
+      req.user = payload;
+    }
+    next();
+  } catch {
+    // If token invalid or expired, continue as unauthenticated
+    next();
+  }
+};
+

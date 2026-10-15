@@ -1,65 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Users,
   Sparkles,
   ChevronDown,
   ChevronRight,
-  CheckCircle2,
-  Clock,
   AlertCircle,
   BookOpen,
+
+  MessageSquare,
+  Shield,
   TrendingUp,
   MapPin,
   IndianRupee,
+  Activity,
+  CheckCircle2,
+  GraduationCap,
+  HeartHandshake,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import type { BhavishyaAgendaResponse, BhavishyaAgendaItem } from '@saathi/shared';
 import { apiClient } from '../lib/apiClient.js';
 import { useSessionStore } from '../stores/session.store.js';
+import { useJointRoomStore } from '../stores/jointRoom.store.js';
+import { JointChatPanel } from '../features/joint-room/JointChatPanel.js';
+import { AskSaathiCard } from '../features/joint-room/AskSaathiCard.js';
+import { SharedConcernsView } from '../features/joint-room/SharedConcernsView.js';
+import { NsqfLadderView } from '../features/joint-room/NsqfLadderView.js';
 import { cn } from '../lib/cn.js';
 
-/* ------------------------------------------------------------------ */
-/* Types (mirror backend BhavishyaAgenda)                             */
-/* ------------------------------------------------------------------ */
-interface AgendaItem {
-  order: number;
-  topic: string;
-  description: string;
-  bridgesConcern?: string;
-  estimatedMinutes: number;
-  priority: 'HIGH' | 'MEDIUM' | 'LOW';
-}
-
-interface TradeHighlight {
-  code: string;
-  name: string;
-  nsqfLevel: number;
-  avgSalary: string;
-  localDemand: 'HIGH' | 'MEDIUM' | 'LOW';
-  costEstimate: string;
-}
-
-interface BhavishyaAgenda {
-  householdId: string;
-  generatedAt: string;
-  learnerName: string;
-  parentName: string;
-  location: string;
-  incomeContext: string;
-  sessionGoal: string;
-  items: AgendaItem[];
-  tradeHighlights: TradeHighlight[];
-  closingNote: string;
-}
+type JointTab = 'agenda' | 'chat' | 'concerns' | 'ladder';
 
 /* ------------------------------------------------------------------ */
 /* Priority badge                                                      */
 /* ------------------------------------------------------------------ */
-const PriorityBadge: React.FC<{ priority: AgendaItem['priority'] }> = ({ priority }) => {
+const PriorityBadge: React.FC<{ priority: BhavishyaAgendaItem['priority'] }> = ({ priority }) => {
   const map = {
-    HIGH: { label: 'High', color: 'var(--color-error)', bg: 'var(--color-error-bg)' },
-    MEDIUM: { label: 'Medium', color: 'var(--color-student)', bg: 'var(--color-student-light)' },
-    LOW: { label: 'Low', color: 'var(--color-subtext)', bg: 'var(--color-muted)' },
+    HIGH: { label: 'High Priority', color: 'var(--color-error)', bg: 'var(--color-error-bg)' },
+    MEDIUM: { label: 'Medium Priority', color: 'var(--color-student)', bg: 'var(--color-student-light)' },
+    LOW: { label: 'Low Priority', color: 'var(--color-subtext)', bg: 'var(--color-muted)' },
   };
   const { label, color, bg } = map[priority];
   return (
@@ -73,65 +52,47 @@ const PriorityBadge: React.FC<{ priority: AgendaItem['priority'] }> = ({ priorit
 };
 
 /* ------------------------------------------------------------------ */
-/* Demand badge                                                        */
+/* Agenda Item Accordion Card                                         */
 /* ------------------------------------------------------------------ */
-const DemandBadge: React.FC<{ demand: TradeHighlight['localDemand'] }> = ({ demand }) => {
-  const map = {
-    HIGH: { label: 'High demand', color: 'var(--color-success)', bg: 'var(--color-success-bg)' },
-    MEDIUM: { label: 'Medium demand', color: 'var(--color-student)', bg: 'var(--color-student-light)' },
-    LOW: { label: 'Low demand', color: 'var(--color-subtext)', bg: 'var(--color-muted)' },
-  };
-  const { label, color, bg } = map[demand];
-  return (
-    <span
-      className="text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full"
-      style={{ color, background: bg }}
-    >
-      {label}
-    </span>
-  );
-};
-
-/* ------------------------------------------------------------------ */
-/* Agenda item accordion                                               */
-/* ------------------------------------------------------------------ */
-const AgendaCard: React.FC<{ item: AgendaItem; index: number }> = ({ item, index }) => {
+const AgendaItemCard: React.FC<{
+  item: BhavishyaAgendaItem;
+  index: number;
+  lang: 'en' | 'hi';
+}> = ({ item, index, lang }) => {
   const [open, setOpen] = useState(index === 0);
 
   return (
     <div
       className={cn(
-        'rounded-xl border transition-shadow',
+        'rounded-2xl border transition-all overflow-hidden',
         'bg-[var(--color-surface)] border-[var(--color-border)]',
-        open && 'shadow-md',
+        open && 'shadow-md border-[var(--color-primary)]/40',
       )}
     >
       <button
         type="button"
-        id={`agenda-item-${item.order}`}
+        id={`agenda-item-${index}`}
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center gap-3 px-4 py-3.5 text-left"
+        className="w-full flex items-center gap-3 px-5 py-4 text-left hover:bg-[var(--color-raised)] transition-colors"
       >
         <div
-          className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0"
+          className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold text-white shrink-0 shadow-sm"
           style={{ background: 'var(--color-primary)' }}
         >
-          {item.order}
+          {index + 1}
         </div>
+
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-[var(--color-text)] truncate">{item.topic}</p>
-          {item.bridgesConcern && (
-            <p className="text-xs text-[var(--color-subtext)] truncate">
-              Bridges: {item.bridgesConcern}
-            </p>
-          )}
+          <p className="text-sm font-bold text-[var(--color-text)] truncate">
+            {lang === 'hi' ? item.titleHi : item.titleEn}
+          </p>
+          <p className="text-xs text-[var(--color-primary)] font-medium">
+            Bridge: {item.category.replace('_', ' ')}
+          </p>
         </div>
+
         <div className="flex items-center gap-2 shrink-0">
           <PriorityBadge priority={item.priority} />
-          <span className="flex items-center gap-0.5 text-xs text-[var(--color-subtext)]">
-            <Clock className="w-3 h-3" />
-            {item.estimatedMinutes}m
-          </span>
           {open ? (
             <ChevronDown className="w-4 h-4 text-[var(--color-subtext)]" />
           ) : (
@@ -139,11 +100,62 @@ const AgendaCard: React.FC<{ item: AgendaItem; index: number }> = ({ item, index
           )}
         </div>
       </button>
+
       {open && (
-        <div className="px-4 pb-4 pt-0 border-t border-[var(--color-border)]">
-          <p className="text-sm text-[var(--color-subtext)] leading-relaxed pt-3">
-            {item.description}
-          </p>
+        <div className="px-5 pb-5 pt-1 border-t border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col gap-4">
+          {/* Dual Perspective Bridge */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            <div className="p-3.5 rounded-xl border border-[var(--color-student)]/30 bg-[var(--color-student-light)] flex flex-col gap-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-student)] flex items-center gap-1">
+                <GraduationCap className="w-3.5 h-3.5" />
+                Learner Perspective
+              </span>
+              <p className="text-xs text-[var(--color-text)] leading-relaxed">
+                {lang === 'hi' ? item.learnerPerspectiveHi : item.learnerPerspectiveEn}
+              </p>
+            </div>
+
+            <div className="p-3.5 rounded-xl border border-[var(--color-parent)]/30 bg-[var(--color-parent-light)] flex flex-col gap-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-parent)] flex items-center gap-1">
+                <HeartHandshake className="w-3.5 h-3.5" />
+                Parent Worry / Hope
+              </span>
+              <p className="text-xs text-[var(--color-text)] leading-relaxed">
+                {lang === 'hi' ? item.parentPerspectiveHi : item.parentPerspectiveEn}
+              </p>
+            </div>
+          </div>
+
+          {/* Verified Resolution */}
+          <div
+            className="p-3.5 rounded-xl border flex flex-col gap-1.5"
+            style={{
+              borderColor: 'var(--color-border)',
+              background: 'var(--color-raised)',
+            }}
+          >
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-success)] flex items-center gap-1">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              Verified Regional Resolution
+            </span>
+            <p className="text-xs text-[var(--color-text)] leading-relaxed font-medium">
+              {lang === 'hi' ? item.verifiedResolutionHi : item.verifiedResolutionEn}
+            </p>
+          </div>
+
+          {/* Recommended actions */}
+          {item.recommendedActions && item.recommendedActions.length > 0 && (
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--color-subtext)]">
+                Agreed Action Steps
+              </span>
+              <ul className="flex flex-col gap-1 pl-4 list-disc text-xs text-[var(--color-text)]">
+                {item.recommendedActions.map((act, i) => (
+                  <li key={i}>{act}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -151,46 +163,35 @@ const AgendaCard: React.FC<{ item: AgendaItem; index: number }> = ({ item, index
 };
 
 /* ------------------------------------------------------------------ */
-/* Trade highlight card                                                */
-/* ------------------------------------------------------------------ */
-const TradeCard: React.FC<{ trade: TradeHighlight }> = ({ trade }) => (
-  <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-raised)] p-4 flex flex-col gap-2">
-    <div className="flex items-start justify-between gap-2">
-      <div>
-        <p className="text-sm font-semibold text-[var(--color-text)]">{trade.name}</p>
-        <p className="text-xs text-[var(--color-subtext)]">NSQF Level {trade.nsqfLevel}</p>
-      </div>
-      <DemandBadge demand={trade.localDemand} />
-    </div>
-    <div className="flex items-center gap-4 text-xs text-[var(--color-subtext)] pt-1">
-      <span className="flex items-center gap-1">
-        <IndianRupee className="w-3 h-3" />
-        {trade.avgSalary}/mo
-      </span>
-      <span className="flex items-center gap-1">
-        <TrendingUp className="w-3 h-3" />
-        {trade.costEstimate} training cost
-      </span>
-    </div>
-  </div>
-);
-
-/* ------------------------------------------------------------------ */
-/* Main page                                                           */
+/* Main Joint Room Page                                               */
 /* ------------------------------------------------------------------ */
 export const JointRoomPage: React.FC = () => {
   const { i18n } = useTranslation();
   const lang = i18n.language.startsWith('hi') ? 'hi' : 'en';
-  const { household } = useSessionStore();
+  const { user, household } = useSessionStore();
+  const { isConnected, connect, disconnect, participants } = useJointRoomStore();
 
+  const [activeTab, setActiveTab] = useState<JointTab>('agenda');
+
+  // Connect socket on mount, disconnect on unmount
+  useEffect(() => {
+    if (household?.id) {
+      connect(household.id, user);
+    }
+    return () => {
+      disconnect();
+    };
+  }, [household?.id, user, connect, disconnect]);
+
+  // Fetch Bhavishya synthesized agenda
   const {
     data,
     isLoading,
     error,
-    refetch,
+    refetch: refetchAgenda,
   } = useQuery({
     queryKey: ['bhavishya-agenda', household?.id],
-    queryFn: () => apiClient.get<BhavishyaAgenda>('/bhavishya/agenda'),
+    queryFn: () => apiClient.get<BhavishyaAgendaResponse>('/bhavishya/agenda'),
     enabled: Boolean(household?.id),
     staleTime: 5 * 60 * 1000,
   });
@@ -203,200 +204,217 @@ export const JointRoomPage: React.FC = () => {
         <AlertCircle className="w-10 h-10 text-[var(--color-error)]" />
         <h1 className="text-xl font-bold text-[var(--color-text)]">No household found</h1>
         <p className="text-sm text-[var(--color-subtext)]">
-          Please complete the intake first before accessing the Joint Room.
+          Please complete family intake first before entering the Joint Room.
         </p>
       </div>
     );
   }
-
-  if (isLoading) {
-    return (
-      <div className="max-w-2xl mx-auto px-4 py-16 flex flex-col items-center gap-6">
-        <div
-          className="w-16 h-16 rounded-2xl flex items-center justify-center"
-          style={{ background: 'var(--color-primary-light)' }}
-        >
-          <Sparkles className="w-8 h-8 animate-pulse" style={{ color: 'var(--color-primary)' }} />
-        </div>
-        <div className="text-center">
-          <h2 className="text-lg font-semibold text-[var(--color-text)] mb-1">
-            Bhavishya Engine is thinking…
-          </h2>
-          <p className="text-sm text-[var(--color-subtext)]">
-            Synthesising shared concerns and verified local data for your joint session agenda.
-          </p>
-        </div>
-        <div className="w-full max-w-sm flex flex-col gap-2">
-          {[...Array(4)].map((_, i) => (
-            <div
-              key={i}
-              className="h-14 rounded-xl bg-[var(--color-muted)] animate-pulse"
-              style={{ animationDelay: `${i * 0.1}s` }}
-            />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !agenda) {
-    return (
-      <div className="max-w-2xl mx-auto px-4 py-16 flex flex-col items-center gap-4 text-center">
-        <AlertCircle className="w-10 h-10 text-[var(--color-error)]" />
-        <h1 className="text-xl font-bold text-[var(--color-text)]">Could not generate agenda</h1>
-        <p className="text-sm text-[var(--color-subtext)]">
-          Share at least one concern from your private window to generate a joint session agenda.
-        </p>
-        <button
-          type="button"
-          id="retry-agenda"
-          onClick={() => refetch()}
-          className="px-5 py-2.5 rounded-xl text-sm font-medium text-white"
-          style={{ background: 'var(--color-primary)' }}
-        >
-          Try Again
-        </button>
-      </div>
-    );
-  }
-
-  const totalMinutes = agenda.items.reduce((a, i) => a + i.estimatedMinutes, 0);
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 flex flex-col gap-8">
-      {/* Header */}
+    <div className="max-w-4xl mx-auto px-4 py-8 flex flex-col gap-6">
+      {/* Top Session Banner */}
       <div
-        className="rounded-2xl p-6"
+        className="rounded-3xl p-6 relative overflow-hidden border border-[var(--color-border)] shadow-sm"
         style={{
-          background: 'linear-gradient(135deg, var(--color-primary-light), var(--color-muted))',
+          background: 'linear-gradient(135deg, var(--color-primary-light), var(--color-surface))',
         }}
       >
-        <div className="flex items-center gap-2 mb-3">
-          <Users className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
-          <span
-            className="text-xs font-semibold uppercase tracking-wider"
-            style={{ color: 'var(--color-primary)' }}
-          >
-            Joint Room
-          </span>
-          <Sparkles className="w-3.5 h-3.5 ml-auto" style={{ color: 'var(--color-primary)' }} />
-          <span className="text-xs text-[var(--color-subtext)]">Bhavishya Engine</span>
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+          <div className="flex items-center gap-2">
+            <div
+              className={cn(
+                'w-2.5 h-2.5 rounded-full',
+                isConnected ? 'bg-[var(--color-success)] animate-pulse' : 'bg-[var(--color-error)]',
+              )}
+            />
+            <span className="text-xs font-bold uppercase tracking-wider text-[var(--color-primary)]">
+              {isConnected ? 'Family Live Room • Connected' : 'Connecting Room…'}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 text-xs text-[var(--color-subtext)]">
+            <Users className="w-3.5 h-3.5" />
+            <span>
+              {participants.length > 0 ? `${participants.length} Active in Room` : 'Family Session'}
+            </span>
+          </div>
         </div>
+
         <h1
-          className="text-2xl font-bold text-[var(--color-text)] mb-2"
+          className="text-2xl sm:text-3xl font-bold text-[var(--color-text)] mb-2"
           style={{ fontFamily: 'var(--font-heading)' }}
         >
-          {lang === 'hi' ? 'संयुक्त परामर्श सत्र' : 'Joint Counselling Session'}
+          {lang === 'hi' ? 'संयुक्त परामर्श कक्ष' : 'Family Joint Counselling Room'}
         </h1>
-        <p className="text-sm text-[var(--color-subtext)] leading-relaxed mb-4">
-          {agenda.sessionGoal}
+
+        <p className="text-sm text-[var(--color-subtext)] leading-relaxed max-w-2xl mb-4">
+          {lang === 'hi'
+            ? 'भविष्य इंजन द्वारा संश्लेषित कार्यसूची, वास्तविक समय पारिवारिक चैट और सत्यापित क्षेत्रीय व्यावसायिक डेटा के साथ मिलकर निर्णय लें।'
+            : 'A unified family space bridging student aspirations and parent worries with verified local career outcomes and grounded AI counselling.'}
         </p>
-        <div className="flex flex-wrap gap-4 text-xs text-[var(--color-subtext)]">
-          <span className="flex items-center gap-1.5">
-            <MapPin className="w-3 h-3" />
-            {agenda.location}
+
+        {/* Household Context Tags */}
+        <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--color-subtext)]">
+          <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--color-raised)] border border-[var(--color-border)]">
+            <MapPin className="w-3.5 h-3.5 text-[var(--color-primary)]" />
+            {household.district}, {household.state}
           </span>
-          <span className="flex items-center gap-1.5">
-            <IndianRupee className="w-3 h-3" />
-            {agenda.incomeContext}
+          <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--color-raised)] border border-[var(--color-border)]">
+            <IndianRupee className="w-3.5 h-3.5 text-[var(--color-primary)]" />
+            {household.incomeBand.replace(/_/g, ' ')}
           </span>
-          <span className="flex items-center gap-1.5">
-            <Clock className="w-3 h-3" />
-            ~{totalMinutes} minutes total
-          </span>
+          {agenda && (
+            <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--color-raised)] border border-[var(--color-border)]">
+              <Activity className="w-3.5 h-3.5 text-[var(--color-success)]" />
+              Alignment Readiness: {agenda.readinessScore}%
+            </span>
+          )}
         </div>
       </div>
 
-      {/* Participants */}
-      <div className="flex gap-4">
-        <div className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-raised)] p-3 flex items-center gap-3">
-          <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold text-white"
-            style={{ background: 'var(--color-student)' }}
-          >
-            {agenda.learnerName.charAt(0).toUpperCase()}
-          </div>
-          <div>
-            <p className="text-xs text-[var(--color-subtext)]">Learner</p>
-            <p className="text-sm font-semibold text-[var(--color-text)]">{agenda.learnerName}</p>
-          </div>
-        </div>
-        <div className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-raised)] p-3 flex items-center gap-3">
-          <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold text-white"
-            style={{ background: 'var(--color-parent)' }}
-          >
-            {agenda.parentName.charAt(0).toUpperCase()}
-          </div>
-          <div>
-            <p className="text-xs text-[var(--color-subtext)]">Parent</p>
-            <p className="text-sm font-semibold text-[var(--color-text)]">{agenda.parentName}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Agenda items */}
-      <section aria-labelledby="agenda-heading">
-        <div className="flex items-center gap-2 mb-4">
-          <BookOpen className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
-          <h2
-            id="agenda-heading"
-            className="text-base font-semibold text-[var(--color-text)]"
-          >
-            Session Agenda
-          </h2>
-          <span className="ml-auto text-xs text-[var(--color-subtext)]">
-            {agenda.items.length} topics
-          </span>
-        </div>
-        <div className="flex flex-col gap-2">
-          {agenda.items.map((item, i) => (
-            <AgendaCard key={item.order} item={item} index={i} />
-          ))}
-        </div>
-      </section>
-
-      {/* Trade highlights */}
-      {agenda.tradeHighlights.length > 0 && (
-        <section aria-labelledby="trades-heading">
-          <div className="flex items-center gap-2 mb-4">
-            <TrendingUp className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
-            <h2
-              id="trades-heading"
-              className="text-base font-semibold text-[var(--color-text)]"
-            >
-              Recommended Trades for Discussion
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {agenda.tradeHighlights.map((trade) => (
-              <TradeCard key={trade.code} trade={trade} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Closing note */}
-      <div
-        className="rounded-xl p-5 flex items-start gap-3"
-        style={{ background: 'var(--color-success-bg)' }}
-      >
-        <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" style={{ color: 'var(--color-success)' }} />
-        <p className="text-sm text-[var(--color-text)] leading-relaxed">{agenda.closingNote}</p>
-      </div>
-
-      {/* Regenerate */}
-      <div className="flex justify-center">
+      {/* Tabs Navigation */}
+      <div className="flex rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-1.5 gap-1 shadow-sm overflow-x-auto">
         <button
           type="button"
-          id="regenerate-agenda"
-          onClick={() => refetch()}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium border border-[var(--color-border)] text-[var(--color-subtext)] hover:bg-[var(--color-muted)] transition-colors"
+          id="joint-tab-agenda"
+          onClick={() => setActiveTab('agenda')}
+          className={cn(
+            'flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all shrink-0',
+            activeTab === 'agenda'
+              ? 'bg-[var(--color-primary)] text-white shadow-sm'
+              : 'text-[var(--color-subtext)] hover:text-[var(--color-text)]',
+          )}
         >
-          <Sparkles className="w-3.5 h-3.5" />
-          Regenerate Agenda
+          <BookOpen className="w-4 h-4" />
+          <span>{lang === 'hi' ? 'सत्र कार्यसूची' : 'Session Agenda'}</span>
+          {agenda && (
+            <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-white/20">
+              {agenda.agendaItems.length}
+            </span>
+          )}
+        </button>
+
+        <button
+          type="button"
+          id="joint-tab-chat"
+          onClick={() => setActiveTab('chat')}
+          className={cn(
+            'flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all shrink-0',
+            activeTab === 'chat'
+              ? 'bg-[var(--color-primary)] text-white shadow-sm'
+              : 'text-[var(--color-subtext)] hover:text-[var(--color-text)]',
+          )}
+        >
+          <MessageSquare className="w-4 h-4" />
+          <span>{lang === 'hi' ? 'पारिवारिक चैट व एआई' : 'Live Chat & AI'}</span>
+        </button>
+
+        <button
+          type="button"
+          id="joint-tab-concerns"
+          onClick={() => setActiveTab('concerns')}
+          className={cn(
+            'flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all shrink-0',
+            activeTab === 'concerns'
+              ? 'bg-[var(--color-primary)] text-white shadow-sm'
+              : 'text-[var(--color-subtext)] hover:text-[var(--color-text)]',
+          )}
+        >
+          <Shield className="w-4 h-4" />
+          <span>{lang === 'hi' ? 'केवल साझा चिंताएं' : 'Shared Items'}</span>
+        </button>
+
+        <button
+          type="button"
+          id="joint-tab-ladder"
+          onClick={() => setActiveTab('ladder')}
+          className={cn(
+            'flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all shrink-0',
+            activeTab === 'ladder'
+              ? 'bg-[var(--color-primary)] text-white shadow-sm'
+              : 'text-[var(--color-subtext)] hover:text-[var(--color-text)]',
+          )}
+        >
+          <TrendingUp className="w-4 h-4" />
+          <span>{lang === 'hi' ? 'एनएसक्यूएफ सीढ़ी' : 'NSQF Ladder'}</span>
         </button>
       </div>
+
+      {/* Tab 1: Agenda */}
+      {activeTab === 'agenda' && (
+        <div className="flex flex-col gap-6">
+          {isLoading && (
+            <div className="p-8 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col items-center gap-3 text-center animate-pulse">
+              <Sparkles className="w-8 h-8 text-[var(--color-primary)] animate-spin" />
+              <p className="text-sm font-semibold text-[var(--color-text)]">
+                Bhavishya Engine is synthesizing your joint agenda…
+              </p>
+            </div>
+          )}
+
+          {error && (
+            <div className="p-6 rounded-2xl border border-[var(--color-error)] bg-[var(--color-error-bg)] text-center flex flex-col items-center gap-3">
+              <AlertCircle className="w-8 h-8 text-[var(--color-error)]" />
+              <p className="text-sm font-medium text-[var(--color-text)]">
+                Could not load synthesized agenda. Share at least one concern from your private window.
+              </p>
+              <button
+                type="button"
+                id="retry-agenda-btn"
+                onClick={() => refetchAgenda()}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-white"
+                style={{ background: 'var(--color-primary)' }}
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
+          {agenda && (
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-[var(--color-primary)]" />
+                  <h2 className="text-base font-bold text-[var(--color-text)]">
+                    {lang === 'hi' ? 'तैयार चर्चा बिंदु' : 'Synthesized Session Agenda'}
+                  </h2>
+                </div>
+                <span className="text-xs text-[var(--color-subtext)]">
+                  {agenda.agendaItems.length} {lang === 'hi' ? 'विषय' : 'topics structured'}
+                </span>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                {agenda.agendaItems.map((item, idx) => (
+                  <AgendaItemCard key={item.id} item={item} index={idx} lang={lang} />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Tab 2: Live Chat & AI */}
+      {activeTab === 'chat' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          <JointChatPanel />
+          <AskSaathiCard />
+        </div>
+      )}
+
+      {/* Tab 3: Shared Items Only */}
+      {activeTab === 'concerns' && (
+        <div className="flex flex-col gap-6">
+          <SharedConcernsView />
+        </div>
+      )}
+
+      {/* Tab 4: NSQF Career Ladder */}
+      {activeTab === 'ladder' && (
+        <div className="flex flex-col gap-6">
+          <NsqfLadderView />
+        </div>
+      )}
     </div>
   );
 };

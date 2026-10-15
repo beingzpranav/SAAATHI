@@ -16,6 +16,8 @@ import { roomRouter } from './modules/rooms/room.routes.js';
 import { ledgerRouter } from './modules/ledger/ledger.routes.js';
 import { concernRouter } from './modules/concerns/concern.routes.js';
 import { bhavishyaRouter } from './modules/bhavishya/bhavishya.routes.js';
+import { aiRouter } from './modules/ai/ai.routes.js';
+
 import { standardRateLimiter } from './middleware/rateLimit.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import { openApiSpec } from './docs/openapi.js';
@@ -128,6 +130,9 @@ app.use(`${API_PREFIX}/rooms`, roomRouter);
 app.use(`${API_PREFIX}/ledger`, ledgerRouter);
 app.use(`${API_PREFIX}/concerns`, concernRouter);
 app.use(`${API_PREFIX}/bhavishya`, bhavishyaRouter);
+// Phase 5 – Grounded AI counselling
+app.use(`${API_PREFIX}/ai`, aiRouter);
+
 
 // 404 handler with standard error envelope
 app.use((req: Request, res: Response<ApiErrorResponse>) => {
