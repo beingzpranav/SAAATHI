@@ -55,6 +55,16 @@ const ConsentLedgerPage = lazy(() =>
     default: module.ConsentLedgerPage,
   })),
 );
+const CounsellorConsolePage = lazy(() =>
+  import('../pages/CounsellorConsolePage.js').then((module) => ({
+    default: module.CounsellorConsolePage,
+  })),
+);
+const DecisionCardPage = lazy(() =>
+  import('../pages/DecisionCardPage.js').then((module) => ({
+    default: module.DecisionCardPage,
+  })),
+);
 
 const RouteSuspenseFallback = () => (
   <div className="flex flex-col gap-6 py-8">
@@ -173,6 +183,24 @@ export const router = createBrowserRouter(
             <ProtectedRoute>
               <Suspense fallback={<RouteSuspenseFallback />}>
                 <ConsentLedgerPage />
+              </Suspense>
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: 'counsellor',
+          element: (
+            <Suspense fallback={<RouteSuspenseFallback />}>
+              <CounsellorConsolePage />
+            </Suspense>
+          ),
+        },
+        {
+          path: 'decision-card',
+          element: (
+            <ProtectedRoute>
+              <Suspense fallback={<RouteSuspenseFallback />}>
+                <DecisionCardPage />
               </Suspense>
             </ProtectedRoute>
           ),

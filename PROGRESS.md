@@ -70,13 +70,13 @@ SAATHI is an AI counselling platform for vocational training in India (Smart Ind
 
 ### Phase 6: Videos, live counselling and Decision Card
 
-- [ ] Course video player (2 videos per course, captions, offline cache)
-- [ ] "Are your concerns answered?" checkpoint
-- [ ] WebRTC live video counselling booking and call with audio fallback
-- [ ] Counsellor console with privacy filters
-- [ ] Family Decision Card (printable 1-page PDF, SMS summary)
-- [ ] Provider linking with scheme/stipend information
-- [ ] End-to-end integration tests
+- [x] Course video player (2 videos per course, captions, offline cache)
+- [x] "Are your concerns answered?" checkpoint
+- [x] WebRTC live video counselling booking and call with audio fallback
+- [x] Counsellor console with privacy filters
+- [x] Family Decision Card (printable 1-page PDF, SMS summary)
+- [x] Provider linking with scheme/stipend information
+- [x] End-to-end integration tests
 
 ### Phase 7: Admin dashboard
 
@@ -109,4 +109,5 @@ SAATHI is an AI counselling platform for vocational training in India (Smart Ind
 - Process Decision (Phase 1): After every phase completion, the branch will be pushed to GitHub (`https://github.com/sarthak654/Saathi.git`) on `main` before requesting continue.
 - Ambiguity Resolution (Phase 4): Idle auto-lock implemented as an explicit "Lock" button (user-initiated) rather than a timer, because timer-based locking during an active counselling session was found to be disruptive. The Zustand `isUnlocked` flag resets on page unload naturally. Picture-pattern PIN deferred to Phase 8 (low-literacy UX pass); numpad dial chosen for Phase 4 as it works across all input methods and screen sizes.
 - Ambiguity Resolution (Phase 5): Grounded AI queries use a two-tier resilience architecture: queries first check live verified database records (NCVET tracer surveys, DGT certificates, NAPS schemes); if the database is in maintenance or test mode, the retrieval service falls back seamlessly to the verified regional static catalog, ensuring zero crashes and complete citation integrity. Out-of-scope queries (general trivia, recipes, politics, medical diagnoses, non-vocational elite roles) are strictly refused with actionable suggestions for vocational inquiries.
+- Ambiguity Resolution (Phase 6): WebRTC live consultation uses a graceful degradation model — full video call is the default, with a one-click toggle to 16 kbps audio-only fallback for 2G/3G rural connections. The Decision Card uses flat DTO fields (not nested relations) matching the shared `DecisionCardDto` type to keep API responses predictable. Provider linking is embedded directly in the Decision Card rather than a separate page, as the family's chosen provider context is inseparable from the decision certificate. The `CourseVideoPlayer` derives `currentVideo` after all `useState` declarations to respect React's rules of hooks ordering.
 

@@ -324,8 +324,58 @@ export function initSocketServer(httpServer: HttpServer): SocketIoServer {
       });
     });
 
-    // 5. Disconnect
+    // 5. WebRTC Live Video Counselling Signaling
+    socket.on('webrtc:join', async (data: { roomId: string }) => {
+      const { roomId } = data;
+      if (!roomId) return;
+      const callRoomKey = `call:${roomId}`;
+      await socket.join(callRoomKey);
+
+      const clients = await io.in(callRoomKey).allSockets();
+      if (clients.size >= 2) {
+        io.to(callRoomKey).emit('webrtc:ready', { roomId, participantCount: clients.size });
+      }
+      logger.info({ roomId, userId: user.userId }, 'Peer joined WebRTC counselling call');
+    });
+
+    socket.on('webrtc:offer', (data: { roomId: string; sdp: unknown }) => {
+      socket.to(`call:${data.roomId}`).emit('webrtc:offer', {
+        sdp: data.sdp,
+        senderId: user.userId,
+      });
+    });
+
+    socket.on('webrtc:answer', (data: { roomId: string; sdp: unknown }) => {
+      socket.to(`call:${data.roomId}`).emit('webrtc:answer', {
+        sdp: data.sdp,
+        senderId: user.userId,
+      });
+    });
+
+    socket.on('webrtc:ice-candidate', (data: { roomId: string; candidate: unknown }) => {
+      socket.to(`call:${data.roomId}`).emit('webrtc:ice-candidate', {
+        candidate: data.candidate,
+        senderId: user.userId,
+      });
+    });
+
+    socket.on('webrtc:toggle-mode', (data: { roomId: string; mode: 'VIDEO' | 'AUDIO_ONLY' }) => {
+      socket.to(`call:${data.roomId}`).emit('webrtc:mode-changed', {
+        mode: data.mode,
+        senderId: user.userId,
+      });
+    });
+
+    socket.on('webrtc:leave', (data: { roomId: string }) => {
+      socket.leave(`call:${data.roomId}`);
+      socket.to(`call:${data.roomId}`).emit('webrtc:peer-left', {
+        userId: user.userId,
+      });
+    });
+
+    // 6. Disconnect
     socket.on('disconnect', () => {
+
       if (currentHouseholdId && roomParticipants.has(currentHouseholdId)) {
         roomParticipants.get(currentHouseholdId)!.delete(user.userId);
         socket.to(`room:${currentHouseholdId}`).emit('room:user-left', {

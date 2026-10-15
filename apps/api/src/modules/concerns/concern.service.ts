@@ -8,7 +8,10 @@ import type {
   ConcernDto,
   MappingQuestion,
   ConcernCategory,
+  CheckpointEvaluationItem,
+  CheckpointEvaluationResponse,
 } from '@saathi/shared';
+
 
 class ConcernService {
   getQuestionsForRole(role: 'LEARNER' | 'PARENT'): MappingQuestion[] {
@@ -109,6 +112,81 @@ class ConcernService {
     return sharedConcerns.map((c) => this.formatConcernDto(c));
   }
 
+  async evaluateCheckpoint(
+    userId: string,
+    evaluations: CheckpointEvaluationItem[],
+  ): Promise<CheckpointEvaluationResponse> {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { householdId: true },
+    });
+
+    if (!user?.householdId) {
+      throw new BadRequestError('User does not belong to a household.');
+    }
+
+    const householdId = user.householdId;
+    let resolvedCount = 0;
+    let unresolvedCount = 0;
+
+    for (const ev of evaluations) {
+      const concern = await prisma.concern.findUnique({
+        where: { id: ev.concernId },
+      });
+
+      if (concern && concern.householdId === householdId) {
+        const isResolved = ev.isResolved || ev.postScore <= 2;
+        await prisma.concern.update({
+          where: { id: ev.concernId },
+          data: {
+            postScore: ev.postScore,
+            resolvedAt: isResolved ? new Date() : null,
+          },
+        });
+
+        if (isResolved) {
+          resolvedCount++;
+        } else {
+          unresolvedCount++;
+        }
+      }
+    }
+
+    const totalEvaluated = resolvedCount + unresolvedCount;
+    const readinessScore = totalEvaluated > 0 ? Math.round((resolvedCount / totalEvaluated) * 100) : 0;
+    const allResolved = unresolvedCount === 0 && resolvedCount > 0;
+    const readyForDecisionCard = readinessScore >= 70;
+
+    await ledgerService.recordEvent(userId, 'DECISION_AGREEMENT', {
+      milestone: 'CONCERNS_ANSWERED_CHECKPOINT',
+      resolvedCount,
+      unresolvedCount,
+      readinessScore,
+      readyForDecisionCard,
+      timestamp: new Date().toISOString(),
+    });
+
+    const recommendedActions: string[] = [];
+    if (readyForDecisionCard) {
+      recommendedActions.push('Family alignment achieved. Proceed to issue official Family Decision Card.');
+      recommendedActions.push('Confirm admission schedule and UP Scholarship portal registration.');
+    } else {
+      recommendedActions.push(
+        `${unresolvedCount} concerns remain unaddressed. We recommend booking a 15-minute live consultation with a certified counsellor.`,
+      );
+    }
+
+    return {
+      householdId,
+      allResolved,
+      resolvedCount,
+      unresolvedCount,
+      readinessScore,
+      readyForDecisionCard,
+      recommendedActions,
+    };
+  }
+
   private formatConcernDto(concern: {
     id: string;
     userId: string;
@@ -143,3 +221,4 @@ class ConcernService {
 }
 
 export const concernService = new ConcernService();
+

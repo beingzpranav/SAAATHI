@@ -6,7 +6,10 @@ import type {
   SaveConcernInput,
   UpdateConcernScoreInput,
   ShareConcernInput,
+  CheckpointEvaluationSchema,
+  CheckpointEvaluationResponse,
 } from '@saathi/shared';
+
 import { concernService } from './concern.service.js';
 import { HTTP_STATUS } from '../../config/constants.js';
 
@@ -126,6 +129,27 @@ class ConcernController {
       next(error);
     }
   };
+
+  evaluateCheckpoint = async (
+
+    req: Request<unknown, unknown, CheckpointEvaluationSchema>,
+    res: Response<ApiResponse<CheckpointEvaluationResponse>>,
+    next: NextFunction,
+  ) => {
+    try {
+      const userId = req.user!.userId;
+      const requestId = req.headers['x-request-id'] as string;
+      const result = await concernService.evaluateCheckpoint(userId, req.body.evaluations);
+
+      res.status(HTTP_STATUS.OK).json({
+        data: result,
+        meta: { requestId, timestamp: new Date().toISOString() },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export const concernController = new ConcernController();
+

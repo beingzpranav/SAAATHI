@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import type { TradeDetail, VerifiedOutcomeResponse } from '@saathi/shared';
 import { NsqfLadder } from '../features/trades/components/NsqfLadder.js';
 import { ConfidenceBadge, FallbackNotice } from '../features/trades/components/ConfidenceBadge.js';
+import { CourseVideoPlayer } from '../features/trades/CourseVideoPlayer.js';
 import { Button } from '../components/ui/Button.js';
 import { Skeleton } from '../components/ui/Skeleton.js';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card.js';
@@ -164,6 +165,13 @@ export const TradeDetailPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Course Video Immersion (Phase 6) */}
+      <CourseVideoPlayer
+        tradeTitleEn={trade.titleEn}
+        tradeTitleHi={trade.titleHi}
+        tradeCode={trade.code}
+      />
 
       {/* Verified Outcome Summary Card */}
       {record && (

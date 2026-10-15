@@ -192,6 +192,141 @@ globalThis.fetch = async (input: RequestInfo | URL): Promise<Response> => {
     );
   }
 
+  // Counselling endpoints
+  if (url.includes('/counselling/slots')) {
+    return new Response(
+      JSON.stringify({
+        data: [
+          {
+            slotTime: '2026-10-20T10:00:00Z',
+            counsellorId: 'counsellor-1',
+            counsellorName: 'Dr. Priya Varma',
+            availableModes: ['VIDEO', 'AUDIO_ONLY'],
+          },
+        ],
+      }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    );
+  }
+
+  if (url.includes('/counselling/counsellor/bookings') || url.includes('/counselling/bookings')) {
+    return new Response(
+      JSON.stringify({
+        data: [
+          {
+            id: 'booking-1',
+            householdId: 'mock-household-id',
+            counsellorId: 'counsellor-1',
+            requestedSlot: '2026-10-20T10:00:00Z',
+            scheduledAt: '2026-10-20T10:00:00Z',
+            status: 'CONFIRMED',
+            mode: 'VIDEO',
+            meetingRoomId: 'saathi-room-varanasi-402',
+            counsellorName: 'Dr. Priya Varma',
+          },
+        ],
+      }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    );
+  }
+
+  if (url.includes('/counselling/counsellor/household')) {
+    return new Response(
+      JSON.stringify({
+        data: {
+          householdId: 'mock-household-id',
+          familyName: 'Sharma Household',
+          state: 'Uttar Pradesh',
+          district: 'Varanasi',
+          block: 'Kashi Vidyapeeth',
+          incomeBand: '1_5L_TO_3L',
+          learnerClassLevel: 'CLASS_10_PASS',
+          sharedConcerns: [
+            {
+              id: 'c-1',
+              userId: 'user-learner-1',
+              householdId: 'mock-household-id',
+              category: 'FINANCIAL_WORRY',
+              questionKey: 'Tuition fees',
+              answerValue: 'Affordability',
+              preScore: 4,
+              postScore: 1,
+              isShared: true,
+              sharedAt: new Date().toISOString(),
+              resolvedAt: null,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            },
+          ],
+          privateConcernsCount: 2,
+          recommendedTrades: ['Electrician (Domestic & Industrial)', 'Solar PV Technician'],
+        },
+      }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    );
+  }
+
+  // Concerns checkpoint
+  if (url.includes('/concerns/checkpoint')) {
+    return new Response(
+      JSON.stringify({
+        data: {
+          allResolved: true,
+          resolvedCount: 2,
+          totalConcerns: 2,
+          readinessScore: 100,
+          readyForDecisionCard: true,
+        },
+      }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    );
+  }
+
+  // Decision Card endpoints
+  if (url.includes('/decision-card/my') || (url.includes('/decision-card') && !url.includes('/sms'))) {
+    return new Response(
+      JSON.stringify({
+        data: {
+          id: 'mock-card-id',
+          householdId: 'mock-household-id',
+          chosenTradeId: 'trade-electrician',
+          chosenTradeCode: 'ELECTRICIAN',
+          chosenTradeTitleEn: 'Electrician (Domestic & Industrial)',
+          chosenTradeTitleHi: 'इलेक्ट्रीशियन (घरेलू और औद्योगिक)',
+          nsqfLevel: 4,
+          chosenProviderId: 'provider-iti-karaundi',
+          chosenProviderName: 'Government ITI Karaundi',
+          chosenProviderType: 'GOVERNMENT_ITI',
+          chosenProviderAddress: 'Karaundi, BHU Road, Varanasi, Uttar Pradesh 221005',
+          chosenProviderContact: '0542-2570123',
+          agreedActions: ['Apply online at scvtup.in', 'Submit 10th Marksheet & Income Certificate'],
+          openConcerns: [],
+          counsellorNotes: 'Approved for Electrician course.',
+          counsellorContact: 'Dr. Priya Varma (0542-2570123)',
+          verificationHash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+          feeWaiverEligible: true,
+          napsStipendMonthly: 2500,
+          createdAt: new Date().toISOString(),
+        },
+      }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    );
+  }
+
+  if (url.includes('/decision-card') && url.includes('/sms')) {
+    return new Response(
+      JSON.stringify({
+        data: {
+          smsTextEn: 'SAATHI DECISION: Electrician at Govt ITI Karaundi confirmed for Sharma Family. Tuition: Free. NAPS Stipend: Rs 2500/mo. Verify: saathi.gov.in/v/A1B2C3D4',
+          smsTextHi: 'साथी निर्णय: राजकीय आईटीआई करौंदी में इलेक्ट्रीशियन ट्रेड तय।',
+          verificationCode: 'A1B2C3D4',
+          verificationUrl: 'https://saathi.gov.in/v/A1B2C3D4',
+        },
+      }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
+    );
+  }
+
   return new Response(JSON.stringify({ data: null }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },

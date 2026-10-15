@@ -17,6 +17,9 @@ import { ledgerRouter } from './modules/ledger/ledger.routes.js';
 import { concernRouter } from './modules/concerns/concern.routes.js';
 import { bhavishyaRouter } from './modules/bhavishya/bhavishya.routes.js';
 import { aiRouter } from './modules/ai/ai.routes.js';
+import { counsellingRouter } from './modules/counselling/counselling.routes.js';
+import { decisionCardRouter } from './modules/decision-card/decision-card.routes.js';
+
 
 import { standardRateLimiter } from './middleware/rateLimit.js';
 import { errorHandler } from './middleware/errorHandler.js';
@@ -132,6 +135,10 @@ app.use(`${API_PREFIX}/concerns`, concernRouter);
 app.use(`${API_PREFIX}/bhavishya`, bhavishyaRouter);
 // Phase 5 – Grounded AI counselling
 app.use(`${API_PREFIX}/ai`, aiRouter);
+// Phase 6 – WebRTC video counselling & Family Decision Card
+app.use(`${API_PREFIX}/counselling`, counsellingRouter);
+app.use(`${API_PREFIX}/decision-card`, decisionCardRouter);
+
 
 
 // 404 handler with standard error envelope

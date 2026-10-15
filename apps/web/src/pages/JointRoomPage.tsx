@@ -27,6 +27,9 @@ import { JointChatPanel } from '../features/joint-room/JointChatPanel.js';
 import { AskSaathiCard } from '../features/joint-room/AskSaathiCard.js';
 import { SharedConcernsView } from '../features/joint-room/SharedConcernsView.js';
 import { NsqfLadderView } from '../features/joint-room/NsqfLadderView.js';
+import { ConcernsCheckpointModal } from '../features/joint-room/ConcernsCheckpointModal.js';
+import { LiveConsultationModal } from '../features/counselling/LiveConsultationModal.js';
+import { Button } from '../components/ui/Button.js';
 import { cn } from '../lib/cn.js';
 
 type JointTab = 'agenda' | 'chat' | 'concerns' | 'ladder';
@@ -172,6 +175,8 @@ export const JointRoomPage: React.FC = () => {
   const { isConnected, connect, disconnect, participants } = useJointRoomStore();
 
   const [activeTab, setActiveTab] = useState<JointTab>('agenda');
+  const [isCheckpointOpen, setIsCheckpointOpen] = useState(false);
+  const [isLiveCallOpen, setIsLiveCallOpen] = useState(false);
 
   // Connect socket on mount, disconnect on unmount
   useEffect(() => {
@@ -269,6 +274,31 @@ export const JointRoomPage: React.FC = () => {
               Alignment Readiness: {agenda.readinessScore}%
             </span>
           )}
+        </div>
+
+        {/* Phase 6 Action Buttons: Checkpoint & Live Counsellor */}
+        <div className="flex flex-wrap items-center gap-3 pt-4 mt-4 border-t border-[var(--color-border)]">
+          <Button
+            variant="primary"
+            size="sm"
+            id="open-concerns-checkpoint-btn"
+            onClick={() => setIsCheckpointOpen(true)}
+            className="gap-2 shadow-sm"
+          >
+            <CheckCircle2 className="w-4 h-4" />
+            <span>{lang === 'hi' ? 'चिंता समाधान चेकपॉइंट' : 'Concerns Checkpoint'}</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            id="open-live-counsellor-call-btn"
+            onClick={() => setIsLiveCallOpen(true)}
+            className="gap-2 bg-[var(--color-surface)]"
+          >
+            <HeartHandshake className="w-4 h-4 text-[var(--color-primary)]" />
+            <span>{lang === 'hi' ? 'लाइव काउंसलर परामर्श (2G/3G समर्थित)' : 'Live Counsellor Call'}</span>
+          </Button>
         </div>
       </div>
 
@@ -415,6 +445,24 @@ export const JointRoomPage: React.FC = () => {
           <NsqfLadderView />
         </div>
       )}
+
+      {/* Concerns Checkpoint Modal (Phase 6) */}
+      <ConcernsCheckpointModal
+        isOpen={isCheckpointOpen}
+        onClose={() => setIsCheckpointOpen(false)}
+        onLaunchLiveCall={() => {
+          setIsCheckpointOpen(false);
+          setIsLiveCallOpen(true);
+        }}
+      />
+
+      {/* Live WebRTC / Audio Fallback Consultation Modal (Phase 6) */}
+      <LiveConsultationModal
+        isOpen={isLiveCallOpen}
+        onClose={() => setIsLiveCallOpen(false)}
+        meetingRoomId={`saathi-room-${household.district.toLowerCase()}-${household.id.slice(0, 6)}`}
+        householdName={household.name}
+      />
     </div>
   );
 };

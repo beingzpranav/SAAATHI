@@ -11,4 +11,7 @@ export * from './schemas/trade.schema.js';
 export * from './schemas/private-window.schema.js';
 export * from './schemas/ai.schema.js';
 export * from './schemas/joint-room.schema.js';
-
+export * from './types/counselling.types.js';
+export * from './types/decision-card.types.js';
+export * from './schemas/counselling.schema.js';
+export * from './schemas/decision-card.schema.js';

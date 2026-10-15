@@ -6,6 +6,7 @@ import {
   saveConcernSchema,
   updateConcernScoreSchema,
   shareConcernSchema,
+  checkpointEvaluationSchema,
 } from '@saathi/shared';
 
 export const concernRouter = Router();
@@ -18,3 +19,5 @@ concernRouter.post('/', validateBody(saveConcernSchema), concernController.saveC
 concernRouter.patch('/:id/score', validateBody(updateConcernScoreSchema), concernController.updateScore);
 concernRouter.post('/:id/share', validateBody(shareConcernSchema), concernController.toggleShare);
 concernRouter.get('/household/:householdId/shared', concernController.getHouseholdShared);
+concernRouter.post('/checkpoint', validateBody(checkpointEvaluationSchema), concernController.evaluateCheckpoint);
+
