@@ -243,15 +243,22 @@ export const ConcernsCheckpointModal: React.FC<ConcernsCheckpointModalProps> = (
             aria-label="Family Readiness Progress"
           />
 
-          <p className="text-xs text-[var(--color-subtext)] leading-relaxed">
-            {isReadyForCard
-              ? isHi
-                ? '✅ परिवार की अधिकांश चिंताएं सुलझ गई हैं! आप आधिकारिक निर्णय कार्ड (Decision Card) जारी करने के लिए तैयार हैं।'
-                : '✅ Major family concerns are successfully addressed! You meet the threshold to generate an official Decision Card.'
-              : isHi
-                ? '⚠️ अभी कुछ चिंताएं शेष हैं (< 70%)। आगे बढ़ने से पहले प्रमाणित सरकारी काउंसलर से लाइव परामर्श लेने की अनुशंसा है।'
-                : '⚠️ Alignment is below 70%. We strongly recommend booking a 1-on-1 certified live counsellor session.'}
-          </p>
+          <div className="flex items-start gap-2 text-xs text-[var(--color-subtext)] leading-relaxed">
+            {isReadyForCard ? (
+              <CheckCircle2 className="w-4 h-4 text-[var(--color-leaf)] shrink-0 mt-0.5" />
+            ) : (
+              <AlertCircle className="w-4 h-4 text-[var(--color-student)] shrink-0 mt-0.5" />
+            )}
+            <p>
+              {isReadyForCard
+                ? isHi
+                  ? 'परिवार की अधिकांश चिंताएं सुलझ गई हैं! आप आधिकारिक निर्णय कार्ड (Decision Card) जारी करने के लिए तैयार हैं।'
+                  : 'Major family concerns are successfully addressed! You meet the threshold to generate an official Decision Card.'
+                : isHi
+                  ? 'अभी कुछ चिंताएं शेष हैं (< 70%)। आगे बढ़ने से पहले प्रमाणित सरकारी काउंसलर से लाइव परामर्श लेने की अनुशंसा है।'
+                  : 'Alignment is below 70%. We strongly recommend booking a 1-on-1 certified live counsellor session.'}
+            </p>
+          </div>
         </div>
 
         {/* Concerns List with Interactive Sliders */}

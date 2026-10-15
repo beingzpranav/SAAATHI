@@ -170,7 +170,7 @@ const AddConcernForm: React.FC<{ accentColor: string; onAdd: (text: string, cate
               type="button"
               onClick={() => setCategory(cat)}
               className={cn(
-                'text-xs px-2 py-1 rounded-full border transition-colors',
+                'text-xs px-2.5 py-1 rounded-lg border transition-colors',
                 category === cat
                   ? 'border-transparent font-medium'
                   : 'border-[var(--color-border)] text-[var(--color-subtext)] hover:text-[var(--color-text)]',

@@ -55,7 +55,7 @@ export const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
         aria-pressed={isListening}
         onClick={handleClick}
         className={cn(
-          'relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2',
+          'relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2',
           isListening
             ? 'bg-red-500 text-white shadow-lg shadow-red-500/40 scale-110'
             : 'bg-[var(--color-raised)] border border-[var(--color-border)] text-[var(--color-subtext)] hover:bg-[var(--color-primary)]/10 hover:text-[var(--color-primary)] hover:border-[var(--color-primary)]/40',
@@ -65,7 +65,7 @@ export const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
         {isListening ? (
           <>
             {/* Pulse ring animation */}
-            <span className="absolute inset-0 rounded-full bg-red-500/40 animate-ping" />
+            <span className="absolute inset-0 rounded-xl bg-red-500/40 animate-ping" />
             <MicOff className="w-4 h-4 relative z-10" />
           </>
         ) : (

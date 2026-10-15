@@ -258,7 +258,7 @@ export const AdminDashboardPage: React.FC = () => {
           <StatCard icon={AlertTriangle} label={isHi ? 'लंबित नियुक्तियां' : 'Pending Escalations'} value={ov.pendingEscalations} color="bg-red-500/10 text-red-500" />
           <StatCard icon={Users} label={isHi ? 'शिक्षार्थी' : 'Learners'} value={ov.totalLearners} color="bg-[var(--color-student)]/10 text-[var(--color-student)]" />
           <StatCard icon={Users} label={isHi ? 'अभिभावक' : 'Parents'} value={ov.totalParents} color="bg-[var(--color-parent)]/10 text-[var(--color-parent)]" />
-          <StatCard icon={Phone} label={isHi ? 'परामर्श नियुक्तियां' : 'Counsellor Bookings'} value={ov.totalCounsellorBookings} color="bg-purple-500/10 text-purple-500" />
+          <StatCard icon={Phone} label={isHi ? 'परामर्श नियुक्तियां' : 'Counsellor Bookings'} value={ov.totalCounsellorBookings} color="bg-[var(--color-primary-light)] text-[var(--color-primary)]" />
           <StatCard
             icon={ov.averageReadinessScore !== null ? CheckCircle2 : ShieldAlert}
             label={isHi ? 'औसत तत्परता स्कोर' : 'Avg Readiness Score'}
@@ -397,7 +397,7 @@ export const AdminDashboardPage: React.FC = () => {
                   const colors = [
                     'from-[var(--color-primary)] to-[var(--color-primary)]/70',
                     'from-[var(--color-marigold)] to-[var(--color-marigold)]/70',
-                    'from-purple-500 to-purple-400',
+                    'from-[var(--color-parent)] to-[var(--color-parent)]/70',
                     'from-[var(--color-leaf)] to-[var(--color-leaf)]/70',
                   ];
                   return (

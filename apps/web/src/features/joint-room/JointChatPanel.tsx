@@ -245,7 +245,7 @@ export const JointChatPanel: React.FC<JointChatPanelProps> = ({ onSelectPrompt }
               setInput(text);
               onSelectPrompt?.(text);
             }}
-            className="shrink-0 px-2.5 py-1 rounded-full text-[11px] font-medium border border-[var(--color-border)] bg-[var(--color-raised)] text-[var(--color-subtext)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors"
+            className="shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-medium border border-[var(--color-border)] bg-[var(--color-raised)] text-[var(--color-subtext)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors"
           >
             {lang === 'hi' ? p.hi : p.en}
           </button>

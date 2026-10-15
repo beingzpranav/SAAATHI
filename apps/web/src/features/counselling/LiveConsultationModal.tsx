@@ -313,7 +313,7 @@ export const LiveConsultationModal: React.FC<LiveConsultationModalProps> = ({
             onClick={handleToggleMute}
             aria-label={isMuted ? 'Unmute microphone' : 'Mute microphone'}
             className={cn(
-              'p-3.5 rounded-full text-white transition-all shadow-md',
+              'p-3.5 rounded-xl text-white transition-all shadow-md',
               isMuted ? 'bg-red-600 hover:bg-red-700' : 'bg-zinc-800 hover:bg-zinc-700',
             )}
           >
@@ -327,7 +327,7 @@ export const LiveConsultationModal: React.FC<LiveConsultationModalProps> = ({
             onClick={handleToggleVideo}
             aria-label={isVideoOff ? 'Turn video on' : 'Turn video off'}
             className={cn(
-              'p-3.5 rounded-full text-white transition-all shadow-md',
+              'p-3.5 rounded-xl text-white transition-all shadow-md',
               isVideoOff ? 'bg-red-600 hover:bg-red-700' : 'bg-zinc-800 hover:bg-zinc-700',
             )}
           >
@@ -341,7 +341,7 @@ export const LiveConsultationModal: React.FC<LiveConsultationModalProps> = ({
             id="live-call-toggle-fallback-btn"
             onClick={handleToggleAudioFallback}
             className={cn(
-              'rounded-full gap-2 text-xs font-bold border-2',
+              'rounded-xl gap-2 text-xs font-bold border-2',
               mode === 'AUDIO_ONLY'
                 ? 'border-amber-500 bg-amber-500/10 text-amber-600 dark:text-amber-400'
                 : 'border-[var(--color-border)]',
@@ -357,7 +357,7 @@ export const LiveConsultationModal: React.FC<LiveConsultationModalProps> = ({
             id="live-call-hangup-btn"
             onClick={handleEndCall}
             aria-label="End consultation call"
-            className="p-3.5 rounded-full bg-red-600 hover:bg-red-700 text-white transition-all shadow-lg active:scale-95"
+            className="p-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white transition-all shadow-lg active:scale-95"
           >
             <PhoneOff className="w-5 h-5" />
           </button>

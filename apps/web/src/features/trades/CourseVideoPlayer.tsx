@@ -323,7 +323,7 @@ export const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
             id="video-play-center-btn"
             onClick={handleTogglePlay}
             aria-label="Play video"
-            className="absolute z-10 w-16 h-16 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-transform"
+            className="absolute z-10 w-16 h-16 rounded-2xl bg-[var(--color-primary)] text-white flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-transform"
           >
             <Play className="w-8 h-8 ml-1" fill="currentColor" />
           </button>

@@ -260,16 +260,16 @@ export const JointRoomPage: React.FC = () => {
 
         {/* Household Context Tags */}
         <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--color-subtext)]">
-          <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--color-raised)] border border-[var(--color-border)]">
+          <span className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[var(--color-raised)] border border-[var(--color-border)]">
             <MapPin className="w-3.5 h-3.5 text-[var(--color-primary)]" />
             {household.district}, {household.state}
           </span>
-          <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--color-raised)] border border-[var(--color-border)]">
+          <span className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[var(--color-raised)] border border-[var(--color-border)]">
             <IndianRupee className="w-3.5 h-3.5 text-[var(--color-primary)]" />
             {household.incomeBand.replace(/_/g, ' ')}
           </span>
           {agenda && (
-            <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--color-raised)] border border-[var(--color-border)]">
+            <span className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[var(--color-raised)] border border-[var(--color-border)]">
               <Activity className="w-3.5 h-3.5 text-[var(--color-success)]" />
               Alignment Readiness: {agenda.readinessScore}%
             </span>
