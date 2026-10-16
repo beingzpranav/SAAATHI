@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { UserProfile, HouseholdSummary } from '@saathi/shared';
 import { apiClient } from '../lib/apiClient.js';
+import { queryClient } from '../lib/queryClient.js';
 
 interface SessionState {
   user: UserProfile | null;
@@ -62,6 +63,8 @@ export const useSessionStore = create<SessionState>((set) => ({
     try {
       await apiClient.post('/auth/logout');
     } finally {
+      // Clear React Query cache to prevent stale data when switching users
+      queryClient.clear();
       set({
         user: null,
         isAuthenticated: false,

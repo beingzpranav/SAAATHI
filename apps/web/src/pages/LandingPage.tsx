@@ -54,7 +54,7 @@ export const LandingPage: React.FC = () => {
               variant="primary"
               size="lg"
               rightIcon={<ArrowRight className="w-5 h-5" />}
-              onClick={() => showToast('Family intake will be available in Phase 3', 'info')}
+              onClick={() => (window.location.href = '/intake')}
             >
               {t('common.primaryCta')}
             </Button>

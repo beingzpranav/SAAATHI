@@ -9,6 +9,8 @@ export interface ModalProps {
   description?: string;
   children: React.ReactNode;
   className?: string;
+  /** Optional size hint — controls max-width of the dialog */
+  size?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -18,7 +20,14 @@ export const Modal: React.FC<ModalProps> = ({
   description,
   children,
   className,
+  size = 'md',
 }) => {
+  const sizeClass = {
+    sm: 'max-w-sm',
+    md: 'max-w-lg',
+    lg: 'max-w-2xl',
+    xl: 'max-w-4xl',
+  }[size];
   const modalRef = useRef<HTMLDivElement>(null);
   const titleId = React.useId();
   const descId = React.useId();
@@ -66,7 +75,8 @@ export const Modal: React.FC<ModalProps> = ({
         aria-labelledby={titleId}
         aria-describedby={description ? descId : undefined}
         className={cn(
-          'relative w-full max-w-lg rounded-[12px] border p-6 shadow-xl',
+          'relative w-full rounded-[12px] border p-6 shadow-xl',
+          sizeClass,
           'bg-white text-[#3A2E2A] border-[#E8DDD2]',
           'dark:bg-[#1F1A17] dark:text-[#F5EFEB] dark:border-[#3D3430]',
           className,

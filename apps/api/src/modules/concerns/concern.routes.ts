@@ -17,6 +17,7 @@ concernRouter.get('/questions', concernController.getQuestions);
 concernRouter.get('/my', concernController.getMyConcerns);
 concernRouter.post('/', validateBody(saveConcernSchema), concernController.saveConcern);
 concernRouter.patch('/:id/score', validateBody(updateConcernScoreSchema), concernController.updateScore);
+concernRouter.delete('/:id', concernController.deleteConcern);
 concernRouter.post('/:id/share', validateBody(shareConcernSchema), concernController.toggleShare);
 concernRouter.get('/household/:householdId/shared', concernController.getHouseholdShared);
 concernRouter.post('/checkpoint', validateBody(checkpointEvaluationSchema), concernController.evaluateCheckpoint);

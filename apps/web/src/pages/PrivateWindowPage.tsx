@@ -5,7 +5,6 @@ import {
   Unlock,
   BookOpen,
   Heart,
-  Plus,
   Trash2,
   Share2,
   BarChart2,
@@ -16,21 +15,14 @@ import { apiClient } from '../lib/apiClient.js';
 import { useSessionStore } from '../stores/session.store.js';
 import { useRoomStore } from '../stores/room.store.js';
 import { PinLockModal } from '../features/rooms/PinLockModal.js';
+import { AddConcernForm } from '../features/concerns/AddConcernForm.js';
 import { cn } from '../lib/cn.js';
+import type { ConcernDto } from '@saathi/shared';
 
 /* ------------------------------------------------------------------ */
 /* Types                                                               */
 /* ------------------------------------------------------------------ */
-interface ConcernItem {
-  id: string;
-  ownerId: string;
-  text: string;
-  category: string;
-  isShared: boolean;
-  preScore?: number;
-  postScore?: number;
-  createdAt: string;
-}
+type ConcernItem = ConcernDto;
 
 interface MappingQuestion {
   id: string;
@@ -90,18 +82,18 @@ const ConcernCard: React.FC<{
       )}
     >
       <div className="flex items-start justify-between gap-2">
-        <p className="text-sm text-[var(--color-text)] flex-1 leading-relaxed">{concern.text}</p>
+        <p className="text-sm text-[var(--color-text)] flex-1 leading-relaxed">{concern.questionKey}</p>
         <span
           className="text-xs px-2 py-0.5 rounded-full shrink-0 mt-0.5"
           style={{ background: `${accentColor}18`, color: accentColor }}
         >
-          {concern.category}
+          {concern.category.replace(/_/g, ' ')}
         </span>
       </div>
 
       <div className="flex items-center gap-2 flex-wrap">
         <ScorePill label="Before" value={concern.preScore} color="var(--color-subtext)" />
-        <ScorePill label="After" value={concern.postScore} color="var(--color-success)" />
+        <ScorePill label="After" value={concern.postScore ?? 0} color="var(--color-success)" />
       </div>
 
       <div className="flex items-center gap-2 pt-1 border-t border-[var(--color-border)]">
@@ -134,71 +126,6 @@ const ConcernCard: React.FC<{
   );
 };
 
-/* ------------------------------------------------------------------ */
-/* Add-concern form                                                    */
-/* ------------------------------------------------------------------ */
-const AddConcernForm: React.FC<{ accentColor: string; onAdd: (text: string, category: string) => void }> = ({
-  accentColor,
-  onAdd,
-}) => {
-  const [text, setText] = useState('');
-  const [category, setCategory] = useState('General');
-  const CATEGORIES = ['General', 'Jobs', 'Income', 'Location', 'Family', 'Cost', 'Future'];
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (text.trim().length < 3) return;
-    onAdd(text.trim(), category);
-    setText('');
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-3 p-4 rounded-xl border border-dashed border-[var(--color-border)] bg-[var(--color-raised)]">
-      <textarea
-        id="new-concern-text"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Describe your concern or question..."
-        rows={2}
-        className="w-full bg-transparent text-sm text-[var(--color-text)] placeholder:text-[var(--color-subtext)] resize-none outline-none"
-      />
-      <div className="flex items-center gap-2 flex-wrap">
-        <div className="flex gap-1.5 flex-wrap flex-1">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              type="button"
-              onClick={() => setCategory(cat)}
-              className={cn(
-                'text-xs px-2.5 py-1 rounded-lg border transition-colors',
-                category === cat
-                  ? 'border-transparent font-medium'
-                  : 'border-[var(--color-border)] text-[var(--color-subtext)] hover:text-[var(--color-text)]',
-              )}
-              style={
-                category === cat
-                  ? { background: `${accentColor}22`, color: accentColor, borderColor: `${accentColor}44` }
-                  : {}
-              }
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-        <button
-          type="submit"
-          id="add-concern-submit"
-          disabled={text.trim().length < 3}
-          className="flex items-center gap-1.5 text-sm px-4 py-1.5 rounded-lg font-medium text-white disabled:opacity-40 transition-opacity"
-          style={{ background: accentColor }}
-        >
-          <Plus className="w-3.5 h-3.5" />
-          Add
-        </button>
-      </div>
-    </form>
-  );
-};
 
 /* ------------------------------------------------------------------ */
 /* Main page                                                           */
@@ -217,7 +144,7 @@ export const PrivateWindowPage: React.FC = () => {
 
   /* ---- Concerns ---- */
   const { data: concernsData, isLoading: loadingConcerns } = useQuery({
-    queryKey: ['my-concerns'],
+    queryKey: ['my-concerns', user?.id],
     queryFn: () => apiClient.get<ConcernItem[]>('/concerns/my'),
     enabled: isUnlocked,
   });
@@ -229,21 +156,15 @@ export const PrivateWindowPage: React.FC = () => {
     enabled: isUnlocked,
   });
 
-  const addMutation = useMutation({
-    mutationFn: ({ text, category }: { text: string; category: string }) =>
-      apiClient.post<ConcernItem>('/concerns', { text, category, isShared: false }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['my-concerns'] }),
-  });
-
   const deleteMutation = useMutation({
     mutationFn: (id: string) => apiClient.delete(`/concerns/${id}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['my-concerns'] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['my-concerns', user?.id] }),
   });
 
   const shareMutation = useMutation({
     mutationFn: ({ id, share }: { id: string; share: boolean }) =>
       apiClient.post(`/concerns/${id}/share`, { share }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['my-concerns'] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['my-concerns', user?.id] }),
   });
 
   const handleUnlocked = useCallback(() => {
@@ -349,7 +270,9 @@ export const PrivateWindowPage: React.FC = () => {
         <div className="flex flex-col gap-3">
           <AddConcernForm
             accentColor={accentColor}
-            onAdd={(text, category) => addMutation.mutate({ text, category })}
+            onAddSuccess={() => {
+              qc.invalidateQueries({ queryKey: ['my-concerns', user?.id] });
+            }}
           />
           {loadingConcerns && (
             <div className="text-xs text-[var(--color-subtext)] animate-pulse py-4 text-center">

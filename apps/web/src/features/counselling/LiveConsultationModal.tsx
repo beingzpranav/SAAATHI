@@ -7,18 +7,13 @@ import {
   MicOff,
   PhoneOff,
   Wifi,
-  WifiOff,
   Headphones,
   Copy,
   Check,
   Shield,
-  Activity,
-  Users,
-  Volume2,
 } from 'lucide-react';
 import { Modal } from '../../components/ui/Modal.js';
 import { Button } from '../../components/ui/Button.js';
-import { Badge } from '../../components/ui/Badge.js';
 import { cn } from '../../lib/cn.js';
 
 interface LiveConsultationModalProps {
@@ -50,7 +45,6 @@ export const LiveConsultationModal: React.FC<LiveConsultationModalProps> = ({
   const [isConnected, setIsConnected] = useState(false);
 
   const localVideoRef = useRef<HTMLVideoElement>(null);
-  const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
   // Initialize consultation & media stream simulation

@@ -11,7 +11,9 @@ import type {
 } from '@saathi/shared';
 
 import { concernService } from './concern.service.js';
+import { concernRepository } from './concern.repository.js';
 import { HTTP_STATUS } from '../../config/constants.js';
+import { NotFoundError, UnauthorizedError } from '../../lib/errors.js';
 
 class ConcernController {
   getQuestions = (
@@ -60,6 +62,16 @@ class ConcernController {
     try {
       const userId = req.user!.userId;
       const requestId = req.headers['x-request-id'] as string;
+      
+      // DEBUG: Log the authenticated user
+      console.log('DEBUG getMyConcerns:', {
+        authenticatedUserId: userId,
+        userFromReq: req.user,
+        path: req.path,
+        method: req.method,
+        headers: req.headers
+      });
+      
       const concerns = await concernService.getMyConcerns(userId);
 
       res.status(HTTP_STATUS.OK).json({
@@ -84,6 +96,38 @@ class ConcernController {
 
       res.status(HTTP_STATUS.OK).json({
         data: updated,
+        meta: { requestId, timestamp: new Date().toISOString() },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  deleteConcern = async (
+    req: Request<{ id: string }>,
+    res: Response<ApiResponse<void>>,
+    next: NextFunction,
+  ) => {
+    try {
+      const userId = req.user!.userId;
+      const { id } = req.params;
+      const requestId = req.headers['x-request-id'] as string;
+      
+      // First get the concern to verify ownership
+      const concern = await concernRepository.findById(id);
+      if (!concern) {
+        throw new NotFoundError('Concern not found');
+      }
+      
+      if (concern.userId !== userId) {
+        throw new UnauthorizedError('You can only delete your own concerns');
+      }
+      
+      await concernRepository.deleteById(id);
+
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: 'Concern deleted successfully',
         meta: { requestId, timestamp: new Date().toISOString() },
       });
     } catch (error) {

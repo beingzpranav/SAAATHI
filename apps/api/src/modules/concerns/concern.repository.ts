@@ -71,6 +71,12 @@ class ConcernRepository {
     });
   }
 
+  async deleteById(concernId: string) {
+    return prisma.concern.delete({
+      where: { id: concernId },
+    });
+  }
+
   /**
    * CRITICAL PRIVACY GUARANTEE:
    * Only records with `isShared: true` are returned to the household or joint agenda.

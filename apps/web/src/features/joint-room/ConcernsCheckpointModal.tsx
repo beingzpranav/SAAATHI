@@ -6,7 +6,6 @@ import {
   ShieldCheck,
   CheckCircle2,
   AlertCircle,
-  HelpCircle,
   ArrowRight,
   PhoneCall,
   Sparkles,
@@ -14,7 +13,6 @@ import {
 } from 'lucide-react';
 import { Modal } from '../../components/ui/Modal.js';
 import { Button } from '../../components/ui/Button.js';
-import { Badge } from '../../components/ui/Badge.js';
 import { ProgressBar } from '../../components/ui/ProgressBar.js';
 import { apiClient } from '../../lib/apiClient.js';
 import { useSessionStore } from '../../stores/session.store.js';
@@ -109,8 +107,8 @@ export const ConcernsCheckpointModal: React.FC<ConcernsCheckpointModalProps> = (
               category: c.category,
               preScore: c.preScore,
               postScore: c.postScore ?? Math.max(1, c.preScore - 2),
-              isResolved: c.isResolved ?? (c.postScore ? c.postScore <= 2 : false),
-              resolutionNotes: c.resolutionNotes || '',
+              isResolved: c.resolvedAt !== null,
+              resolutionNotes: '',
             })),
           );
         }
@@ -123,38 +121,37 @@ export const ConcernsCheckpointModal: React.FC<ConcernsCheckpointModalProps> = (
       });
   }, [isOpen, household?.id, isHi]);
 
-  // Handle score change
   const handleScoreChange = (index: number, newScore: number) => {
     setEvaluations((prev) => {
       const next = [...prev];
-      next[index] = {
-        ...next[index],
-        postScore: newScore,
-        isResolved: newScore <= 2,
-      };
+      const item = next[index];
+      if (!item) return prev;
+      next[index] = { ...item, postScore: newScore, isResolved: newScore <= 2 };
       return next;
     });
   };
 
-  // Handle resolved toggle
   const handleToggleResolved = (index: number) => {
     setEvaluations((prev) => {
       const next = [...prev];
-      const currentResolved = next[index].isResolved;
+      const item = next[index];
+      if (!item) return prev;
+      const nowResolved = !item.isResolved;
       next[index] = {
-        ...next[index],
-        isResolved: !currentResolved,
-        postScore: !currentResolved ? Math.min(next[index].postScore, 2) : 4,
+        ...item,
+        isResolved: nowResolved,
+        postScore: nowResolved ? Math.min(item.postScore, 2) : 4,
       };
       return next;
     });
   };
 
-  // Handle notes change
   const handleNotesChange = (index: number, notes: string) => {
     setEvaluations((prev) => {
       const next = [...prev];
-      next[index] = { ...next[index], resolutionNotes: notes };
+      const item = next[index];
+      if (!item) return prev;
+      next[index] = { ...item, resolutionNotes: notes };
       return next;
     });
   };
@@ -182,11 +179,13 @@ export const ConcernsCheckpointModal: React.FC<ConcernsCheckpointModalProps> = (
     } catch {
       // If error (or offline), calculate local simulated response so user isn't blocked
       setSubmitResult({
+        householdId: household?.id ?? '',
         allResolved: resolvedCount === totalConcerns,
         resolvedCount,
-        totalConcerns,
+        unresolvedCount: totalConcerns - resolvedCount,
         readinessScore: liveReadinessScore,
         readyForDecisionCard: isReadyForCard,
+        recommendedActions: [],
       });
     } finally {
       setIsSubmitting(false);

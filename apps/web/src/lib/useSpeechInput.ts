@@ -21,6 +21,53 @@ export interface UseSpeechInputReturn {
   resetTranscript: () => void;
 }
 
+// ── Web Speech API types (not in all TS lib versions) ──────────────────────
+
+interface ISpeechRecognitionResult {
+  readonly isFinal: boolean;
+  readonly length: number;
+  [index: number]: { transcript: string };
+}
+
+interface ISpeechRecognitionResultList {
+  readonly length: number;
+  readonly resultIndex: number;
+  [index: number]: ISpeechRecognitionResult | undefined;
+}
+
+interface ISpeechRecognitionEvent {
+  readonly resultIndex: number;
+  readonly results: ISpeechRecognitionResultList;
+}
+
+interface ISpeechRecognitionErrorEvent {
+  readonly error: string;
+}
+
+interface ISpeechRecognition {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  maxAlternatives: number;
+  onstart: (() => void) | null;
+  onend: (() => void) | null;
+  onresult: ((event: ISpeechRecognitionEvent) => void) | null;
+  onerror: ((event: ISpeechRecognitionErrorEvent) => void) | null;
+  start(): void;
+  stop(): void;
+  abort(): void;
+}
+
+type ISpeechRecognitionConstructor = new () => ISpeechRecognition;
+
+function getSpeechRecognitionClass(): ISpeechRecognitionConstructor | null {
+  if (typeof window === 'undefined') return null;
+  const w = window as unknown as Record<string, unknown>;
+  return (w['SpeechRecognition'] ?? w['webkitSpeechRecognition'] ?? null) as ISpeechRecognitionConstructor | null;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 /**
  * Web Speech API voice input hook with a Bhashini-ready adapter interface.
  *
@@ -35,15 +82,9 @@ export function useSpeechInput(options: UseSpeechInputOptions = {}): UseSpeechIn
   const [transcript, setTranscript] = useState('');
   const [interimTranscript, setInterimTranscript] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<ISpeechRecognition | null>(null);
 
-  const SpeechRecognitionClass =
-    typeof window !== 'undefined'
-      ? ((window as Window & { SpeechRecognition?: typeof SpeechRecognition; webkitSpeechRecognition?: typeof SpeechRecognition }).SpeechRecognition ??
-        (window as Window & { webkitSpeechRecognition?: typeof SpeechRecognition }).webkitSpeechRecognition ??
-        null)
-      : null;
-
+  const SpeechRecognitionClass = getSpeechRecognitionClass();
   const isSupported = SpeechRecognitionClass !== null;
 
   const stopListening = useCallback(() => {
@@ -73,7 +114,7 @@ export function useSpeechInput(options: UseSpeechInputOptions = {}): UseSpeechIn
       setInterimTranscript('');
     };
 
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
+    recognition.onresult = (event: ISpeechRecognitionEvent) => {
       let finalPart = '';
       let interimPart = '';
 
@@ -92,7 +133,7 @@ export function useSpeechInput(options: UseSpeechInputOptions = {}): UseSpeechIn
       setInterimTranscript(interimPart);
     };
 
-    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+    recognition.onerror = (event: ISpeechRecognitionErrorEvent) => {
       if (event.error === 'aborted' || event.error === 'no-speech') return;
       setError(`Speech error: ${event.error}`);
       setIsListening(false);

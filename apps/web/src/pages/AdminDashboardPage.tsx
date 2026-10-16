@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   BarChart3,
-  MapPin,
   TrendingDown,
-  TrendingUp,
   Users,
   FileText,
   AlertTriangle,
@@ -365,9 +363,9 @@ export const AdminDashboardPage: React.FC = () => {
                     </span>
                     <div className="col-span-2 flex justify-end">
                       {item.suppressed ? (
-                        <Badge variant="warning" size="sm">Suppressed</Badge>
+                        <Badge variant="neutral" size="sm">Suppressed</Badge>
                       ) : (
-                        <Badge variant="success" size="sm">Visible</Badge>
+                        <Badge variant="parent" size="sm">Visible</Badge>
                       )}
                     </div>
                   </div>
@@ -452,7 +450,7 @@ export const AdminDashboardPage: React.FC = () => {
                 <CardTitle className="flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4 text-red-500" />
                   <span>{isHi ? 'लंबित नियुक्तियां' : 'Pending Bookings'}</span>
-                  <Badge variant="danger" size="sm">{es.pending.length}</Badge>
+                  <Badge variant="primary" size="sm">{es.pending.length}</Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -471,7 +469,7 @@ export const AdminDashboardPage: React.FC = () => {
                             <p className="text-xs text-[var(--color-subtext)]">HH: {item.householdId.slice(0, 8)}…</p>
                           </div>
                         </div>
-                        <Badge variant="danger" size="sm">{item.daysWaiting}d waiting</Badge>
+                        <Badge variant="primary" size="sm">{item.daysWaiting}d waiting</Badge>
                       </div>
                     ))}
                   </div>
@@ -485,7 +483,7 @@ export const AdminDashboardPage: React.FC = () => {
                 <CardTitle className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-[var(--color-leaf)]" />
                   <span>{isHi ? 'पुष्टिकृत नियुक्तियां' : 'Confirmed Bookings'}</span>
-                  <Badge variant="success" size="sm">{es.confirmed.length}</Badge>
+                  <Badge variant="parent" size="sm">{es.confirmed.length}</Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -504,7 +502,7 @@ export const AdminDashboardPage: React.FC = () => {
                             <p className="text-xs text-[var(--color-subtext)]">{item.counsellorName ?? 'Unassigned'} · {item.scheduledAt ? new Date(item.scheduledAt).toLocaleDateString('en-IN') : 'TBD'}</p>
                           </div>
                         </div>
-                        <Badge variant="success" size="sm">Confirmed</Badge>
+                        <Badge variant="parent" size="sm">Confirmed</Badge>
                       </div>
                     ))}
                   </div>

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { kAnon, median, adminAggregationService } from '../modules/admin/admin.service.js';
 import { K_ANON_THRESHOLD } from '@saathi/shared';
 

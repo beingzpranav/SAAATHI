@@ -57,7 +57,7 @@ class AdminAggregationService {
 
     // Compute average readiness from concerns pre/post scores
     const concerns = await prisma.concern.findMany({
-      where: { preScore: { not: null }, postScore: { not: null } },
+      where: { postScore: { not: undefined } },
       select: { preScore: true, postScore: true },
     }).catch(() => []);
 

@@ -3,6 +3,7 @@ import { ledgerService } from '../ledger/ledger.service.js';
 import { prisma } from '../../lib/prisma.js';
 import { MAPPING_QUESTIONS } from './mapping-questions.data.js';
 import { NotFoundError, UnauthorizedError, BadRequestError } from '../../lib/errors.js';
+import { logger } from '../../lib/logger.js';
 import type {
   SaveConcernInput,
   ConcernDto,
@@ -19,14 +20,24 @@ class ConcernService {
   }
 
   async saveConcern(userId: string, input: SaveConcernInput): Promise<ConcernDto> {
+    logger.info({ userId, questionKey: input.questionKey }, 'Creating concern');
+    
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { householdId: true },
+      select: { id: true, householdId: true, name: true, role: true },
     });
 
     if (!user?.householdId) {
       throw new BadRequestError('User does not belong to a household. Please complete intake first.');
     }
+
+    // DEBUG: Log the user creating the concern
+    logger.debug({ 
+      creatingUserId: userId, 
+      userName: user.name,
+      userRole: user.role,
+      householdId: user.householdId 
+    }, 'User creating concern');
 
     const concern = await concernRepository.upsertConcern(
       userId,
@@ -34,11 +45,26 @@ class ConcernService {
       input,
     );
 
+    logger.info({ concernId: concern.id, userId: concern.userId }, 'Concern created successfully');
+
     return this.formatConcernDto(concern);
   }
 
   async getMyConcerns(userId: string): Promise<ConcernDto[]> {
+    logger.info({ userId }, 'Fetching concerns for user');
     const concerns = await concernRepository.findByUserId(userId);
+    
+    // DEBUG: Log each concern's userId to verify privacy isolation
+    concerns.forEach(concern => {
+      logger.debug({ 
+        concernId: concern.id, 
+        concernUserId: concern.userId,
+        requestingUserId: userId,
+        match: concern.userId === userId 
+      }, 'Concern privacy check');
+    });
+    
+    logger.info({ count: concerns.length, userId }, 'Found concerns');
     return concerns.map((c) => this.formatConcernDto(c));
   }
 
@@ -221,4 +247,3 @@ class ConcernService {
 }
 
 export const concernService = new ConcernService();
-
