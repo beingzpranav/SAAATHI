@@ -17,7 +17,7 @@ services:
       - key: DATABASE_URL
         sync: false
       - key: CORS_ORIGIN
-        value: https://saathi-web-j2qr.onrender.com
+        value: https://saathi-web-j2qr.onrender.com,http://localhost:3000
       - key: JWT_ACCESS_SECRET
         generateValue: true
       - key: JWT_REFRESH_SECRET

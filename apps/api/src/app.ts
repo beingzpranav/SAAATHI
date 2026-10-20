@@ -33,7 +33,23 @@ export const app = express();
 app.use(helmet());
 app.use(
   cors({
-    origin: env.CORS_ORIGIN,
+    origin: (requestOrigin, callback) => {
+      const configuredOrigins = env.CORS_ORIGIN.split(',')
+        .map((origin) => origin.trim())
+        .filter(Boolean);
+      const fallbackOrigins = [
+        'http://localhost:3000',
+        'https://saathi-web-j2qr.onrender.com',
+      ];
+      const allowedOrigins = new Set([...configuredOrigins, ...fallbackOrigins]);
+
+      if (!requestOrigin || allowedOrigins.has(requestOrigin)) {
+        callback(null, requestOrigin || true);
+        return;
+      }
+
+      callback(new Error('Origin is not allowed by CORS'));
+    },
     credentials: true,
   }),
 );
