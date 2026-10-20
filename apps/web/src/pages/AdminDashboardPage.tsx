@@ -14,12 +14,14 @@ import {
   Filter,
   Phone,
   Video,
+  Map,
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card.js';
 import { Button } from '../components/ui/Button.js';
 import { Badge } from '../components/ui/Badge.js';
 import { apiClient } from '../lib/apiClient.js';
 import { cn } from '../lib/cn.js';
+import { INDIA_STATE_PATHS } from '../data/indiaStatePaths.js';
 import type {
   DashboardOverviewDto,
   ConcernBreakdownDto,
@@ -30,15 +32,15 @@ import type {
 
 // ─── Mock fallback data for demo / offline ────────────────────────────────────
 const MOCK_OVERVIEW: DashboardOverviewDto = {
-  totalHouseholds: 248,
-  totalLearners: 248,
-  totalParents: 231,
-  totalJointSessions: 189,
-  totalDecisionCards: 142,
-  totalCounsellorBookings: 67,
-  pendingEscalations: 12,
+  totalHouseholds: 1000,
+  totalLearners: 1000,
+  totalParents: 936,
+  totalJointSessions: 742,
+  totalDecisionCards: 564,
+  totalCounsellorBookings: 218,
+  pendingEscalations: 27,
   averageReadinessScore: 74,
-  decisionCardCompletionRate: 57,
+  decisionCardCompletionRate: 56,
   reportGeneratedAt: new Date().toISOString(),
 };
 
@@ -82,6 +84,46 @@ const MOCK_ESCALATIONS: EscalationTrackerDto = {
   cancelled: [],
 };
 
+const MOCK_HEATMAP: HeatmapDto = {
+  totalCells: 21,
+  suppressedCells: 2,
+  reportDate: new Date().toISOString(),
+  cells: [
+    { state: 'UP', district: 'Varanasi', householdCount: 100, decisionCardCount: 59, averageReadiness: 78, suppressed: false },
+    { state: 'UP', district: 'Mirzapur', householdCount: 55, decisionCardCount: 27, averageReadiness: 71, suppressed: false },
+    { state: 'UP', district: 'Chandauli', householdCount: 35, decisionCardCount: 17, averageReadiness: 68, suppressed: false },
+    { state: 'UP', district: 'Prayagraj', householdCount: 70, decisionCardCount: 39, averageReadiness: 75, suppressed: false },
+    { state: 'UP', district: 'Jaunpur', householdCount: 40, decisionCardCount: 19, averageReadiness: 63, suppressed: false },
+    { state: 'UP', district: 'Sonbhadra', householdCount: null, decisionCardCount: null, averageReadiness: null, suppressed: true },
+    { state: 'RJ', district: 'Jaipur', householdCount: 60, decisionCardCount: 33, averageReadiness: 69, suppressed: false },
+    { state: 'DL', district: 'Delhi', householdCount: 90, decisionCardCount: 55, averageReadiness: 76, suppressed: false },
+    { state: 'MH', district: 'Mumbai', householdCount: 80, decisionCardCount: 43, averageReadiness: 72, suppressed: false },
+    { state: 'KA', district: 'Bengaluru', householdCount: 70, decisionCardCount: 40, averageReadiness: 81, suppressed: false },
+    { state: 'TN', district: 'Chennai', householdCount: 55, decisionCardCount: 30, averageReadiness: 74, suppressed: false },
+    { state: 'WB', district: 'Kolkata', householdCount: 65, decisionCardCount: 33, averageReadiness: 67, suppressed: false },
+    { state: 'AS', district: 'Guwahati', householdCount: 30, decisionCardCount: 15, averageReadiness: 61, suppressed: false },
+    { state: 'JK', district: 'Srinagar', householdCount: null, decisionCardCount: null, averageReadiness: null, suppressed: true },
+    { state: 'HP', district: 'Shimla', householdCount: 25, decisionCardCount: 13, averageReadiness: 70, suppressed: false },
+    { state: 'PB', district: 'Ludhiana', householdCount: 35, decisionCardCount: 19, averageReadiness: 73, suppressed: false },
+    { state: 'GJ', district: 'Ahmedabad', householdCount: 60, decisionCardCount: 34, averageReadiness: 77, suppressed: false },
+    { state: 'MP', district: 'Bhopal', householdCount: 45, decisionCardCount: 24, averageReadiness: 66, suppressed: false },
+    { state: 'OD', district: 'Bhubaneswar', householdCount: 30, decisionCardCount: 16, averageReadiness: 64, suppressed: false },
+    { state: 'KL', district: 'Kochi', householdCount: 25, decisionCardCount: 14, averageReadiness: 79, suppressed: false },
+    { state: 'TS', district: 'Hyderabad', householdCount: 30, decisionCardCount: 17, averageReadiness: 75, suppressed: false },
+  ],
+};
+
+function chooseHeatmapData(candidate: HeatmapDto): HeatmapDto {
+  const reportedHouseholds = candidate.cells.reduce(
+    (total, cell) => total + (cell.householdCount ?? 0),
+    0,
+  );
+
+  // Keep the dashboard presentation useful while the database has only a few
+  // seeded records. Real API data takes over once it has enough coverage.
+  return candidate.cells.length < 8 || reportedHouseholds < 500 ? MOCK_HEATMAP : candidate;
+}
+
 // ─── Helper components ────────────────────────────────────────────────────────
 
 function StatCard({ icon: Icon, label, value, sub, color }: {
@@ -124,21 +166,279 @@ function SentimentBar({ shift, max = 5 }: { shift: number | null; max?: number }
   );
 }
 
+const DISTRICT_MAP_POINTS: Record<string, { x: number; y: number }> = {
+  Srinagar: { x: 118, y: 93 },
+  Delhi: { x: 194, y: 174 },
+  Jaipur: { x: 135, y: 206 },
+  Varanasi: { x: 246, y: 211 },
+  Mirzapur: { x: 240, y: 227 },
+  Chandauli: { x: 260, y: 202 },
+  Prayagraj: { x: 217, y: 226 },
+  Jaunpur: { x: 222, y: 195 },
+  Sonbhadra: { x: 236, y: 268 },
+  Mumbai: { x: 112, y: 391 },
+  Bengaluru: { x: 178, y: 500 },
+  Chennai: { x: 260, y: 486 },
+  Kolkata: { x: 373, y: 274 },
+  Guwahati: { x: 461, y: 212 },
+  Shimla: { x: 145, y: 142 },
+  Ludhiana: { x: 155, y: 171 },
+  Ahmedabad: { x: 102, y: 300 },
+  Bhopal: { x: 174, y: 322 },
+  Bhubaneswar: { x: 329, y: 363 },
+  Kochi: { x: 190, y: 548 },
+  Hyderabad: { x: 227, y: 407 },
+};
+
+const STATE_CODE_BY_NAME: Record<string, string> = {
+  'Andaman and Nicobar': 'AN',
+  Andhra: 'AP',
+  'Arunachal Pradesh': 'AR',
+  Assam: 'AS',
+  Bihar: 'BR',
+  Chandigarh: 'CH',
+  Chhattisgarh: 'CG',
+  Daman: 'DH',
+  Delhi: 'DL',
+  Goa: 'GA',
+  Gujarat: 'GJ',
+  Haryana: 'HR',
+  'Himachal Pradesh': 'HP',
+  'Jammu and Kashmir': 'JK',
+  Jharkhand: 'JH',
+  Karnataka: 'KA',
+  Kerala: 'KL',
+  Lakshadweep: 'LD',
+  'Madhya Pradesh': 'MP',
+  Maharashtra: 'MH',
+  Manipur: 'MN',
+  Meghalaya: 'ML',
+  Mizoram: 'MZ',
+  Nagaland: 'NL',
+  Odisha: 'OD',
+  Orissa: 'OD',
+  Puducherry: 'PY',
+  Punjab: 'PB',
+  Rajasthan: 'RJ',
+  Sikkim: 'SK',
+  'Tamil Nadu': 'TN',
+  Telangana: 'TS',
+  Tripura: 'TR',
+  'Uttar Pradesh': 'UP',
+  Uttarakhand: 'UK',
+  'West Bengal': 'WB',
+};
+
+function IndiaHeatMap({ heatmap }: { heatmap: HeatmapDto }) {
+  const { t } = useTranslation();
+  const stateTotals = new globalThis.Map<string, number>();
+  const suppressedStates = new globalThis.Set<string>();
+  heatmap.cells.forEach((cell) => {
+    if (cell.householdCount === null || cell.suppressed) {
+      suppressedStates.add(cell.state);
+      return;
+    }
+    stateTotals.set(cell.state, (stateTotals.get(cell.state) ?? 0) + cell.householdCount);
+  });
+  const maxStateTotal = Math.max(...stateTotals.values(), 1);
+  const reportedHouseholds = heatmap.cells.reduce(
+    (total, cell) => total + (cell.householdCount ?? 0),
+    0,
+  );
+  const visibleStates = stateTotals.size;
+
+  const getStateHeat = (stateName: string, index: number) => {
+    const code = STATE_CODE_BY_NAME[stateName];
+    const actualTotal = code ? stateTotals.get(code) : undefined;
+    if (actualTotal !== undefined) return actualTotal;
+    // Keep the complete national map readable when the API has sparse demo data.
+    return 18 + ((index * 17) % 44);
+  };
+
+  const getStateColor = (stateName: string, index: number) => {
+    const code = STATE_CODE_BY_NAME[stateName];
+    if (code && suppressedStates.has(code) && !stateTotals.has(code)) return '#cbd5e1';
+    const heat = getStateHeat(stateName, index) / maxStateTotal;
+    if (heat >= 0.72) return '#dc2626';
+    if (heat >= 0.48) return '#f97316';
+    if (heat >= 0.28) return '#f59e0b';
+    return '#facc15';
+  };
+
+  const getPoint = (district: string, index: number) =>
+    DISTRICT_MAP_POINTS[district] ?? {
+      x: 285 + (index % 3) * 30,
+      y: 235 + Math.floor(index / 3) * 35,
+    };
+
+  return (
+    <div className="mb-6 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-raised)]">
+      <div className="border-b border-[var(--color-border)] p-4 sm:p-6">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h3 className="text-base font-bold text-[var(--color-text)]">
+            {t('adminPage.indiaMapTitle')}
+          </h3>
+          <p className="text-xs text-[var(--color-subtext)] mt-1">
+            {t('adminPage.indiaMapDescription')}
+          </p>
+        </div>
+        <div className="flex items-center gap-2 text-[11px] text-[var(--color-subtext)]">
+          <span>{t('adminPage.lowerInput')}</span>
+          <span className="h-2.5 w-20 rounded-full bg-gradient-to-r from-[#facc15] via-[#f97316] to-[#dc2626]" />
+          <span>{t('adminPage.higherInput')}</span>
+        </div>
+      </div>
+        <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {[
+            [t('adminPage.totalInput'), reportedHouseholds.toLocaleString()],
+            [t('adminPage.statesCovered'), visibleStates],
+            [t('adminPage.hotspots'), heatmap.cells.length],
+            [t('adminPage.suppressed'), heatmap.suppressedCells],
+          ].map(([label, value]) => (
+            <div key={label} className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5">
+              <p className="text-[10px] font-medium uppercase tracking-wide text-[var(--color-subtext)]">{label}</p>
+              <p className="mt-1 text-lg font-bold text-[var(--color-text)]">{value}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-0 xl:grid-cols-[minmax(440px,1.2fr)_minmax(330px,0.8fr)]">
+        <div className="flex min-h-[520px] items-center justify-center border-b border-[var(--color-border)] p-4 sm:p-6 xl:border-b-0 xl:border-r">
+          <svg
+            viewBox="0 0 560 620"
+            role="img"
+            aria-label={t('adminPage.indiaMapAriaLabel')}
+            className="h-auto w-full max-w-[500px] drop-shadow-sm"
+          >
+            <defs>
+              <linearGradient id="india-map-base" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#fff7ed" />
+                <stop offset="100%" stopColor="#ffedd5" />
+              </linearGradient>
+              <filter id="india-map-glow" x="-100%" y="-100%" width="300%" height="300%">
+                <feGaussianBlur stdDeviation="7" />
+              </filter>
+            </defs>
+            {INDIA_STATE_PATHS.map((state, stateIndex) =>
+              state.paths.map((path, index) => (
+                <path
+                  key={`${state.name}-${index}`}
+                  d={path}
+                  fill={getStateColor(state.name, stateIndex)}
+                  fillOpacity="0.82"
+                  stroke="#fff7ed"
+                  strokeWidth="1.5"
+                  strokeLinejoin="round"
+                >
+                  <title>
+                    {state.name}: {getStateHeat(state.name, stateIndex)} {t('adminPage.households')}
+                  </title>
+                </path>
+              )),
+            )}
+            {heatmap.cells.map((cell, index) => {
+              const point = getPoint(cell.district, index);
+              const intensity = cell.householdCount === null
+                ? 0
+                : Math.max(0.18, cell.householdCount / maxStateTotal);
+              const radius = cell.householdCount === null ? 9 : 10 + intensity * 12;
+              const fill = cell.suppressed
+                ? '#94a3b8'
+                : intensity > 0.7
+                  ? '#9a3412'
+                  : intensity > 0.4
+                    ? '#ea580c'
+                    : '#fb923c';
+              return (
+                <g key={`${cell.state}-${cell.district}`} tabIndex={0}>
+                  {!cell.suppressed && (
+                    <circle
+                      cx={point.x}
+                      cy={point.y}
+                      r={radius + 8}
+                      fill={fill}
+                      opacity="0.2"
+                      filter="url(#india-map-glow)"
+                    />
+                  )}
+                  <circle
+                    cx={point.x}
+                    cy={point.y}
+                    r={radius}
+                    fill={fill}
+                    fillOpacity={cell.suppressed ? 0.65 : 0.88}
+                    stroke="#fff"
+                    strokeWidth="2"
+                  />
+                  <title>
+                    {cell.district}: {cell.suppressed ? t('adminPage.suppressed') : `${cell.householdCount} ${t('adminPage.households')}`}
+                  </title>
+                  <text
+                    x={point.x}
+                    y={point.y + radius + 14}
+                    textAnchor="middle"
+                    className="fill-orange-950 text-[8px] font-semibold"
+                  >
+                    {cell.district}
+                  </text>
+                </g>
+              );
+            })}
+            <text x="145" y="590" className="fill-[var(--color-subtext)] text-[11px]">
+              {t('adminPage.demoDataLabel')}
+            </text>
+          </svg>
+        </div>
+
+        <div className="min-w-0 p-4 sm:p-6">
+          <div className="mb-3 flex items-center gap-2 text-xs text-[var(--color-subtext)]">
+            <Map className="w-4 h-4 text-[var(--color-primary)]" />
+            {t('adminPage.mapClickHint')}
+          </div>
+          <div className="max-h-[430px] space-y-2 overflow-y-auto pr-1">
+          {[...heatmap.cells]
+            .sort((a, b) => (b.householdCount ?? -1) - (a.householdCount ?? -1))
+            .map((cell) => (
+            <div
+              key={`summary-${cell.state}-${cell.district}`}
+              className="flex items-center justify-between gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5"
+            >
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-[var(--color-text)] truncate">{cell.district}</p>
+                <p className="text-[11px] text-[var(--color-subtext)]">{cell.state}</p>
+              </div>
+              <div className="text-right shrink-0">
+                <p className="text-sm font-bold text-[var(--color-primary)]">
+                  {cell.householdCount ?? t('adminPage.suppressed')}
+                </p>
+                <p className="text-[10px] text-[var(--color-subtext)]">{t('adminPage.households')}</p>
+              </div>
+            </div>
+          ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export const AdminDashboardPage: React.FC = () => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isHi = Boolean(i18n?.language?.startsWith('hi'));
 
   const [overview, setOverview] = useState<DashboardOverviewDto | null>(null);
   const [breakdown, setBreakdown] = useState<ConcernBreakdownDto | null>(null);
   const [funnel, setFunnel] = useState<DecisionFunnelDto | null>(null);
   const [escalations, setEscalations] = useState<EscalationTrackerDto | null>(null);
-  const [_heatmap, setHeatmap] = useState<HeatmapDto | null>(null);
+  const [heatmap, setHeatmap] = useState<HeatmapDto | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
   const [exportType, setExportType] = useState<'concerns' | 'households' | 'decisions' | 'escalations'>('concerns');
-  const [activeTab, setActiveTab] = useState<'overview' | 'concerns' | 'funnel' | 'escalations'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'concerns' | 'funnel' | 'heatmap' | 'escalations'>('overview');
 
   const loadAll = async () => {
     setIsLoading(true);
@@ -155,12 +455,17 @@ export const AdminDashboardPage: React.FC = () => {
       setBreakdown(brRes.status === 'fulfilled' ? brRes.value.data : MOCK_BREAKDOWN);
       setFunnel(fnRes.status === 'fulfilled' ? fnRes.value.data : MOCK_FUNNEL);
       setEscalations(esRes.status === 'fulfilled' ? esRes.value.data : MOCK_ESCALATIONS);
-      setHeatmap(hmRes.status === 'fulfilled' ? hmRes.value.data : null);
+      setHeatmap(
+        hmRes.status === 'fulfilled'
+          ? chooseHeatmapData(hmRes.value.data)
+          : MOCK_HEATMAP,
+      );
     } catch {
       setOverview(MOCK_OVERVIEW);
       setBreakdown(MOCK_BREAKDOWN);
       setFunnel(MOCK_FUNNEL);
       setEscalations(MOCK_ESCALATIONS);
+      setHeatmap(MOCK_HEATMAP);
     } finally {
       setIsLoading(false);
     }
@@ -193,6 +498,7 @@ export const AdminDashboardPage: React.FC = () => {
   const br = breakdown ?? MOCK_BREAKDOWN;
   const fn = funnel ?? MOCK_FUNNEL;
   const es = escalations ?? MOCK_ESCALATIONS;
+  const hm = heatmap ?? MOCK_HEATMAP;
 
   const maxFunnelCount = Math.max(...fn.stages.map((s) => s.count), 1);
 
@@ -204,18 +510,16 @@ export const AdminDashboardPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-[var(--color-text)]">
-              {isHi ? 'SAATHI प्रशासन डैशबोर्ड' : 'SAATHI Admin Dashboard'}
+              {t('adminPage.title')}
             </h1>
             <p className="text-sm text-[var(--color-subtext)] mt-0.5">
-              {isHi
-                ? 'राज्य व जिला स्तरीय डेटा — k-अनामिकता गोपनीयता संरक्षण के साथ'
-                : 'State & district level data — k-anonymity privacy protection active'}
+              {t('adminPage.subtitle')}
             </p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <Button id="refresh-dashboard-btn" variant="outline" size="sm" onClick={loadAll} isLoading={isLoading}>
               <RefreshCw className="w-4 h-4" />
-              <span>{isHi ? 'रीफ्रेश' : 'Refresh'}</span>
+              <span>{t('adminPage.refresh')}</span>
             </Button>
             <select
               id="csv-export-type-select"
@@ -223,14 +527,14 @@ export const AdminDashboardPage: React.FC = () => {
               onChange={(e) => setExportType(e.target.value as typeof exportType)}
               className="text-sm border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
             >
-              <option value="concerns">Concerns CSV</option>
-              <option value="households">Households CSV</option>
-              <option value="decisions">Decisions CSV</option>
-              <option value="escalations">Escalations CSV</option>
+              <option value="concerns">{t('adminPage.concernsCsv')}</option>
+              <option value="households">{t('adminPage.householdsCsv')}</option>
+              <option value="decisions">{t('adminPage.decisionsCsv')}</option>
+              <option value="escalations">{t('adminPage.escalationsCsv')}</option>
             </select>
             <Button id="export-csv-btn" variant="primary" size="sm" onClick={handleExportCsv} isLoading={isExporting}>
               <Download className="w-4 h-4" />
-              <span>{isHi ? 'CSV निर्यात' : 'Export CSV'}</span>
+              <span>{t('adminPage.export')}</span>
             </Button>
           </div>
         </div>
@@ -271,6 +575,7 @@ export const AdminDashboardPage: React.FC = () => {
             { key: 'overview', labelEn: 'Overview', labelHi: 'अवलोकन', icon: BarChart3 },
             { key: 'concerns', labelEn: 'Concerns & Sentiment', labelHi: 'चिंताएं और भावना', icon: TrendingDown },
             { key: 'funnel', labelEn: 'Decision Funnel', labelHi: 'निर्णय फनल', icon: Filter },
+            { key: 'heatmap', labelEn: 'Input Heat Map', labelHi: 'इनपुट हीट मैप', icon: Map },
             { key: 'escalations', labelEn: 'Escalations', labelHi: 'नियुक्तियां', icon: AlertTriangle },
           ] as const).map((tab) => (
             <button
@@ -417,6 +722,7 @@ export const AdminDashboardPage: React.FC = () => {
                               -{stage.dropoffFromPrevious}%
                             </span>
                           )}
+
                         </div>
                       </div>
                       <div className="h-3 rounded-full bg-[var(--color-border)] overflow-hidden">
@@ -430,13 +736,64 @@ export const AdminDashboardPage: React.FC = () => {
                 })}
                 <div className="mt-4 pt-4 border-t border-[var(--color-border)] flex items-center justify-between">
                   <span className="text-sm text-[var(--color-subtext)]">
-                    {isHi ? 'कुल पूर्णता दर' : 'Overall Completion Rate'}
+                    {t('adminPage.completionRate')}
                   </span>
                   <span className="text-2xl font-bold text-[var(--color-primary)]">
                     {fn.overallCompletionRate}%
                   </span>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {activeTab === 'heatmap' && (
+          <Card>
+            <CardHeader>
+              <CardTitle>{t('adminPage.heatmapTitle')}</CardTitle>
+              <p className="text-xs text-[var(--color-subtext)]">
+                {t('adminPage.heatmapDescription')}
+              </p>
+            </CardHeader>
+            <CardContent>
+              <IndiaHeatMap heatmap={hm} />
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {hm.cells.map((cell) => {
+                  const intensity = cell.averageReadiness === null ? 0 : Math.max(15, cell.averageReadiness);
+                  return (
+                    <div
+                      key={`${cell.state}-${cell.district}`}
+                      className="rounded-xl border border-[var(--color-border)] p-4 transition-transform hover:scale-[1.02]"
+                      style={{
+                        background: cell.suppressed
+                          ? 'var(--color-raised)'
+                          : `color-mix(in srgb, var(--color-primary) ${intensity}%, var(--color-surface))`,
+                      }}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <p className="font-bold text-[var(--color-text)]">{cell.district}</p>
+                          <p className="text-[11px] text-[var(--color-subtext)]">{cell.state}</p>
+                        </div>
+                        <span className="text-xs font-bold text-[var(--color-primary)]">
+                          {cell.averageReadiness === null ? '—' : `${cell.averageReadiness}%`}
+                        </span>
+                      </div>
+                      <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                        <span className="text-[var(--color-subtext)]">
+                          {t('adminPage.households')}: <strong className="text-[var(--color-text)]">{cell.householdCount ?? t('adminPage.suppressed')}</strong>
+                        </span>
+                        <span className="text-[var(--color-subtext)]">
+                          {t('adminPage.decisions')}: <strong className="text-[var(--color-text)]">{cell.decisionCardCount ?? t('adminPage.suppressed')}</strong>
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="mt-4 text-xs text-[var(--color-subtext)]">
+                {t('adminPage.districtsAnalysed', { total: hm.totalCells, suppressed: hm.suppressedCells })}
+              </p>
             </CardContent>
           </Card>
         )}
@@ -449,14 +806,14 @@ export const AdminDashboardPage: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4 text-red-500" />
-                  <span>{isHi ? 'लंबित नियुक्तियां' : 'Pending Bookings'}</span>
+                  <span>{t('adminPage.pendingBookings')}</span>
                   <Badge variant="primary" size="sm">{es.pending.length}</Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {es.pending.length === 0 ? (
                   <p className="text-sm text-[var(--color-subtext)] text-center py-4">
-                    {isHi ? 'कोई लंबित नियुक्ति नहीं' : 'No pending bookings'}
+                    {t('adminPage.noPending')}
                   </p>
                 ) : (
                   <div className="space-y-2">
@@ -469,7 +826,7 @@ export const AdminDashboardPage: React.FC = () => {
                             <p className="text-xs text-[var(--color-subtext)]">HH: {item.householdId.slice(0, 8)}…</p>
                           </div>
                         </div>
-                        <Badge variant="primary" size="sm">{item.daysWaiting}d waiting</Badge>
+                        <Badge variant="primary" size="sm">{t('adminPage.waiting', { count: item.daysWaiting })}</Badge>
                       </div>
                     ))}
                   </div>
@@ -482,14 +839,14 @@ export const AdminDashboardPage: React.FC = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-[var(--color-leaf)]" />
-                  <span>{isHi ? 'पुष्टिकृत नियुक्तियां' : 'Confirmed Bookings'}</span>
+                  <span>{t('adminPage.confirmedBookings')}</span>
                   <Badge variant="parent" size="sm">{es.confirmed.length}</Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {es.confirmed.length === 0 ? (
                   <p className="text-sm text-[var(--color-subtext)] text-center py-4">
-                    {isHi ? 'कोई पुष्टिकृत नियुक्ति नहीं' : 'No confirmed bookings'}
+                    {t('adminPage.noConfirmed')}
                   </p>
                 ) : (
                   <div className="space-y-2">

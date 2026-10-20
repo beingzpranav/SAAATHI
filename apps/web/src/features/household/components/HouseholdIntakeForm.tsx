@@ -29,7 +29,7 @@ import {
 import { cn } from '../../../lib/cn.js';
 
 export const HouseholdIntakeForm: React.FC = () => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isHi = i18n.language === 'hi';
   const navigate = useNavigate();
   const { setHousehold } = useSessionStore();
@@ -229,7 +229,7 @@ export const HouseholdIntakeForm: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E8DDD2] dark:border-[#3D3430]">
         <div>
           <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#1F1A17] dark:text-[#FFFDF9]">
-            {isHi ? 'पारिवारिक परामर्श इनटेक' : 'Household Intake & Location'}
+            {t('intakePage.title')}
           </h1>
           <p className="text-sm text-[#6A5B55] dark:text-[#B8AAA3] mt-1">
             {isHi
@@ -246,7 +246,7 @@ export const HouseholdIntakeForm: React.FC = () => {
           className="shrink-0 flex items-center gap-1.5 self-start sm:self-auto text-xs"
         >
           <Sparkles className="w-3.5 h-3.5 text-[#EFA531]" aria-hidden="true" />
-          <span>{isHi ? 'त्वरित भरें: वाराणसी डेमो' : 'Quick Fill: Varanasi Demo'}</span>
+          <span>{t('intakePage.quickFill')}</span>
         </Button>
       </div>
 
@@ -278,7 +278,7 @@ export const HouseholdIntakeForm: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <Input
-              label={isHi ? 'परिवार / घर का नाम' : 'Household Name'}
+              label={t('intakePage.householdName')}
               value={householdName}
               onChange={(e) => setHouseholdName(e.target.value)}
               required
@@ -286,7 +286,7 @@ export const HouseholdIntakeForm: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <Select
-                label={isHi ? 'राज्य' : 'State'}
+                label={t('intakePage.state')}
                 value={selectedState}
                 onChange={(e) => setSelectedState(e.target.value)}
                 options={
@@ -298,7 +298,7 @@ export const HouseholdIntakeForm: React.FC = () => {
               />
 
               <Select
-                label={isHi ? 'जिला' : 'District'}
+                label={t('intakePage.district')}
                 value={selectedDistrict}
                 onChange={(e) => setSelectedDistrict(e.target.value)}
                 options={
@@ -310,7 +310,7 @@ export const HouseholdIntakeForm: React.FC = () => {
               />
 
               <Select
-                label={isHi ? 'ब्लॉक (स्थानीय डेटा हेतु)' : 'Block (for localized data)'}
+                label={t('intakePage.block')}
                 value={selectedBlock}
                 onChange={(e) => setSelectedBlock(e.target.value)}
                 options={
@@ -335,7 +335,7 @@ export const HouseholdIntakeForm: React.FC = () => {
             <div className="flex items-center gap-2">
               <Banknote className="w-5 h-5 text-[#2F7D5C] dark:text-[#50AF85]" aria-hidden="true" />
               <CardTitle className="text-lg font-serif">
-                {isHi ? '2. वार्षिक पारिवारिक आय वर्ग' : '2. Annual Household Income Band'}
+                {t('intakePage.income')}
               </CardTitle>
             </div>
           </CardHeader>
@@ -408,7 +408,7 @@ export const HouseholdIntakeForm: React.FC = () => {
             <div className="flex items-center gap-2">
               <GraduationCap className="w-5 h-5 text-[#EFA531]" aria-hidden="true" />
               <CardTitle className="text-lg font-serif">
-                {isHi ? '3. शिक्षार्थी की वर्तमान शिक्षा स्तर' : '3. Learner Current Class Level'}
+                {t('intakePage.education')}
               </CardTitle>
             </div>
           </CardHeader>
@@ -474,17 +474,17 @@ export const HouseholdIntakeForm: React.FC = () => {
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-[#C4562B] dark:text-[#E27E53]" aria-hidden="true" />
             <h3 className="font-serif font-bold text-sm sm:text-base text-[#1F1A17] dark:text-[#FFFDF9]">
-              {isHi ? 'लाइव अनुकूलन पूर्वावलोकन' : 'Live Personalization Impact'}
+              {t('intakePage.preview')}
             </h3>
             <span className="text-xs px-2 py-0.5 rounded bg-[#C4562B]/10 text-[#C4562B] dark:text-[#E27E53] font-medium ml-auto">
-              {isHi ? 'आपके उत्तरों के अनुसार' : 'Dynamically Adjusted'}
+              {t('intakePage.adjusted')}
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-1">
             <div className="p-3 rounded-lg bg-white dark:bg-[#1F1A17] border border-[#E8DDD2] dark:border-[#3D3430]">
               <span className="text-[#6A5B55] dark:text-[#B8AAA3] block uppercase tracking-wider text-[10px]">
-                {isHi ? 'शुल्क व छात्रवृत्ति संरचना' : 'Cost & Scholarship Framing'}
+                {t('intakePage.cost')}
               </span>
               <span className="font-bold text-[#1F1A17] dark:text-[#FFFDF9] text-sm block mt-0.5">
                 {previewFraming.title}
@@ -496,7 +496,7 @@ export const HouseholdIntakeForm: React.FC = () => {
 
             <div className="p-3 rounded-lg bg-white dark:bg-[#1F1A17] border border-[#E8DDD2] dark:border-[#3D3430]">
               <span className="text-[#6A5B55] dark:text-[#B8AAA3] block uppercase tracking-wider text-[10px]">
-                {isHi ? 'एनएसक्यूएफ प्रवेश स्तर' : 'Highlighted NSQF Entry Level'}
+                {t('intakePage.entryLevel')}
               </span>
               <div className="flex items-center gap-2 mt-1">
                 <span className="px-2 py-0.5 rounded font-mono font-bold bg-[#EFA531]/20 text-[#855403] dark:text-[#F8C26E] text-xs">
@@ -534,7 +534,7 @@ export const HouseholdIntakeForm: React.FC = () => {
             className="w-full sm:w-auto flex items-center justify-center gap-2 px-8"
           >
             <Users className="w-4 h-4" aria-hidden="true" />
-            <span>{isHi ? 'पारिवारिक विवरण सहेजें' : 'Save Household Intake'}</span>
+            <span>{t('intakePage.save')}</span>
             <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </Button>
         </div>

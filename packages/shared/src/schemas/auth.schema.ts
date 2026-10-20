@@ -2,7 +2,17 @@ import { z } from 'zod';
 
 export const userRoleSchema = z.enum(['LEARNER', 'PARENT', 'COUNSELLOR', 'ADMINISTRATOR']);
 
-export const supportedLanguageSchema = z.enum(['en', 'hi']);
+export const supportedLanguageSchema = z.enum([
+  'en',
+  'hi',
+  'bn',
+  'ta',
+  'te',
+  'mr',
+  'gu',
+  'kn',
+  'ml',
+]);
 
 export const registerSchema = z
   .object({

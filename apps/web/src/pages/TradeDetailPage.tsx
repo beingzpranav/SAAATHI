@@ -23,7 +23,7 @@ import {
 
 export const TradeDetailPage: React.FC = () => {
   const { code } = useParams<{ code: string }>();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isHi = i18n.language === 'hi';
   const { household } = useSessionStore();
 
@@ -81,17 +81,15 @@ export const TradeDetailPage: React.FC = () => {
     return (
       <div className="py-12 text-center space-y-4">
         <h2 className="font-serif text-2xl font-bold text-[#1F1A17] dark:text-[#FFFDF9]">
-          {isHi ? 'ट्रेड नहीं मिला' : 'Vocational Trade Not Found'}
+          {t('tradeDetail.notFound')}
         </h2>
         <p className="text-sm text-[#6A5B55] dark:text-[#B8AAA3]">
-          {isHi
-            ? 'अनुरोधित ट्रेड कोड उपलब्ध नहीं है।'
-            : 'The requested trade code could not be loaded.'}
+          {t('tradeDetail.loadError')}
         </p>
         <Button variant="outline" asChild>
           <Link to="/trades">
             <ArrowLeft className="w-4 h-4 mr-1.5" aria-hidden="true" />
-            <span>{isHi ? 'एक्सप्लोरर पर वापस जाएं' : 'Back to Trade Explorer'}</span>
+            <span>{t('tradeDetail.back')}</span>
           </Link>
         </Button>
       </div>
@@ -107,7 +105,7 @@ export const TradeDetailPage: React.FC = () => {
         <Button variant="ghost" size="sm" asChild className="text-[#C4562B] dark:text-[#E27E53]">
           <Link to="/trades" className="flex items-center gap-1.5">
             <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-            <span>{isHi ? 'सभी ट्रेड्स देखें' : 'Back to Trade Explorer'}</span>
+            <span>{t('tradeDetail.back')}</span>
           </Link>
         </Button>
 
@@ -142,8 +140,8 @@ export const TradeDetailPage: React.FC = () => {
           <div className="flex items-center gap-2 text-[#554640] dark:text-[#C5B8B1]">
             <Clock className="w-4 h-4 text-[#C4562B] dark:text-[#E27E53]" aria-hidden="true" />
             <span>
-              <strong>{isHi ? 'अवधि:' : 'Duration:'}</strong> {trade.durationMonths}{' '}
-              {isHi ? 'महीने' : 'Months'}
+              <strong>{t('tradeDetail.duration')}:</strong> {trade.durationMonths}{' '}
+              {t('tradeDetail.months')}
             </span>
           </div>
 
@@ -153,14 +151,14 @@ export const TradeDetailPage: React.FC = () => {
               aria-hidden="true"
             />
             <span>
-              <strong>{isHi ? 'न्यूनतम योग्यता:' : 'Min Education:'}</strong> {trade.minEducation}
+              <strong>{t('tradeDetail.minEducation')}:</strong> {trade.minEducation}
             </span>
           </div>
 
           <div className="flex items-center gap-2 text-[#554640] dark:text-[#C5B8B1]">
             <Building2 className="w-4 h-4 text-[#C4562B] dark:text-[#E27E53]" aria-hidden="true" />
             <span>
-              <strong>{isHi ? 'प्रवेश चरण:' : 'Entry Step:'}</strong> {trade.entryStep}
+              <strong>{t('tradeDetail.entryStep')}:</strong> {trade.entryStep}
             </span>
           </div>
         </div>
@@ -184,9 +182,7 @@ export const TradeDetailPage: React.FC = () => {
                   aria-hidden="true"
                 />
                 <CardTitle className="font-serif text-lg">
-                  {isHi
-                    ? 'स्थानीय सत्यापित परिणाम डेटा (मध्यमान वेतन व प्लेसमेंट)'
-                    : 'Verified Local Outcomes & Salary Reality'}
+                  {t('tradeDetail.verifiedOutcomes')}
                 </CardTitle>
               </div>
               <ConfidenceBadge
@@ -207,36 +203,36 @@ export const TradeDetailPage: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
               <div className="p-4 rounded-xl bg-white dark:bg-[#1F1A17] border border-[#E8DDD2] dark:border-[#3D3430]">
                 <span className="block text-xs uppercase tracking-wider text-[#6A5B55] dark:text-[#B8AAA3]">
-                  {isHi ? 'सत्यापित मध्यमान मासिक वेतन' : 'Verified Median Monthly'}
+                  {t('tradeDetail.medianSalary')}
                 </span>
                 <span className="font-mono text-2xl sm:text-3xl font-extrabold text-[#2F7D5C] dark:text-[#50AF85] block mt-1">
                   ₹{record.medianSalaryMonthly.toLocaleString('en-IN')}{' '}
                   <span className="text-xs font-normal text-[#6A5B55] dark:text-[#B8AAA3]">
-                    {isHi ? '/माह' : '/mo'}
+                    {t('tradeDetail.perMonth')}
                   </span>
                 </span>
                 <span className="text-xs text-[#7A6B63] dark:text-[#A89A92] mt-1 block">
-                  {isHi ? 'सीमा:' : 'Range:'} ₹{record.salaryRangeMin.toLocaleString('en-IN')} – ₹
+                  {t('tradeDetail.range')}: ₹{record.salaryRangeMin.toLocaleString('en-IN')} – ₹
                   {record.salaryRangeMax.toLocaleString('en-IN')}
                 </span>
               </div>
 
               <div className="p-4 rounded-xl bg-white dark:bg-[#1F1A17] border border-[#E8DDD2] dark:border-[#3D3430]">
                 <span className="block text-xs uppercase tracking-wider text-[#6A5B55] dark:text-[#B8AAA3]">
-                  {isHi ? 'सत्यापित प्लेसमेंट दर' : 'Placement Rate'}
+                  {t('tradeDetail.placementRate')}
                 </span>
                 <span className="font-mono text-2xl sm:text-3xl font-extrabold text-[#1F1A17] dark:text-[#FFFDF9] block mt-1">
                   {record.placementRatePercent}%
                 </span>
                 <span className="text-xs text-[#7A6B63] dark:text-[#A89A92] mt-1 block">
                   {record.verifiedGraduatesCount}{' '}
-                  {isHi ? 'सत्यापित स्नातक' : 'verified alumni in sample'}
+                  {t('tradeDetail.verifiedAlumni')}
                 </span>
               </div>
 
               <div className="p-4 rounded-xl bg-white dark:bg-[#1F1A17] border border-[#E8DDD2] dark:border-[#3D3430]">
                 <span className="block text-xs uppercase tracking-wider text-[#6A5B55] dark:text-[#B8AAA3]">
-                  {isHi ? 'डेटा स्रोत व ऑडिट' : 'Data Sources & Audit'}
+                  {t('tradeDetail.dataSources')}
                 </span>
                 <ul className="mt-1 space-y-1 text-xs text-[#4A3D37] dark:text-[#D1C6BD]">
                   {record.sources.map((src, idx) => (
@@ -270,7 +266,7 @@ export const TradeDetailPage: React.FC = () => {
             </h3>
           </div>
           <span className="text-xs font-medium text-[#6A5B55] dark:text-[#B8AAA3]">
-            {isHi ? 'सत्यापित सरकारी व मान्यताप्राप्त संस्थान' : 'NCVT / SCVT Verified Institutes'}
+            {t('tradeDetail.verifiedInstitutes')}
           </span>
         </div>
 
@@ -298,10 +294,10 @@ export const TradeDetailPage: React.FC = () => {
             <div className="p-2.5 rounded-lg bg-[#FAF6EE] dark:bg-[#28211A] text-xs flex items-center justify-between text-[#554640] dark:text-[#C5B8B1]">
               <span className="flex items-center gap-1">
                 <Banknote className="w-3.5 h-3.5 text-[#2F7D5C]" aria-hidden="true" />
-                <span>{isHi ? 'मासिक शिक्षुता मानदेय:' : 'Apprentice Stipend:'}</span>
+                <span>{t('tradeDetail.apprenticeStipend')}:</span>
               </span>
               <span className="font-mono font-bold text-[#2F7D5C] dark:text-[#50AF85]">
-                ₹2,500 / {isHi ? 'माह' : 'mo'}
+                ₹2,500 / {t('tradeDetail.monthsShort')}
               </span>
             </div>
           </div>
@@ -329,10 +325,10 @@ export const TradeDetailPage: React.FC = () => {
             <div className="p-2.5 rounded-lg bg-[#FAF6EE] dark:bg-[#28211A] text-xs flex items-center justify-between text-[#554640] dark:text-[#C5B8B1]">
               <span className="flex items-center gap-1">
                 <Banknote className="w-3.5 h-3.5 text-[#2F7D5C]" aria-hidden="true" />
-                <span>{isHi ? 'मासिक शिक्षुता मानदेय:' : 'Apprentice Stipend:'}</span>
+                <span>{t('tradeDetail.apprenticeStipend')}:</span>
               </span>
               <span className="font-mono font-bold text-[#2F7D5C] dark:text-[#50AF85]">
-                ₹2,500 / {isHi ? 'माह' : 'mo'}
+                ₹2,500 / {t('tradeDetail.monthsShort')}
               </span>
             </div>
           </div>
@@ -357,12 +353,12 @@ export const TradeDetailPage: React.FC = () => {
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <Button variant="outline" asChild className="w-full sm:w-auto">
             <Link to="/trades">
-              <span>{isHi ? 'अन्य ट्रेड्स खोजें' : 'Browse More'}</span>
+              <span>{t('tradeDetail.browseMore')}</span>
             </Link>
           </Button>
           <Button variant="primary" asChild className="w-full sm:w-auto">
             <Link to="/intake">
-              <span>{isHi ? 'परामर्श कक्ष में जाएं' : 'Continue Intake'}</span>
+              <span>{t('tradeDetail.continueIntake')}</span>
             </Link>
           </Button>
         </div>

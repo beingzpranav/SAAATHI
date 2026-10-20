@@ -22,8 +22,7 @@ import type { BookingDto, CounsellorHouseholdSummary, ConcernDto } from '@saathi
 import { cn } from '../lib/cn.js';
 
 export const CounsellorConsolePage: React.FC = () => {
-  const { i18n } = useTranslation();
-  const isHi = Boolean(i18n?.language?.startsWith('hi'));
+  const { t } = useTranslation();
   const { user } = useSessionStore();
 
   const [bookings, setBookings] = useState<BookingDto[]>([]);
@@ -195,16 +194,14 @@ export const CounsellorConsolePage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-xl sm:text-2xl font-bold font-serif text-[var(--color-text)]">
-                {isHi ? 'प्रमाणित काउंसलर कंसोल' : 'Certified Counsellor Console'}
+                {t('counsellorPage.title')}
               </h1>
               <Badge variant="primary" size="sm">
-                NCVET Verified
+                {t('common.verified')}
               </Badge>
             </div>
             <p className="text-xs text-[var(--color-subtext)]">
-              {isHi
-                ? 'राष्ट्रीय कौशल विकास मिशन (MSDE) के तहत पारिवारिक परामर्श व लाइव वीडियो सहायता'
-                : 'Empowering rural households with verified career pathways under MSDE standards.'}
+              {t('counsellorPage.subtitle')}
             </p>
           </div>
         </div>
@@ -227,7 +224,7 @@ export const CounsellorConsolePage: React.FC = () => {
               <Video className="w-4 h-4" />
             )}
             <span>
-              {isHi ? 'लाइव परामर्श शुरू करें' : 'Join Live Session'}
+              {t('counsellorPage.joinSession')}
             </span>
           </Button>
         )}
@@ -240,7 +237,7 @@ export const CounsellorConsolePage: React.FC = () => {
             <CardHeader className="pb-3 border-b border-[var(--color-border)]">
               <CardTitle className="text-sm font-bold flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-[var(--color-primary)]" />
-                <span>{isHi ? 'आगामी परामर्श सत्र' : 'Scheduled Consultations'}</span>
+                <span>{t('counsellorPage.scheduled')}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="p-3 space-y-2">
@@ -284,7 +281,7 @@ export const CounsellorConsolePage: React.FC = () => {
                     ) : (
                       <Video className="w-3.5 h-3.5" />
                     )}
-                    <span>{booking.mode === 'AUDIO_ONLY' ? '2G/3G Audio Call' : 'Video Conference'}</span>
+                    <span>{booking.mode === 'AUDIO_ONLY' ? t('counsellorPage.audioCall') : t('counsellorPage.videoCall')}</span>
                   </div>
                 </div>
               ))}
@@ -301,14 +298,10 @@ export const CounsellorConsolePage: React.FC = () => {
                 <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                 <div className="text-xs space-y-1">
                   <p className="font-bold">
-                    {isHi
-                      ? 'गोपनीयता फ़िल्टर सक्रिय: केवल संयुक्त रूप से साझा की गई चिंताएं प्रदर्शित हैं'
-                      : 'Strict Privacy Filter Enforced: Only Jointly Shared Concerns are Visible'}
+                    {t('counsellorPage.privacyTitle')}
                   </p>
                   <p className="text-emerald-700 dark:text-emerald-400/90 leading-relaxed">
-                    {isHi
-                      ? `परिवार द्वारा निजी विंडो में रखी गई ${householdSummary.privateConcernsCount} चिंताएं काउंसलर से सुरक्षित व गुप्त रखी गई हैं। केवल वे बिंदु दिखाई दे रहे हैं जिन्हें छात्र और माता-पिता दोनों ने साझा करने की सहमति दी है।`
-                      : `${householdSummary.privateConcernsCount} private learner/parent concerns remain strictly confidential inside private windows. Only points explicitly approved for joint discussion appear here.`}
+                    {t('counsellorPage.privacyDescription', { count: householdSummary.privateConcernsCount })}
                   </p>
                 </div>
               </div>
@@ -328,15 +321,15 @@ export const CounsellorConsolePage: React.FC = () => {
                 <CardContent className="p-4 space-y-4">
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
                     <div className="p-2.5 rounded-lg bg-[var(--color-raised)]">
-                      <span className="text-[var(--color-subtext)] block">{isHi ? 'ब्लॉक' : 'Block'}</span>
+                      <span className="text-[var(--color-subtext)] block">{t('counsellorPage.block')}</span>
                       <strong className="text-[var(--color-text)]">{householdSummary.block}</strong>
                     </div>
                     <div className="p-2.5 rounded-lg bg-[var(--color-raised)]">
-                      <span className="text-[var(--color-subtext)] block">{isHi ? 'वार्षिक आय' : 'Income Band'}</span>
+                      <span className="text-[var(--color-subtext)] block">{t('counsellorPage.income')}</span>
                       <strong className="text-[var(--color-text)]">₹{householdSummary.incomeBand.replace('_', ' ')}</strong>
                     </div>
                     <div className="p-2.5 rounded-lg bg-[var(--color-raised)]">
-                      <span className="text-[var(--color-subtext)] block">{isHi ? 'शिक्षा स्तर' : 'Education'}</span>
+                      <span className="text-[var(--color-subtext)] block">{t('counsellorPage.education')}</span>
                       <strong className="text-[var(--color-text)]">{householdSummary.learnerClassLevel.replace('_', ' ')}</strong>
                     </div>
                   </div>
@@ -344,7 +337,7 @@ export const CounsellorConsolePage: React.FC = () => {
                   {/* Bookmarked Trades of Interest */}
                   <div>
                     <h4 className="text-xs font-bold text-[var(--color-text)] mb-2">
-                      {isHi ? 'परिवार द्वारा रुचि दिखाए गए ट्रेड्स' : 'Shortlisted Trades of Interest'}
+                      {t('counsellorPage.shortlisted')}
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {householdSummary.recommendedTrades?.map((title: string, i: number) => (
@@ -361,9 +354,9 @@ export const CounsellorConsolePage: React.FC = () => {
                   {/* Shared Concerns List */}
                   <div>
                     <h4 className="text-xs font-bold text-[var(--color-text)] mb-2 flex items-center gap-1.5">
-                      <span>{isHi ? 'संयुक्त रूप से साझा की गई चिंताएं' : 'Jointly Shared Family Concerns'}</span>
+                      <span>{t('counsellorPage.sharedConcerns')}</span>
                       <span className="text-[10px] bg-[var(--color-raised)] px-2 py-0.5 rounded-full text-[var(--color-subtext)]">
-                        {householdSummary.sharedConcerns.length} {isHi ? 'मुद्दे' : 'items'}
+                        {householdSummary.sharedConcerns.length} {t('counsellorPage.items')}
                       </span>
                     </h4>
                     <div className="space-y-2">
@@ -395,7 +388,7 @@ export const CounsellorConsolePage: React.FC = () => {
                       htmlFor="counsellor-notes-input"
                       className="text-xs font-bold text-[var(--color-text)] block"
                     >
-                      {isHi ? 'परामर्शदाता के आधिकारिक नोट्स और अनुशंसा' : 'Official Counsellor Consultation Notes'}
+                      {t('counsellorPage.notesTitle')}
                     </label>
                     <textarea
                       id="counsellor-notes-input"
@@ -403,9 +396,7 @@ export const CounsellorConsolePage: React.FC = () => {
                       value={counsellorNotes}
                       onChange={(e) => setCounsellorNotes(e.target.value)}
                       placeholder={
-                        isHi
-                          ? 'सत्र के दौरान परिवार को समझाए गए बिंदु, शुल्क छूट सत्यापन, NAPS अनुबंध संबंधी टिप्पणियां...'
-                          : 'Record session notes, guidance provided on fee waivers, apprenticeship expectations, and agreement terms...'
+                        t('counsellorPage.notesPlaceholder')
                       }
                       className="w-full text-xs p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
                     />
@@ -444,12 +435,12 @@ export const CounsellorConsolePage: React.FC = () => {
                         {isSavedNotes ? (
                           <>
                             <CheckCircle2 className="w-3.5 h-3.5 text-white" />
-                            <span>{isHi ? 'सहेजा गया!' : 'Notes Saved!'}</span>
+                            <span>{t('counsellorPage.savedNotes')}</span>
                           </>
                         ) : (
                           <>
                             <FileText className="w-3.5 h-3.5" />
-                            <span>{isHi ? 'नोट्स सुरक्षित करें' : 'Save Notes'}</span>
+                            <span>{t('counsellorPage.saveNotes')}</span>
                           </>
                         )}
                       </Button>

@@ -76,7 +76,7 @@ const NSQF_STEPS: LadderStep[] = [
 ];
 
 export const NsqfLadderView: React.FC = () => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const lang = i18n.language.startsWith('hi') ? 'hi' : 'en';
   const [selectedLevel, setSelectedLevel] = useState<number>(4);
 
@@ -91,12 +91,12 @@ export const NsqfLadderView: React.FC = () => {
         <div className="flex items-center gap-2">
           <TrendingUp className="w-4 h-4 text-[var(--color-primary)]" />
           <h3 className="text-sm font-bold text-[var(--color-text)]">
-            {lang === 'hi' ? 'एनएसक्यूएफ करियर सीढ़ी' : 'NSQF Career Progression Ladder'}
+            {t('jointRoom.nsqfCareerLadder')}
           </h3>
         </div>
         <span className="text-[11px] font-semibold text-[var(--color-success)] flex items-center gap-1">
           <Award className="w-3.5 h-3.5" />
-          {lang === 'hi' ? 'राष्ट्रीय मानक' : 'National Qualification Framework'}
+          {t('jointRoom.nationalQualificationFramework')}
         </span>
       </div>
 
@@ -136,7 +136,7 @@ export const NsqfLadderView: React.FC = () => {
                 </span>
                 {step.isStarting && (
                   <span className="text-[9px] font-bold text-[var(--color-success)]">
-                    Start Here
+                    {t('jointRoom.startHere')}
                   </span>
                 )}
               </div>

@@ -23,7 +23,7 @@ export interface TradeCardProps {
 }
 
 export const TradeCard: React.FC<TradeCardProps> = ({ trade, outcome, household, className }) => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isHi = i18n.language === 'hi';
 
   const record = outcome?.record;
@@ -73,7 +73,7 @@ export const TradeCard: React.FC<TradeCardProps> = ({ trade, outcome, household,
                 aria-hidden="true"
               />
               <span>
-                {trade.durationMonths} {isHi ? 'महीने' : 'Months'}
+                {trade.durationMonths} {t('tradeDetail.months')}
               </span>
             </div>
             <div className="flex items-center gap-1.5 text-[#554640] dark:text-[#C5B8B1]">
@@ -91,21 +91,21 @@ export const TradeCard: React.FC<TradeCardProps> = ({ trade, outcome, household,
               <div className="flex items-baseline justify-between">
                 <div>
                   <span className="block text-[11px] uppercase tracking-wider text-[#6A5B55] dark:text-[#B8AAA3]">
-                    {isHi ? 'सत्यापित मध्यमान वेतन' : 'Verified Median Salary'}
+                    {t('trades.verifiedMedianSalary')}
                   </span>
                   <div className="flex items-baseline gap-1 mt-0.5">
                     <span className="font-mono text-xl font-bold text-[#2F7D5C] dark:text-[#50AF85]">
                       ₹{record.medianSalaryMonthly.toLocaleString('en-IN')}
                     </span>
                     <span className="text-xs text-[#6A5B55] dark:text-[#B8AAA3]">
-                      {isHi ? '/माह' : '/mo'}
+                      {t('trades.perMonth')}
                     </span>
                   </div>
                 </div>
 
                 <div className="text-right">
                   <span className="block text-[11px] uppercase tracking-wider text-[#6A5B55] dark:text-[#B8AAA3]">
-                    {isHi ? 'प्लेसमेंट दर' : 'Placement Rate'}
+                    {t('trades.placementRate')}
                   </span>
                   <span className="font-mono text-lg font-bold text-[#1F1A17] dark:text-[#FFFDF9]">
                     {record.placementRatePercent}%
@@ -115,7 +115,7 @@ export const TradeCard: React.FC<TradeCardProps> = ({ trade, outcome, household,
 
               {/* Salary Range */}
               <div className="flex items-center justify-between text-xs text-[#6A5B55] dark:text-[#B8AAA3]">
-                <span>{isHi ? 'वेतन सीमा:' : 'Salary Range:'}</span>
+                <span>{t('trades.salaryRange')}</span>
                 <span className="font-mono font-medium text-[#3A2E2A] dark:text-[#E2D8D1]">
                   ₹{record.salaryRangeMin.toLocaleString('en-IN')} – ₹
                   {record.salaryRangeMax.toLocaleString('en-IN')}
@@ -126,7 +126,7 @@ export const TradeCard: React.FC<TradeCardProps> = ({ trade, outcome, household,
                 <span className="flex items-center gap-1">
                   <ShieldCheck className="w-3.5 h-3.5 text-[#2F7D5C]" aria-hidden="true" />
                   <span>
-                    {record.verifiedGraduatesCount} {isHi ? 'सत्यापित स्नातक' : 'verified alumni'}
+                    {record.verifiedGraduatesCount} {t('trades.verifiedAlumni')}
                   </span>
                 </span>
                 <span className="font-mono text-[10px]">
@@ -145,9 +145,7 @@ export const TradeCard: React.FC<TradeCardProps> = ({ trade, outcome, household,
             </div>
           ) : (
             <div className="text-xs text-[#7A6B63] dark:text-[#A89A92] py-2 italic">
-              {isHi
-                ? 'इस क्षेत्र के लिए डेटा सत्यापन प्रक्रियाधीन है'
-                : 'Outcome verification in progress for this region'}
+              {t('trades.verificationInProgress')}
             </div>
           )}
 
@@ -166,7 +164,7 @@ export const TradeCard: React.FC<TradeCardProps> = ({ trade, outcome, household,
       <CardFooter className="pt-3 border-t border-[#E8DDD2] dark:border-[#3D3430]">
         <Button variant="outline" className="w-full flex items-center justify-center gap-2" asChild>
           <Link to={`/trades/${trade.code}`}>
-            <span>{isHi ? 'कैरियर सीढ़ी और कॉलेज देखें' : 'View NSQF Ladder & Providers'}</span>
+            <span>{t('trades.viewLadder')}</span>
             <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </Link>
         </Button>

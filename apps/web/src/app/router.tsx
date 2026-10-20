@@ -195,9 +195,11 @@ export const router = createBrowserRouter(
         {
           path: 'counsellor',
           element: (
-            <Suspense fallback={<RouteSuspenseFallback />}>
-              <CounsellorConsolePage />
-            </Suspense>
+            <ProtectedRoute allowedRoles={['COUNSELLOR']}>
+              <Suspense fallback={<RouteSuspenseFallback />}>
+                <CounsellorConsolePage />
+              </Suspense>
+            </ProtectedRoute>
           ),
         },
         {
@@ -213,9 +215,11 @@ export const router = createBrowserRouter(
         {
           path: 'admin',
           element: (
-            <Suspense fallback={<RouteSuspenseFallback />}>
-              <AdminDashboardPage />
-            </Suspense>
+            <ProtectedRoute allowedRoles={['ADMINISTRATOR']}>
+              <Suspense fallback={<RouteSuspenseFallback />}>
+                <AdminDashboardPage />
+              </Suspense>
+            </ProtectedRoute>
           ),
         },
         {

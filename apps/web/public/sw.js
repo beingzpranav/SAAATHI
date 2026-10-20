@@ -9,7 +9,7 @@
  * when it detects the device is back online after queuing mutations.
  */
 
-const CACHE_VERSION = 'saathi-v1';
+const CACHE_VERSION = 'saathi-v2';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const API_CACHE = `${CACHE_VERSION}-api`;
 

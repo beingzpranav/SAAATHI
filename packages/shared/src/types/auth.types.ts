@@ -6,7 +6,16 @@ export type UserRole = 'LEARNER' | 'PARENT' | 'COUNSELLOR' | 'ADMINISTRATOR';
 /**
  * Supported UI Languages
  */
-export type SupportedLanguage = 'en' | 'hi';
+export type SupportedLanguage =
+  | 'en'
+  | 'hi'
+  | 'bn'
+  | 'ta'
+  | 'te'
+  | 'mr'
+  | 'gu'
+  | 'kn'
+  | 'ml';
 
 /**
  * Public User profile

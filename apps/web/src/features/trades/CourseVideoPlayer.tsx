@@ -107,7 +107,7 @@ export const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
   tradeCode: _tradeCode,
   className,
 }) => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isHi = Boolean(i18n?.language?.startsWith('hi'));
 
   const videoList = (SAMPLE_VIDEOS.default || []) as VideoTrack[];
@@ -237,10 +237,10 @@ export const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
           </div>
           <div>
             <h3 className="text-sm font-bold text-[var(--color-text)]">
-              {isHi ? `${tradeTitleHi} - वीडियो पूर्वावलोकन` : `${tradeTitleEn} - Video Immersion`}
+              {t('media.videoImmersion', { title: isHi ? tradeTitleHi : tradeTitleEn })}
             </h3>
             <p className="text-xs text-[var(--color-subtext)]">
-              {isHi ? '2 विशेष वीडियो: व्यावहारिक कार्यशाला और उद्योग वेतन' : '2 Core Videos: Hands-on Workshop & Real Wages'}
+              {t('media.videoSubtitle')}
             </p>
           </div>
         </div>
@@ -266,7 +266,7 @@ export const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
               )}
             >
               <Layers className="w-3.5 h-3.5" />
-              <span>{idx === 0 ? (isHi ? '1. कार्यशाला' : '1. Workshop') : (isHi ? '2. वेतन व अनुभव' : '2. Real Wages')}</span>
+              <span>{idx === 0 ? t('media.workshop') : t('media.wages')}</span>
             </button>
           ))}
         </div>
@@ -301,7 +301,7 @@ export const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
             <p className="text-xs text-zinc-400 max-w-md mb-4">{isHi ? currentVideo.descriptionHi : currentVideo.descriptionEn}</p>
             <div className="flex items-center gap-2">
               <Badge variant="primary" size="sm">
-                {isHi ? 'सिम्युलेटेड सत्र सक्रिय' : 'Live Simulation Active'}
+                {t('media.simulation')}
               </Badge>
             </div>
           </div>
@@ -322,7 +322,7 @@ export const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
             type="button"
             id="video-play-center-btn"
             onClick={handleTogglePlay}
-            aria-label="Play video"
+            aria-label={t('media.play')}
             className="absolute z-10 w-16 h-16 rounded-2xl bg-[var(--color-primary)] text-white flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-transform"
           >
             <Play className="w-8 h-8 ml-1" fill="currentColor" />
@@ -349,7 +349,7 @@ export const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
               step={1}
               value={currentTime}
               onChange={handleSeek}
-              aria-label="Seek time"
+              aria-label={t('media.seek')}
               className="w-full h-1.5 bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-[var(--color-primary)]"
             />
             <span className="text-[11px] font-mono text-zinc-400 min-w-[36px]">
@@ -364,7 +364,7 @@ export const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
                 type="button"
                 id="video-play-pause-btn"
                 onClick={handleTogglePlay}
-                aria-label={isPlaying ? 'Pause' : 'Play'}
+                aria-label={isPlaying ? t('media.pause') : t('media.play')}
                 className="hover:text-[var(--color-primary)] transition-colors"
               >
                 {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
@@ -377,7 +377,7 @@ export const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
                   if (videoRef.current) videoRef.current.currentTime = 0;
                   setCurrentTime(0);
                 }}
-                aria-label="Restart video"
+                aria-label={t('media.restart')}
                 className="hover:text-[var(--color-primary)] transition-colors"
               >
                 <RotateCcw className="w-4 h-4" />
@@ -387,7 +387,7 @@ export const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
                 type="button"
                 id="video-mute-btn"
                 onClick={handleToggleMute}
-                aria-label={isMuted ? 'Unmute' : 'Mute'}
+                aria-label={isMuted ? t('media.unmute') : t('media.mute')}
                 className="hover:text-[var(--color-primary)] transition-colors"
               >
                 {isMuted ? <VolumeX className="w-5 h-5 text-red-400" /> : <Volume2 className="w-5 h-5" />}
@@ -417,7 +417,7 @@ export const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
                 type="button"
                 id="video-captions-toggle"
                 onClick={() => setCaptionsEnabled(!captionsEnabled)}
-                aria-label="Toggle subtitles"
+                aria-label={t('media.subtitles')}
                 className={cn(
                   'p-1.5 rounded-md transition-colors flex items-center gap-1',
                   captionsEnabled ? 'text-[var(--color-primary)] bg-white/10' : 'text-zinc-400 hover:text-white',
@@ -432,7 +432,7 @@ export const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
                 type="button"
                 id="video-fullscreen-btn"
                 onClick={handleToggleFullscreen}
-                aria-label="Toggle fullscreen"
+                aria-label={t('media.fullscreen')}
                 className="hover:text-[var(--color-primary)] transition-colors"
               >
                 <Maximize2 className="w-4 h-4" />
@@ -452,7 +452,7 @@ export const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
             {isOfflineSaved && (
               <span className="inline-flex items-center gap-1 text-[11px] text-[var(--color-success)] font-semibold bg-[var(--color-success)]/10 px-2 py-0.5 rounded-full">
                 <CheckCircle2 className="w-3 h-3" />
-                {isHi ? 'ऑफ़लाइन सुरक्षित' : 'Available Offline'}
+                {t('media.offline')}
               </span>
             )}
           </div>
@@ -474,17 +474,17 @@ export const CourseVideoPlayer: React.FC<CourseVideoPlayerProps> = ({
             {isDownloading ? (
               <>
                 <HardDrive className="w-3.5 h-3.5 animate-spin" />
-                <span>{isHi ? 'डाउनलोड हो रहा है...' : 'Saving (24 MB)...'}</span>
+                <span>{t('media.saving')}</span>
               </>
             ) : isOfflineSaved ? (
               <>
                 <WifiOff className="w-3.5 h-3.5 text-[var(--color-success)]" />
-                <span>{isHi ? 'ऑफ़लाइन हटाएं' : 'Saved (IndexedDB)'}</span>
+                <span>{t('media.saved')}</span>
               </>
             ) : (
               <>
                 <Download className="w-3.5 h-3.5" />
-                <span>{isHi ? 'ऑफ़लाइन सेव करें (2G/3G)' : 'Save Offline (28 MB)'}</span>
+                <span>{t('media.saveOffline')}</span>
               </>
             )}
           </Button>

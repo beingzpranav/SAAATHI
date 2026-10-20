@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Lock, Shield, AlertTriangle, CheckCircle2, Delete } from 'lucide-react';
 import { cn } from '../../lib/cn.js';
 import { useRoomStore } from '../../stores/room.store.js';
+import { useTranslation } from 'react-i18next';
+import { TranslatedText } from '../../components/common/TranslatedText.js';
 
 interface PinLockModalProps {
   isOpen: boolean;
@@ -21,6 +23,7 @@ export const PinLockModal: React.FC<PinLockModalProps> = ({
   accentColor = 'student',
   title = 'Enter your Private PIN',
 }) => {
+  const { t } = useTranslation();
   const [pin, setPin] = useState('');
   const [shakeError, setShakeError] = useState(false);
   const [setupMode, setSetupMode] = useState(false);
@@ -163,18 +166,18 @@ export const PinLockModal: React.FC<PinLockModalProps> = ({
           <h2 className="text-xl font-bold text-[var(--color-text)] text-center font-[var(--font-heading)]">
             {setupMode
               ? setupStep === 'enter'
-                ? 'Create your private PIN'
-                : 'Confirm your PIN'
+                ? <TranslatedText text={t('privateWindow.createPin')} context="app_ui" />
+                : <TranslatedText text={t('privateWindow.confirmPin')} context="app_ui" />
               : title}
           </h2>
           <p className="text-sm text-[var(--color-subtext)] text-center">
             {setupMode
               ? setupStep === 'enter'
-                ? 'Choose a 4-digit PIN to protect your private window.'
-                : 'Re-enter the same PIN to confirm.'
+                ? <TranslatedText text={t('privateWindow.choosePin')} context="app_ui" />
+                : <TranslatedText text={t('privateWindow.reenterPin')} context="app_ui" />
               : isLocked
-                ? 'Your private room is temporarily locked due to 3 failed attempts.'
-                : 'Your private thoughts stay safe. Only you can see them.'}
+                ? <TranslatedText text={t('privateWindow.temporarilyLocked')} context="app_ui" />
+                : <TranslatedText text={t('privateWindow.privateThoughts')} context="app_ui" />}
           </p>
         </div>
 
@@ -186,12 +189,14 @@ export const PinLockModal: React.FC<PinLockModalProps> = ({
               style={{ background: 'var(--color-error-bg)', color: 'var(--color-error)' }}
             >
               <Shield className="w-5 h-5 mx-auto mb-2" />
-              Locked until{' '}
+              <TranslatedText text={t('privateWindow.lockedUntil')} context="app_ui" />{' '}
               {status?.lockedUntil
                 ? new Date(status.lockedUntil).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                 : '—'}
               <br />
-              <span className="text-xs opacity-80">Please wait before trying again.</span>
+              <span className="text-xs opacity-80">
+                <TranslatedText text={t('privateWindow.waitBeforeRetry')} context="app_ui" />
+              </span>
             </div>
             <button
               type="button"
@@ -236,7 +241,7 @@ export const PinLockModal: React.FC<PinLockModalProps> = ({
             {isUnlocked && (
               <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--color-success)' }}>
                 <CheckCircle2 className="w-4 h-4" />
-                Unlocked
+                <TranslatedText text={t('privateWindow.unlocked')} context="app_ui" />
               </div>
             )}
 
@@ -261,7 +266,11 @@ export const PinLockModal: React.FC<PinLockModalProps> = ({
                       isDel && 'text-base',
                       isVerifying && 'opacity-50 cursor-not-allowed',
                     )}
-                    aria-label={isDel ? 'Delete last digit' : `Digit ${key}`}
+                    aria-label={
+                      isDel
+                        ? t('privateWindow.deleteDigit')
+                        : `${t('privateWindow.digit')} ${key}`
+                    }
                   >
                     {isDel ? <Delete className="w-5 h-5" /> : key}
                   </button>
@@ -274,7 +283,7 @@ export const PinLockModal: React.FC<PinLockModalProps> = ({
               onClick={onCancel}
               className="text-sm text-[var(--color-subtext)] hover:text-[var(--color-text)] transition-colors mt-1"
             >
-              Cancel
+              <TranslatedText text={t('privateWindow.cancel')} context="app_ui" />
             </button>
           </div>
         )}

@@ -12,8 +12,7 @@ import { Link } from 'react-router-dom';
 import { Compass, MapPin, SlidersHorizontal, ArrowRight, Sparkles } from 'lucide-react';
 
 export const TradeExplorerPage: React.FC = () => {
-  const { i18n } = useTranslation();
-  const isHi = i18n.language === 'hi';
+  const { t } = useTranslation();
   const { household, setHousehold } = useSessionStore();
 
   const [trades, setTrades] = useState<TradeSummary[]>([]);
@@ -178,13 +177,11 @@ export const TradeExplorerPage: React.FC = () => {
           <div className="flex items-center gap-2">
             <Compass className="w-6 h-6 text-[#C4562B] dark:text-[#E27E53]" aria-hidden="true" />
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#1F1A17] dark:text-[#FFFDF9]">
-              {isHi ? 'सत्यापित ट्रेड एक्सप्लोरर' : 'Verified Vocational Trade Explorer'}
+              {t('trades.explorerTitle')}
             </h1>
           </div>
           <p className="text-sm text-[#6A5B55] dark:text-[#B8AAA3] mt-1">
-            {isHi
-              ? 'राष्ट्रीय कौशल योग्यता ढांचा (NSQF) के आधार पर सत्यापित स्थानीय वेतन और प्लेसमेंट आंकड़े।'
-              : 'Verified local salaries and placement rates grounded in NSQF vocational pathways.'}
+            {t('trades.explorerSubtitle')}
           </p>
         </div>
 
@@ -195,7 +192,7 @@ export const TradeExplorerPage: React.FC = () => {
             <span className="font-semibold">
               {household
                 ? `${household.district} (${household.block})`
-                : 'Varanasi (Kashi Vidyapeeth)'}
+                : t('trades.defaultLocation')}
             </span>
           </div>
 
@@ -203,12 +200,8 @@ export const TradeExplorerPage: React.FC = () => {
 
           <span className="text-[#6A5B55] dark:text-[#B8AAA3]">
             {household?.incomeBand === 'BELOW_1_5L'
-              ? isHi
-                ? '100% निशुल्क ट्यूशन'
-                : '100% Free Tuition'
-              : isHi
-                ? 'रियायती सरकारी फीस'
-                : 'Subsidized Fee'}
+              ? t('trades.freeTuition')
+              : t('trades.subsidizedFee')}
           </span>
 
           <Button
@@ -217,7 +210,7 @@ export const TradeExplorerPage: React.FC = () => {
             asChild
             className="h-6 px-2 text-xs text-[#C4562B] dark:text-[#E27E53]"
           >
-            <Link to="/intake">{isHi ? 'स्थान बदलें' : 'Change Location'}</Link>
+            <Link to="/intake">{t('trades.changeLocation')}</Link>
           </Button>
         </div>
       </div>
@@ -226,30 +219,28 @@ export const TradeExplorerPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row items-center gap-3 p-3.5 rounded-xl bg-white dark:bg-[#221B18] border border-[#E8DDD2] dark:border-[#3D3430]">
         <div className="flex items-center gap-2 text-xs font-bold text-[#554640] dark:text-[#C5B8B1] self-start sm:self-center shrink-0">
           <SlidersHorizontal className="w-4 h-4 text-[#C4562B]" aria-hidden="true" />
-          <span>{isHi ? 'फ़िल्टर करें:' : 'Filter By:'}</span>
+          <span>{t('trades.filterBy')}</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
           <Select
             options={[
-              { value: 'ALL', label: isHi ? 'सभी क्षेत्र (All Sectors)' : 'All Sectors' },
+              { value: 'ALL', label: t('trades.allSectors') },
               {
                 value: 'power',
-                label: isHi ? 'बिजली और ऊर्जा (Power & Electrical)' : 'Power & Energy',
+                label: t('trades.powerEnergy'),
               },
               {
                 value: 'solar',
-                label: isHi ? 'हरित ऊर्जा और सोलर (Solar & Green Energy)' : 'Green Energy & Solar',
+                label: t('trades.greenEnergy'),
               },
               {
                 value: 'healthcare',
-                label: isHi ? 'स्वास्थ्य सेवा (Healthcare & Paramedical)' : 'Healthcare',
+                label: t('trades.healthcare'),
               },
               {
                 value: 'capital',
-                label: isHi
-                  ? 'सीएनसी और सटीक विनिर्माण (CNC & Manufacturing)'
-                  : 'CNC & Manufacturing',
+                label: t('trades.manufacturing'),
               },
             ]}
             value={selectedSector}
@@ -260,19 +251,19 @@ export const TradeExplorerPage: React.FC = () => {
             options={[
               {
                 value: 'ALL',
-                label: isHi ? 'सभी शैक्षणिक स्तर (All Education)' : 'All Eligibility',
+                label: t('trades.allEligibility'),
               },
               {
                 value: 'CLASS_8',
-                label: isHi ? 'कक्षा 8 उत्तीर्ण (Class 8 Pass)' : 'Class 8 Pass',
+                label: t('trades.class8'),
               },
               {
                 value: 'CLASS_10',
-                label: isHi ? 'कक्षा 10 उत्तीर्ण (Class 10 Pass)' : 'Class 10 Pass',
+                label: t('trades.class10'),
               },
               {
                 value: 'CLASS_12',
-                label: isHi ? 'कक्षा 12 उत्तीर्ण (Class 12 Pass)' : 'Class 12 Pass',
+                label: t('trades.class12'),
               },
             ]}
             value={selectedEducation}
@@ -291,13 +282,11 @@ export const TradeExplorerPage: React.FC = () => {
         </div>
       ) : filteredTrades.length === 0 ? (
         <EmptyState
-          title={isHi ? 'कोई ट्रेड नहीं मिला' : 'No Vocational Trades Found'}
+          title={t('trades.noTrades')}
           description={
-            isHi
-              ? 'चयनित फ़िल्टर के साथ कोई ट्रेड मेल नहीं खाता। कृपया फ़िल्टर रीसेट करें।'
-              : 'No trades match the selected criteria. Try resetting the filters.'
+            t('trades.noTradesDescription')
           }
-          actionLabel={isHi ? 'फ़िल्टर रीसेट करें' : 'Reset Filters'}
+          actionLabel={t('trades.resetFilters')}
           onAction={() => {
             setSelectedSector('ALL');
             setSelectedEducation('ALL');
@@ -321,18 +310,16 @@ export const TradeExplorerPage: React.FC = () => {
         <div>
           <div className="flex items-center gap-2 text-[#993E1B] dark:text-[#EFA531] font-bold text-sm">
             <Sparkles className="w-4 h-4" aria-hidden="true" />
-            <span>{isHi ? 'पारिवारिक निर्णय समर्थन' : 'Family Decision Support'}</span>
+            <span>{t('trades.familyDecisionSupport')}</span>
           </div>
           <p className="text-sm text-[#5A382C] dark:text-[#E2D4CD] mt-1 max-w-xl">
-            {isHi
-              ? 'विद्यार्थी और अभिभावक अपनी प्राथमिकताओं को अपने-अपने निजी विंडो में दर्ज कर सकते हैं, जिसे साथ मिलकर संयुक्त कक्ष (Joint Room) में साझा किया जाएगा।'
-              : 'Learners and parents can record their priorities in private windows before coming together in the Joint Room.'}
+            {t('trades.familyDecisionDescription')}
           </p>
         </div>
 
         <Button variant="primary" asChild className="shrink-0">
           <Link to="/intake" className="flex items-center gap-1.5">
-            <span>{isHi ? 'परामर्श शुरू करें' : 'Start Counselling'}</span>
+            <span>{t('trades.startCounselling')}</span>
             <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </Link>
         </Button>

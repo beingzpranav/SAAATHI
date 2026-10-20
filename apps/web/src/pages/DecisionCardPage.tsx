@@ -22,7 +22,7 @@ import type { DecisionCardDto, SmsSummaryResponse } from '@saathi/shared';
 import { cn } from '../lib/cn.js';
 
 export const DecisionCardPage: React.FC = () => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isHi = Boolean(i18n?.language?.startsWith('hi'));
   const { household } = useSessionStore();
 
@@ -138,7 +138,7 @@ export const DecisionCardPage: React.FC = () => {
   if (isLoading || !card) {
     return (
       <div className="py-16 text-center text-xs text-[var(--color-subtext)]">
-        {isHi ? 'निर्णय कार्ड तैयार किया जा रहा है...' : 'Generating Family Decision Card...'}
+        {t('decisionCard.generating')}
       </div>
     );
   }
@@ -150,10 +150,10 @@ export const DecisionCardPage: React.FC = () => {
         <div className="flex items-center gap-2">
           <Badge variant="parent" size="sm">
             <ShieldCheck className="w-3.5 h-3.5 mr-1" />
-            {isHi ? 'सत्यापित निर्णय' : 'Verified Decision'}
+            {t('decisionCard.verifiedDecision')}
           </Badge>
           <span className="text-xs text-[var(--color-subtext)]">
-            {isHi ? 'प्रमाणित व अपरिवर्तनीय डिजिटल दस्तावेज' : 'Cryptographically stamped & official'}
+            {t('decisionCard.officialDocument')}
           </span>
         </div>
 
@@ -167,7 +167,7 @@ export const DecisionCardPage: React.FC = () => {
             className="gap-1.5"
           >
             <Printer className="w-4 h-4 text-[var(--color-primary)]" />
-            <span>{isHi ? 'कार्ड प्रिंट करें' : 'Print Official Card'}</span>
+            <span>{t('decisionCard.print')}</span>
           </Button>
 
           {/* Bilingual SMS Summary */}
@@ -179,7 +179,7 @@ export const DecisionCardPage: React.FC = () => {
             className="gap-1.5"
           >
             <MessageSquare className="w-4 h-4 text-[var(--color-student)]" />
-            <span>{isHi ? 'SMS सारांश (साधारण फोन)' : 'SMS Summary'}</span>
+            <span>{t('decisionCard.smsSummary')}</span>
           </Button>
 
           {/* WhatsApp Share */}
@@ -196,7 +196,7 @@ export const DecisionCardPage: React.FC = () => {
             className="gap-1.5 bg-[#25D366] hover:bg-[#20ba59] text-white border-transparent"
           >
             <Share2 className="w-4 h-4" />
-            <span>{isHi ? 'व्हाट्सएप पर साझा करें' : 'WhatsApp Share'}</span>
+            <span>{t('decisionCard.whatsapp')}</span>
           </Button>
         </div>
       </div>
@@ -217,19 +217,17 @@ export const DecisionCardPage: React.FC = () => {
                 NATIONAL COUNCIL FOR VOCATIONAL EDUCATION AND TRAINING (NCVET) & MSDE
               </span>
               <h1 className="text-xl sm:text-2xl font-serif font-black tracking-tight text-[#1F1A17] dark:text-white">
-                {isHi ? 'आधिकारिक पारिवारिक व्यावसायिक निर्णय पत्र' : 'OFFICIAL VOCATIONAL DECISION CERTIFICATE'}
+                {t('decisionCard.certificate')}
               </h1>
               <p className="text-xs text-[#6A5B55] dark:text-[#B8AAA3]">
-                {isHi
-                  ? 'छात्र और अभिभावक की संयुक्त सहमति एवं डेटा-सत्यापित परामर्श से प्रमाणित'
-                  : 'Certified under joint student-parent consensus & grounded government data'}
+                {t('decisionCard.consensus')}
               </p>
             </div>
           </div>
 
           <div className="text-right shrink-0">
             <span className="text-[10px] uppercase font-bold text-[#6A5B55] dark:text-[#A89A92] block">
-              CERTIFICATE ID
+              {t('decisionCard.certificateId')}
             </span>
             <span className="font-mono text-sm font-bold text-[#C4562B]">
               SAATHI-{card.id.slice(0, 12).toUpperCase()}
@@ -246,18 +244,18 @@ export const DecisionCardPage: React.FC = () => {
           <div className="p-5 rounded-xl border border-[#E8DDD2] dark:border-[#3D3430] bg-[#FFFDF9] dark:bg-[#251E1A] space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#C4562B]">
-                CHOSEN VOCATIONAL TRADE
+                {t('decisionCard.chosenTrade')}
               </span>
               <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-[#F8EDE7] dark:bg-[#34221A] text-[#993E1B]">
                 NSQF Level {card.nsqfLevel}
               </span>
             </div>
             <h2 className="text-lg font-bold font-serif text-[#1F1A17] dark:text-white">
-              {isHi ? card.chosenTradeTitleHi : card.chosenTradeTitleEn}
+              {i18n.language.startsWith('hi') ? card.chosenTradeTitleHi : card.chosenTradeTitleEn}
             </h2>
             <div className="flex items-center gap-4 text-xs text-[#6A5B55] dark:text-[#B8AAA3] pt-1">
-              <span>Duration: <strong>24 Months</strong></span>
-              <span>Sector: <strong>Power & Renewable Energy</strong></span>
+              <span>{t('decisionCard.duration')}: <strong>24 Months</strong></span>
+              <span>{t('decisionCard.sector')}: <strong>Power & Renewable Energy</strong></span>
             </div>
           </div>
 
@@ -265,10 +263,10 @@ export const DecisionCardPage: React.FC = () => {
           <div className="p-5 rounded-xl border border-[#E8DDD2] dark:border-[#3D3430] bg-[#FFFDF9] dark:bg-[#251E1A] space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#2F7D5C]">
-                DESIGNATED TRAINING PROVIDER
+                {t('decisionCard.provider')}
               </span>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                GOVERNMENT ITI
+                {t('decisionCard.governmentIti')}
               </span>
             </div>
             <h3 className="text-lg font-bold font-serif text-[#1F1A17] dark:text-white">
@@ -280,7 +278,7 @@ export const DecisionCardPage: React.FC = () => {
             </p>
             <p className="text-xs text-[#6A5B55] dark:text-[#B8AAA3] flex items-center gap-1.5">
               <Phone className="w-3.5 h-3.5 text-[#2F7D5C] shrink-0" />
-              <span>Contact: {card.chosenProviderContact}</span>
+              <span>{t('decisionCard.contact')}: {card.chosenProviderContact}</span>
             </p>
           </div>
         </div>
@@ -290,20 +288,20 @@ export const DecisionCardPage: React.FC = () => {
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             <span className="text-sm font-bold uppercase tracking-wide">
-              {isHi ? 'सरकारी वित्तीय अधिकार व स्टाइपेंड गारंटी' : 'Statutory Financial Entitlements Guarantee'}
+              {t('decisionCard.entitlements')}
             </span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs pt-1">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
               <span>
-                <strong>100% Tuition Fee Waiver:</strong> {isHi ? 'सरकारी नियमानुसार निःशुल्क प्रशिक्षण लागू' : 'Full tuition exemption verified'}
+                <strong>{t('decisionCard.tuitionWaiver')}:</strong> {t('decisionCard.tuitionWaiverDetail')}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
               <span>
-                <strong>NAPS Direct Benefit Transfer (DBT):</strong> ₹{card.napsStipendMonthly}/month government co-funded stipend during apprenticeship.
+                <strong>{t('decisionCard.dbt')}:</strong> {t('decisionCard.stipendDetail', { amount: `₹${card.napsStipendMonthly}` })}
               </span>
             </div>
           </div>
@@ -312,7 +310,7 @@ export const DecisionCardPage: React.FC = () => {
         {/* Agreed Action Items Checklist */}
         <div className="space-y-3">
           <h4 className="text-xs font-bold uppercase tracking-wider text-[#6A5B55] dark:text-[#A89A92]">
-            {isHi ? 'सहमति आधारित कार्य सूची (चेकलिस्ट)' : 'Agreed Next Steps & Application Checklist'}
+            {t('decisionCard.nextSteps')}
           </h4>
           <div className="space-y-2">
             {card.agreedActions.map((action, idx) => (
@@ -348,7 +346,7 @@ export const DecisionCardPage: React.FC = () => {
         {card.counsellorNotes && (
           <div className="p-4 rounded-xl border border-[#E8DDD2] dark:border-[#3D3430] bg-[#FAF6EE] dark:bg-[#201A17] text-xs space-y-1">
             <span className="font-bold text-[#C4562B] block">
-              {isHi ? 'काउंसलर पृष्ठांकन व टिप्पणियां:' : 'Counsellor Endorsement & Notes:'}
+              {t('decisionCard.counsellorNotes')}
             </span>
             <p className="text-[#4A3D37] dark:text-[#C5B8B1] italic">&quot;{card.counsellorNotes}&quot;</p>
             <p className="text-[11px] text-[#6A5B55] dark:text-[#8C7E77] pt-1">
@@ -403,7 +401,7 @@ export const DecisionCardPage: React.FC = () => {
       <Modal
         isOpen={isSmsModalOpen}
         onClose={() => setIsSmsModalOpen(false)}
-        title={isHi ? 'साधारण फोन के लिए SMS सारांश' : 'Offline / Feature Phone SMS Summary'}
+        title={t('decisionCard.smsModalTitle')}
         description={
           isHi
             ? 'बिना स्मार्टफोन या इंटरनेट वाले परिवारों के लिए द्विभाषी टेक्स्ट सारांश'

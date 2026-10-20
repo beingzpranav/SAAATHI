@@ -11,7 +11,7 @@ export interface NsqfLadderProps {
 }
 
 export const NsqfLadder: React.FC<NsqfLadderProps> = ({ steps, tradeTitle, className }) => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isHi = i18n.language === 'hi';
 
   return (
@@ -20,14 +20,14 @@ export const NsqfLadder: React.FC<NsqfLadderProps> = ({ steps, tradeTitle, class
         'w-full bg-[#FFFDF9] dark:bg-[#1F1A17] border border-[#E8DDD2] dark:border-[#3D3430] rounded-xl p-4 sm:p-6 shadow-sm',
         className,
       )}
-      aria-label={isHi ? 'एनएसक्यूएफ करियर सीढ़ी' : 'NSQF Career Progression Ladder'}
+      aria-label={t('jointRoom.nsqfCareerLadder')}
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 mb-6 border-b border-[#E8DDD2] dark:border-[#3D3430]">
         <div>
           <div className="flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-[#C4562B] dark:text-[#E27E53]" aria-hidden="true" />
             <h3 className="font-serif text-lg sm:text-xl font-bold text-[#1F1A17] dark:text-[#FFFDF9]">
-              {isHi ? 'एनएसक्यूएफ करियर सीढ़ी' : 'NSQF Career Progression Ladder'}
+              {t('jointRoom.nsqfCareerLadder')}
             </h3>
           </div>
           {tradeTitle && (
@@ -42,7 +42,7 @@ export const NsqfLadder: React.FC<NsqfLadderProps> = ({ steps, tradeTitle, class
         <div className="flex items-center gap-2 text-xs font-medium text-[#6A5B55] dark:text-[#B8AAA3] bg-[#F7F3EE] dark:bg-[#2A2320] px-3 py-1.5 rounded-md self-start sm:self-auto">
           <Award className="w-4 h-4 text-[#EFA531]" aria-hidden="true" />
           <span>
-            {isHi ? 'राष्ट्रीय कौशल योग्यता ढांचा' : 'National Skills Qualifications Framework'}
+            {t('ladder.framework')}
           </span>
         </div>
       </div>
@@ -90,12 +90,12 @@ export const NsqfLadder: React.FC<NsqfLadderProps> = ({ steps, tradeTitle, class
                     {isStart && (
                       <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded bg-[#EFA531]/20 text-[#855403] dark:text-[#FAD58F] border border-[#EFA531]/40">
                         <CheckCircle2 className="w-3 h-3 text-[#EFA531]" aria-hidden="true" />
-                        {isHi ? 'आपका प्रवेश बिंदु' : 'Learner Starting Step'}
+                        {t('ladder.starting')}
                       </span>
                     )}
                     {isHighest && (
                       <span className="inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded bg-[#2F7D5C]/15 text-[#1E573F] dark:text-[#64C89D] border border-[#2F7D5C]/30">
-                        {isHi ? 'वरिष्ठ विशेषज्ञ' : 'Lead Specialist'}
+                        {t('ladder.lead')}
                       </span>
                     )}
                   </div>
@@ -106,7 +106,7 @@ export const NsqfLadder: React.FC<NsqfLadderProps> = ({ steps, tradeTitle, class
 
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-xs text-[#7A6B63] dark:text-[#A89A92]">
                     <span className="inline-flex items-center gap-1">
-                      <span className="font-semibold">{isHi ? 'योग्यता:' : 'Eligibility:'}</span>
+                      <span className="font-semibold">{t('ladder.eligibility')}</span>
                       <span>{isHi ? step.minExperienceHi : step.minExperienceEn}</span>
                     </span>
                   </div>
@@ -116,12 +116,12 @@ export const NsqfLadder: React.FC<NsqfLadderProps> = ({ steps, tradeTitle, class
               {/* Verified Median Monthly Salary */}
               <div className="w-full sm:w-auto sm:text-right pt-2 sm:pt-0 border-t sm:border-t-0 border-[#E8DDD2] dark:border-[#3D3430] shrink-0">
                 <span className="block text-xs uppercase tracking-wider text-[#6A5B55] dark:text-[#B8AAA3]">
-                  {isHi ? 'सत्यापित मध्यमान वेतन' : 'Verified Median Monthly'}
+                  {t('ladder.median')}
                 </span>
                 <span className="font-mono text-base sm:text-lg font-bold text-[#2F7D5C] dark:text-[#50AF85]">
                   ₹{step.medianSalaryMonthly.toLocaleString('en-IN')}{' '}
                   <span className="text-xs font-normal text-[#6A5B55] dark:text-[#B8AAA3]">
-                    {isHi ? '/माह' : '/mo'}
+                    {t('tradeDetail.perMonth')}
                   </span>
                 </span>
               </div>
@@ -134,13 +134,11 @@ export const NsqfLadder: React.FC<NsqfLadderProps> = ({ steps, tradeTitle, class
         <div className="flex items-center gap-1.5">
           <ChevronRight className="w-4 h-4 text-[#C4562B] dark:text-[#E27E53]" aria-hidden="true" />
           <span>
-            {isHi
-              ? 'प्रगति समय: प्रत्येक स्तर के बीच 1 से 2 वर्ष का व्यावहारिक औद्योगिक अनुभव आवश्यक है।'
-              : 'Progression timeframe: 1-2 years practical industry experience typically required between levels.'}
+            {t('ladder.progression')}
           </span>
         </div>
         <span className="font-mono text-[11px] text-[#7A6B63] dark:text-[#A89A92]">
-          {isHi ? 'स्रोत: एमएसडीई एनएसक्यूएफ 2026' : 'Ref: MSDE NSQF Gazette 2026'}
+          {t('ladder.reference')}
         </span>
       </div>
     </div>

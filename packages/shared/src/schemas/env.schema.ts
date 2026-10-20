@@ -16,6 +16,9 @@ export const apiEnvSchema = z.object({
     .string()
     .min(32, 'JWT_REFRESH_SECRET must be at least 32 characters for security'),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
+  // Translation micro-service (optional — falls back to no-op when absent)
+  TRANSLATION_SERVICE_URL: z.string().url().optional().default('http://localhost:8000'),
+  TRANSLATION_INTERNAL_SECRET: z.string().optional().default(''),
 });
 
 export type ApiEnv = z.infer<typeof apiEnvSchema>;

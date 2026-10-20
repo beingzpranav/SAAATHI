@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginInput, type UserProfile } from '@saathi/shared';
@@ -14,6 +15,7 @@ interface LoginFormProps {
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
+  const { t } = useTranslation();
   const [serverError, setServerError] = useState<string | null>(null);
   const setUser = useSessionStore((state) => state.setUser);
 
@@ -40,7 +42,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       if (err instanceof ApiClientError) {
         setServerError(err.message);
       } else {
-        setServerError('An unexpected error occurred while logging in.');
+        setServerError(t('auth.loginUnexpectedError'));
       }
     }
   };
@@ -63,7 +65,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       )}
 
       <Input
-        label="Email address"
+        label={t('auth.email')}
         type="email"
         placeholder="e.g. learner@saathi.demo"
         autoComplete="email"
@@ -73,7 +75,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       />
 
       <Input
-        label="Password"
+        label={t('auth.password')}
         type="password"
         placeholder="••••••••"
         autoComplete="current-password"
@@ -90,7 +92,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         rightIcon={<ArrowRight className="w-5 h-5" />}
         className="w-full mt-2"
       >
-        Sign in to SAATHI
+        {t('auth.signInToSaathi')}
       </Button>
 
       {/* Demo Credentials Helper */}
@@ -98,7 +100,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         <div className="flex items-center justify-between text-xs font-semibold text-[#6A5B55] dark:text-[#B8AAA3]">
           <span className="flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-[#2F7D5C]" aria-hidden="true" />
-            <span>Fast-Login Demo Accounts</span>
+            <span>{t('auth.demoAccounts')}</span>
           </span>
           <Badge variant="demo" size="sm">
             DEMO
@@ -111,7 +113,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
             size="sm"
             onClick={() => fillDemoAccount('learner@saathi.demo')}
           >
-            Learner (Rohan)
+            {t('auth.learnerDemo')}
           </Button>
           <Button
             type="button"
@@ -119,7 +121,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
             size="sm"
             onClick={() => fillDemoAccount('parent@saathi.demo')}
           >
-            Parent (Manoj)
+            {t('auth.parentDemo')}
           </Button>
           <Button
             type="button"
@@ -127,7 +129,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
             size="sm"
             onClick={() => fillDemoAccount('counsellor@saathi.demo')}
           >
-            Counsellor
+            {t('auth.counsellor')}
           </Button>
           <Button
             type="button"
@@ -135,7 +137,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
             size="sm"
             onClick={() => fillDemoAccount('admin@saathi.demo')}
           >
-            Administrator
+            {t('auth.administrator')}
           </Button>
         </div>
       </div>

@@ -49,6 +49,7 @@ export const LandingPage: React.FC = () => {
             {t('landing.heroSubtitle')}
           </p>
 
+
           <div className="flex flex-wrap items-center gap-4 pt-2">
             <Button
               variant="primary"

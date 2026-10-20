@@ -43,7 +43,7 @@ export const ConcernsCheckpointModal: React.FC<ConcernsCheckpointModalProps> = (
   onLaunchLiveCall,
 }) => {
   const navigate = useNavigate();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isHi = Boolean(i18n?.language?.startsWith('hi'));
   const { household } = useSessionStore();
 
@@ -196,11 +196,9 @@ export const ConcernsCheckpointModal: React.FC<ConcernsCheckpointModalProps> = (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={isHi ? 'चिंता समाधान चेकपॉइंट' : 'Concerns Answered Checkpoint'}
+      title={t('checkpoint.title')}
       description={
-        isHi
-          ? 'संयुक्त सत्र के बाद परिवार की चिंताओं का पुनर्मूल्यांकन करें और निर्णय कार्ड के लिए सहमति दर्ज करें।'
-          : 'Re-evaluate family anxieties after joint deliberation to certify alignment for the Decision Card.'
+        t('checkpoint.description')
       }
       size="lg"
     >
@@ -222,7 +220,7 @@ export const ConcernsCheckpointModal: React.FC<ConcernsCheckpointModalProps> = (
                 <ShieldAlert className="w-5 h-5 text-[var(--color-student)]" />
               )}
               <span className="text-sm font-bold text-[var(--color-text)]">
-                {isHi ? 'पारिवारिक तत्परता स्कोर' : 'Family Alignment & Readiness Score'}
+                {t('checkpoint.readiness')}
               </span>
             </div>
             <span
@@ -263,7 +261,7 @@ export const ConcernsCheckpointModal: React.FC<ConcernsCheckpointModalProps> = (
         {/* Concerns List with Interactive Sliders */}
         {isLoading ? (
           <div className="py-8 text-center text-xs text-[var(--color-subtext)]">
-            {isHi ? 'चिंताएं लोड हो रही हैं...' : 'Loading household concerns...'}
+            {t('checkpoint.loading')}
           </div>
         ) : (
           <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-1">
@@ -299,7 +297,7 @@ export const ConcernsCheckpointModal: React.FC<ConcernsCheckpointModalProps> = (
                     )}
                   >
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>{item.isResolved ? (isHi ? 'सुलझ गया' : 'Resolved') : (isHi ? 'चिंता बाकी' : 'Open')}</span>
+                    <span>{item.isResolved ? t('checkpoint.resolved') : t('checkpoint.open')}</span>
                   </button>
                 </div>
 
@@ -307,18 +305,18 @@ export const ConcernsCheckpointModal: React.FC<ConcernsCheckpointModalProps> = (
                 <div className="pt-2 border-t border-[var(--color-border)] space-y-2">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-[var(--color-subtext)]">
-                      {isHi ? 'प्रारंभिक चिंता स्तर:' : 'Initial Anxiety:'}{' '}
+                      {t('checkpoint.initial')}{' '}
                       <strong className="text-[var(--color-text)]">{item.preScore}/5</strong>
                     </span>
                     <span className="text-[var(--color-subtext)]">
-                      {isHi ? 'वर्तमान चिंता स्तर:' : 'Current Anxiety:'}{' '}
+                      {t('checkpoint.current')}{' '}
                       <strong
                         className={cn(
                           'font-mono font-bold',
                           item.postScore <= 2 ? 'text-[var(--color-success)]' : 'text-[var(--color-error)]',
                         )}
                       >
-                        {item.postScore}/5 {item.postScore <= 2 ? (isHi ? '(शांत)' : '(Resolved)') : (isHi ? '(चिंता)' : '(Concerned)')}
+                        {item.postScore}/5 {item.postScore <= 2 ? t('checkpoint.calm') : t('checkpoint.concerned')}
                       </strong>
                     </span>
                   </div>
@@ -334,9 +332,9 @@ export const ConcernsCheckpointModal: React.FC<ConcernsCheckpointModalProps> = (
                     aria-label={`Post-session score for ${item.questionKey}`}
                   />
                   <div className="flex justify-between text-[10px] text-[var(--color-subtext)]">
-                    <span>1: {isHi ? 'पूरी तरह निश्चिंत' : 'Completely Satisfied'}</span>
-                    <span>3: {isHi ? 'मध्यम' : 'Neutral'}</span>
-                    <span>5: {isHi ? 'अत्यधिक चिंतित' : 'Still Anxious'}</span>
+                    <span>1: {t('checkpoint.satisfied')}</span>
+                    <span>3: {t('checkpoint.neutral')}</span>
+                    <span>5: {t('checkpoint.anxious')}</span>
                   </div>
                 </div>
 
@@ -362,7 +360,7 @@ export const ConcernsCheckpointModal: React.FC<ConcernsCheckpointModalProps> = (
         {/* Footer Actions */}
         <div className="pt-4 border-t border-[var(--color-border)] flex flex-col sm:flex-row items-center justify-between gap-3">
           <Button variant="ghost" size="sm" onClick={onClose}>
-            {isHi ? 'रद्द करें' : 'Close'}
+            {t('checkpoint.close')}
           </Button>
 
           <div className="flex flex-wrap items-center gap-2">
@@ -380,7 +378,7 @@ export const ConcernsCheckpointModal: React.FC<ConcernsCheckpointModalProps> = (
                 className="gap-1.5 text-[var(--color-primary)] border-[var(--color-primary)]"
               >
                 <PhoneCall className="w-3.5 h-3.5" />
-                <span>{isHi ? 'काउंसलर से बात करें' : 'Talk to Counsellor'}</span>
+                <span>{t('checkpoint.counsellor')}</span>
               </Button>
             )}
 
@@ -418,7 +416,7 @@ export const ConcernsCheckpointModal: React.FC<ConcernsCheckpointModalProps> = (
                 className="gap-1.5 bg-[var(--color-parent)] hover:bg-[var(--color-parent-dark)] text-white"
               >
                 <FileCheck className="w-3.5 h-3.5" />
-                <span>{isHi ? 'आधिकारिक निर्णय कार्ड खोलें' : 'Open Family Decision Card'}</span>
+                <span>{t('checkpoint.decision')}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Button>
             )}

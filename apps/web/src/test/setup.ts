@@ -1,4 +1,8 @@
 import '@testing-library/jest-dom';
+import i18n from '../lib/i18n.js';
+
+// Keep component tests deterministic even when a previous test changes the UI language.
+void i18n.changeLanguage('en');
 
 // Polyfill window.matchMedia for JSDOM
 Object.defineProperty(window, 'matchMedia', {

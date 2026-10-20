@@ -9,7 +9,15 @@ import { AskSaathiCard } from '../features/joint-room/AskSaathiCard.js';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string) => key,
+    t: (key: string) =>
+      ({
+        'jointRoom.nsqfCareerLadder': 'NSQF Career Progression Ladder',
+        'jointRoom.sharedConcernsOnly': 'Shared Concerns Only',
+        'jointRoom.privacyProtected': 'Zero Unshared Leakage',
+        'jointRoom.familyRealtimeChat': 'Family Real-Time Chat',
+        'jointRoom.askSaathi': 'Ask Saathi Grounded AI',
+        'jointRoom.askPlaceholder': 'Ask about starting salary, training fees, stipends, or career growth…',
+      })[key] ?? key,
     i18n: { language: 'en', changeLanguage: vi.fn() },
   }),
 }));
@@ -45,7 +53,7 @@ describe('Joint Room Features', () => {
   it('renders JointChatPanel with quick prompt buttons', () => {
     render(<JointChatPanel />);
     expect(screen.getByText(/Family Real-Time Chat/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Type a message or ask @ai/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('chat.placeholder')).toBeInTheDocument();
     expect(screen.getByText(/What is the median salary for Electrician in our district\?/i)).toBeInTheDocument();
   });
 

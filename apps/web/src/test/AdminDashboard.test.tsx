@@ -1,14 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { AdminDashboardPage } from '../pages/AdminDashboardPage.js';
-
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-    i18n: { language: 'en', changeLanguage: vi.fn() },
-  }),
-}));
 
 describe('Phase 7: AdminDashboardPage', () => {
   it('renders the admin dashboard header and privacy shield', async () => {

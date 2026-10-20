@@ -126,8 +126,7 @@ class ConcernController {
       await concernRepository.deleteById(id);
 
       res.status(HTTP_STATUS.OK).json({
-        success: true,
-        message: 'Concern deleted successfully',
+        data: undefined,
         meta: { requestId, timestamp: new Date().toISOString() },
       });
     } catch (error) {

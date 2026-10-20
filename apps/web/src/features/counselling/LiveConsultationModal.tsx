@@ -33,7 +33,7 @@ export const LiveConsultationModal: React.FC<LiveConsultationModalProps> = ({
   householdName = 'Sharma Family',
   initialMode = 'VIDEO',
 }) => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isHi = Boolean(i18n?.language?.startsWith('hi'));
 
   const [mode, setMode] = useState<'VIDEO' | 'AUDIO_ONLY'>(initialMode);
@@ -171,11 +171,9 @@ export const LiveConsultationModal: React.FC<LiveConsultationModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={handleEndCall}
-      title={isHi ? 'लाइव परामर्श सत्र' : 'Live Vocational Consultation'}
+      title={t('live.title')}
       description={
-        isHi
-          ? 'सत्यापित काउंसलर के साथ रीयल-टाइम आमने-सामने मार्गदर्शन (कम बैंडविड्थ ऑडियो फ़ॉलबैक समर्थित)'
-          : 'Direct WebRTC consultation with government-certified vocational mentor with 2G/3G audio fallback.'
+        t('live.description')
       }
       size="xl"
     >
@@ -204,12 +202,12 @@ export const LiveConsultationModal: React.FC<LiveConsultationModalProps> = ({
               {mode === 'AUDIO_ONLY' ? (
                 <>
                   <Headphones className="w-3 h-3" />
-                  <span>{isHi ? 'ऑडियो फ़ॉलबैक (16 kbps)' : 'Audio Fallback (16 kbps)'}</span>
+                  <span>{t('live.audioFallback')}</span>
                 </>
               ) : (
                 <>
                   <Wifi className="w-3 h-3" />
-                  <span>{isHi ? '4G/ब्रॉडबैंड (HD वीडियो)' : '4G HD Video'}</span>
+                  <span>{t('live.hdVideo')}</span>
                 </>
               )}
             </span>
@@ -220,7 +218,7 @@ export const LiveConsultationModal: React.FC<LiveConsultationModalProps> = ({
               onClick={handleCopyLink}
               id="live-call-copy-link-btn"
               className="inline-flex items-center gap-1 text-[11px] text-[var(--color-subtext)] hover:text-[var(--color-text)] bg-[var(--color-surface)] border border-[var(--color-border)] px-2 py-1 rounded-lg"
-              title="Copy session link"
+              title={t('live.copyLink')}
             >
               {copied ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
               <span className="font-mono">{meetingRoomId.slice(0, 14)}...</span>
@@ -305,7 +303,7 @@ export const LiveConsultationModal: React.FC<LiveConsultationModalProps> = ({
             type="button"
             id="live-call-toggle-mic-btn"
             onClick={handleToggleMute}
-            aria-label={isMuted ? 'Unmute microphone' : 'Mute microphone'}
+            aria-label={isMuted ? t('live.unmute') : t('live.mute')}
             className={cn(
               'p-3.5 rounded-xl text-white transition-all shadow-md',
               isMuted ? 'bg-red-600 hover:bg-red-700' : 'bg-zinc-800 hover:bg-zinc-700',
@@ -319,7 +317,7 @@ export const LiveConsultationModal: React.FC<LiveConsultationModalProps> = ({
             type="button"
             id="live-call-toggle-video-btn"
             onClick={handleToggleVideo}
-            aria-label={isVideoOff ? 'Turn video on' : 'Turn video off'}
+            aria-label={isVideoOff ? t('live.videoOn') : t('live.videoOff')}
             className={cn(
               'p-3.5 rounded-xl text-white transition-all shadow-md',
               isVideoOff ? 'bg-red-600 hover:bg-red-700' : 'bg-zinc-800 hover:bg-zinc-700',
@@ -342,7 +340,7 @@ export const LiveConsultationModal: React.FC<LiveConsultationModalProps> = ({
             )}
           >
             <Headphones className="w-4 h-4" />
-            <span>{mode === 'AUDIO_ONLY' ? (isHi ? 'वीडियो चालू करें' : 'Switch to Video') : (isHi ? '2G/3G ऑडियो मोड' : 'Low-Bandwidth Audio Mode')}</span>
+            <span>{mode === 'AUDIO_ONLY' ? t('live.switchVideo') : t('live.audioMode')}</span>
           </Button>
 
           {/* End Consultation */}
@@ -350,7 +348,7 @@ export const LiveConsultationModal: React.FC<LiveConsultationModalProps> = ({
             type="button"
             id="live-call-hangup-btn"
             onClick={handleEndCall}
-            aria-label="End consultation call"
+            aria-label={t('live.end')}
             className="p-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white transition-all shadow-lg active:scale-95"
           >
             <PhoneOff className="w-5 h-5" />

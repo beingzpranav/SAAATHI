@@ -43,8 +43,7 @@ const ScorePill: React.FC<{ score: number | null; label: string }> = ({ score, l
 };
 
 export const SharedConcernsView: React.FC<SharedConcernsViewProps> = ({ onConcernClick }) => {
-  const { i18n } = useTranslation();
-  const lang = i18n.language.startsWith('hi') ? 'hi' : 'en';
+  const { t } = useTranslation();
   const { household, user } = useSessionStore();
 
   const { data, isLoading, refetch } = useQuery({
@@ -73,22 +72,20 @@ export const SharedConcernsView: React.FC<SharedConcernsViewProps> = ({ onConcer
         <div className="flex items-center gap-2">
           <Shield className="w-4 h-4 text-[var(--color-primary)]" />
           <h3 className="text-sm font-bold text-[var(--color-text)]">
-            {lang === 'hi' ? 'केवल साझा की गई चिंताएं' : 'Shared Concerns Only'}
+            {t('jointRoom.sharedConcernsOnly')}
           </h3>
           <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--color-raised)] text-[var(--color-subtext)] font-medium">
-            {concerns.length} {lang === 'hi' ? 'सक्रिय' : 'active'}
+            {concerns.length} {t('jointRoom.active')}
           </span>
         </div>
         <span className="text-[11px] text-[var(--color-subtext)] flex items-center gap-1">
           <Lock className="w-3 h-3 text-[var(--color-success)]" />
-          {lang === 'hi' ? 'गोपनीयता सुरक्षित' : 'Zero Unshared Leakage'}
+          {t('jointRoom.privacyProtected')}
         </span>
       </div>
 
       <p className="text-xs text-[var(--color-subtext)] leading-relaxed">
-        {lang === 'hi'
-          ? 'इस संयुक्त कक्ष में केवल वही प्रश्न और प्राथमिकताएं दिखाई देती हैं जिन्हें शिक्षार्थी या अभिभावक ने अपनी निजी खिड़की में स्वेच्छा से "परिवार के साथ साझा करें" चुना है।'
-          : 'Strict privacy isolation: Only concerns voluntarily toggled to "Share with Family" in the Private Window are visible here.'}
+        {t('jointRoom.sharedConcernsDescription')}
       </p>
 
       {/* Concerns list */}
@@ -96,12 +93,10 @@ export const SharedConcernsView: React.FC<SharedConcernsViewProps> = ({ onConcer
         <div className="p-8 rounded-xl border border-dashed border-[var(--color-border)] bg-[var(--color-raised)] text-center flex flex-col items-center gap-2">
           <Eye className="w-6 h-6 text-[var(--color-subtext)]" />
           <p className="text-xs font-medium text-[var(--color-text)]">
-            {lang === 'hi' ? 'अभी तक कोई चिंता साझा नहीं की गई है' : 'No concerns shared yet'}
+            {t('jointRoom.noConcernsShared')}
           </p>
           <p className="text-[11px] text-[var(--color-subtext)] max-w-sm">
-            {lang === 'hi'
-              ? 'चिंता या प्राथमिकता साझा करने के लिए अपनी निजी खिड़की में "परिवार के साथ साझा करें" बटन दबाएं।'
-              : 'Family members can toggle "Share with Family" on any item in their Private Window to discuss it here.'}
+            {t('jointRoom.noConcernsDescription')}
           </p>
         </div>
       ) : (
@@ -125,7 +120,7 @@ export const SharedConcernsView: React.FC<SharedConcernsViewProps> = ({ onConcer
                           : 'bg-[var(--color-muted)] text-[var(--color-text)]',
                       )}
                     >
-                      {isMyConcern ? 'My Item' : 'Family Member'}
+                      {isMyConcern ? t('jointRoom.myItem') : t('jointRoom.familyMember')}
                     </span>
                     <span className="text-[11px] font-semibold text-[var(--color-primary)] uppercase">
                       {c.category.replace('_', ' ')}
@@ -150,7 +145,7 @@ export const SharedConcernsView: React.FC<SharedConcernsViewProps> = ({ onConcer
                   {c.sharedAt && (
                     <span className="flex items-center gap-1 text-[10px]">
                       <Clock className="w-3 h-3" />
-                      Shared {new Date(c.sharedAt).toLocaleDateString()}
+                      {t('jointRoom.sharedOn')} {new Date(c.sharedAt).toLocaleDateString()}
                     </span>
                   )}
                 </div>
@@ -167,7 +162,7 @@ export const SharedConcernsView: React.FC<SharedConcernsViewProps> = ({ onConcer
           className="text-xs text-[var(--color-primary)] hover:underline flex items-center gap-1 font-medium"
         >
           <Sparkles className="w-3 h-3" />
-          {lang === 'hi' ? 'सूची ताज़ा करें' : 'Refresh Shared List'}
+          {t('jointRoom.refreshSharedList')}
         </button>
       </div>
     </div>

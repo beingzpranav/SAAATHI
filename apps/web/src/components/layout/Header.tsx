@@ -1,15 +1,16 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Compass, Moon, Sun, Globe, Menu, User, LogOut } from 'lucide-react';
+import { Compass, Moon, Sun, Menu, User, LogOut } from 'lucide-react';
 import { useUiStore } from '../../stores/ui.store.js';
 import { useSessionStore } from '../../stores/session.store.js';
 import { Drawer } from '../ui/Drawer.js';
 import { Button } from '../ui/Button.js';
 import { Badge } from '../ui/Badge.js';
+import { LanguageSelector } from './LanguageSelector.js';
 
 export const Header: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const location = useLocation();
   const theme = useUiStore((state) => state.theme);
   const toggleTheme = useUiStore((state) => state.toggleTheme);
@@ -17,37 +18,36 @@ export const Header: React.FC = () => {
   const setMobileMenuOpen = useUiStore((state) => state.setMobileMenuOpen);
   const { user, isAuthenticated, logout } = useSessionStore();
 
-  const toggleLanguage = () => {
-    const nextLang = i18n.language === 'hi' ? 'en' : 'hi';
-    i18n.changeLanguage(nextLang);
-  };
-
   const navLinks = [
     { to: '/', label: t('nav.home') },
-    { to: '/trades', label: i18n.language === 'hi' ? 'ट्रेड एक्सप्लोरर' : 'Trades' },
-    { to: '/intake', label: i18n.language === 'hi' ? 'पारिवारिक इनटेक' : 'Intake' },
+    { to: '/trades', label: t('nav.trades') },
+    { to: '/intake', label: t('nav.intake') },
     { to: '/design', label: t('nav.design') },
-    { to: '/counsellor', label: i18n.language === 'hi' ? 'काउंसलर कंसोल' : 'Counsellor' },
+    ...(user?.role === 'COUNSELLOR'
+      ? [{ to: '/counsellor', label: t('nav.counsellor') }]
+      : []),
     ...(isAuthenticated
       ? [
-          { to: '/dashboard', label: 'Dashboard' },
-          { to: '/private', label: i18n.language === 'hi' ? 'निजी विंडो' : 'My Window' },
-          { to: '/joint-room', label: i18n.language === 'hi' ? 'संयुक्त कक्ष' : 'Joint Room' },
-          { to: '/consent-ledger', label: i18n.language === 'hi' ? 'सहमति खाता' : 'Ledger' },
-          { to: '/decision-card', label: i18n.language === 'hi' ? 'निर्णय कार्ड' : 'Decision Card' },
-          { to: '/admin', label: i18n.language === 'hi' ? 'एडमिन' : 'Admin' },
+          { to: '/dashboard', label: t('nav.dashboard') },
+          { to: '/private', label: t('nav.myWindow') },
+          { to: '/joint-room', label: t('nav.jointRoom') },
+          { to: '/consent-ledger', label: t('nav.ledger') },
+          { to: '/decision-card', label: t('nav.decisionCard') },
+          ...(user?.role === 'ADMINISTRATOR'
+            ? [{ to: '/admin', label: t('nav.admin') }]
+            : []),
         ]
       : []),
   ];
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-[#E8DDD2] bg-[#FFFDF9]/95 dark:bg-[#1F1A17]/95 dark:border-[#3D3430] backdrop-blur-sm">
-      <div className="max-w-[1200px] mx-auto px-2 sm:px-6 h-16 flex items-center justify-between gap-2 sm:gap-4">
+      <div className="max-w-[1200px] mx-auto px-2 sm:px-6 min-h-16 py-2 flex items-center justify-between gap-2 sm:gap-4">
         {/* Brand Logo */}
         <Link
           to="/"
           className="flex items-center gap-2 text-[#3A2E2A] dark:text-[#F5EFEB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C4562B] rounded-[8px] p-1 shrink-0"
-          aria-label="SAATHI home"
+          aria-label={t('common.home')}
         >
           <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-[8px] bg-[#C4562B] flex items-center justify-center text-white shadow-sm shrink-0">
             <Compass className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
@@ -63,14 +63,17 @@ export const Header: React.FC = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-6" aria-label="Main navigation">
+        <nav
+          className="hidden lg:flex min-w-0 flex-1 items-center justify-center gap-1 xl:gap-2 overflow-x-auto scrollbar-none"
+          aria-label={t('common.mainNavigation')}
+        >
           {navLinks.map((link) => {
             const isActive = location.pathname === link.to;
             return (
               <Link
                 key={link.to}
                 to={link.to}
-                className={`text-sm font-semibold transition-colors px-2 py-1 rounded-[6px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C4562B] ${
+                className={`shrink-0 whitespace-nowrap text-xs xl:text-sm font-semibold transition-colors px-2 py-1 rounded-[6px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C4562B] ${
                   isActive
                     ? 'text-[#C4562B] dark:text-[#D86A3E]'
                     : 'text-[#6A5B55] hover:text-[#3A2E2A] dark:text-[#B8AAA3] dark:hover:text-[#F5EFEB]'
@@ -84,16 +87,8 @@ export const Header: React.FC = () => {
 
         {/* Action Controls */}
         <div className="flex items-center gap-1 sm:gap-2.5 shrink-0">
-          {/* Language Switch */}
-          <button
-            type="button"
-            onClick={toggleLanguage}
-            aria-label={`${t('common.languageSelect')}: currently ${i18n.language.toUpperCase()}`}
-            className="inline-flex items-center gap-1 min-h-[38px] sm:min-h-[44px] px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold rounded-[8px] border border-[#E8DDD2] text-[#3A2E2A] hover:bg-[#F3ECE4] dark:border-[#3D3430] dark:text-[#F5EFEB] dark:hover:bg-[#2A2320] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C4562B]"
-          >
-            <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#C4562B] dark:text-[#D86A3E]" aria-hidden="true" />
-            <span>{i18n.language === 'hi' ? 'EN' : 'हिन्दी'}</span>
-          </button>
+          {/* Dynamic Multilingual Selector for 8 Indian Languages */}
+          <LanguageSelector />
 
           {/* Theme Toggle */}
           <button
@@ -134,7 +129,7 @@ export const Header: React.FC = () => {
               <button
                 type="button"
                 onClick={() => logout()}
-                aria-label="Sign out"
+                aria-label={t('auth.signOut')}
                 className="inline-flex items-center justify-center min-w-[38px] min-h-[38px] sm:min-w-[44px] sm:min-h-[44px] rounded-[8px] border border-[#E8DDD2] text-[#6A5B55] hover:text-[#B83226] hover:bg-[#FDF2F0] dark:border-[#3D3430] dark:text-[#B8AAA3] dark:hover:text-[#E56658] dark:hover:bg-[#2E1C1A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C4562B]"
               >
                 <LogOut className="w-4 h-4" aria-hidden="true" />
@@ -144,12 +139,12 @@ export const Header: React.FC = () => {
             <div className="hidden sm:flex items-center gap-2">
               <Link to="/login">
                 <Button variant="ghost" size="sm">
-                  Sign in
+                  {t('auth.signIn')}
                 </Button>
               </Link>
               <Link to="/register">
                 <Button variant="primary" size="sm">
-                  Register
+                  {t('auth.register')}
                 </Button>
               </Link>
             </div>
@@ -176,7 +171,7 @@ export const Header: React.FC = () => {
         onClose={() => setMobileMenuOpen(false)}
         title={t('common.menu')}
       >
-        <nav className="flex flex-col gap-2" aria-label="Mobile navigation">
+        <nav className="flex flex-col gap-2" aria-label={t('common.mobileNavigation')}>
           {navLinks.map((link) => (
             <Link
               key={link.to}
@@ -222,14 +217,9 @@ export const Header: React.FC = () => {
               </>
             )}
 
-            <Button
-              variant="secondary"
-              size="md"
-              onClick={toggleLanguage}
-              leftIcon={<Globe className="w-4 h-4" />}
-            >
-              {i18n.language === 'hi' ? 'Switch to English' : 'हिंदी में बदलें'}
-            </Button>
+            <div className="w-full">
+              <LanguageSelector className="w-full [&>button]:w-full [&>button]:justify-between" />
+            </div>
             <Button
               variant="secondary"
               size="md"

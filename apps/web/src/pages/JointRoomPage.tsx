@@ -38,10 +38,11 @@ type JointTab = 'agenda' | 'chat' | 'concerns' | 'ladder';
 /* Priority badge                                                      */
 /* ------------------------------------------------------------------ */
 const PriorityBadge: React.FC<{ priority: BhavishyaAgendaItem['priority'] }> = ({ priority }) => {
+  const { t } = useTranslation();
   const map = {
-    HIGH: { label: 'High Priority', color: 'var(--color-error)', bg: 'var(--color-error-bg)' },
-    MEDIUM: { label: 'Medium Priority', color: 'var(--color-student)', bg: 'var(--color-student-light)' },
-    LOW: { label: 'Low Priority', color: 'var(--color-subtext)', bg: 'var(--color-muted)' },
+    HIGH: { label: t('jointRoom.highPriority'), color: 'var(--color-error)', bg: 'var(--color-error-bg)' },
+    MEDIUM: { label: t('jointRoom.mediumPriority'), color: 'var(--color-student)', bg: 'var(--color-student-light)' },
+    LOW: { label: t('jointRoom.lowPriority'), color: 'var(--color-subtext)', bg: 'var(--color-muted)' },
   };
   const { label, color, bg } = map[priority];
   return (
@@ -62,6 +63,7 @@ const AgendaItemCard: React.FC<{
   index: number;
   lang: 'en' | 'hi';
 }> = ({ item, index, lang }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(index === 0);
 
   return (
@@ -90,7 +92,7 @@ const AgendaItemCard: React.FC<{
             {lang === 'hi' ? item.titleHi : item.titleEn}
           </p>
           <p className="text-xs text-[var(--color-primary)] font-medium">
-            Bridge: {item.category.replace('_', ' ')}
+            {t('jointRoom.bridge')}: {item.category.replace('_', ' ')}
           </p>
         </div>
 
@@ -111,7 +113,7 @@ const AgendaItemCard: React.FC<{
             <div className="p-3.5 rounded-xl border border-[var(--color-student)]/30 bg-[var(--color-student-light)] flex flex-col gap-1">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-student)] flex items-center gap-1">
                 <GraduationCap className="w-3.5 h-3.5" />
-                Learner Perspective
+                {t('jointRoom.learnerPerspective')}
               </span>
               <p className="text-xs text-[var(--color-text)] leading-relaxed">
                 {lang === 'hi' ? item.learnerPerspectiveHi : item.learnerPerspectiveEn}
@@ -121,7 +123,7 @@ const AgendaItemCard: React.FC<{
             <div className="p-3.5 rounded-xl border border-[var(--color-parent)]/30 bg-[var(--color-parent-light)] flex flex-col gap-1">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-parent)] flex items-center gap-1">
                 <HeartHandshake className="w-3.5 h-3.5" />
-                Parent Worry / Hope
+                {t('jointRoom.parentWorryHope')}
               </span>
               <p className="text-xs text-[var(--color-text)] leading-relaxed">
                 {lang === 'hi' ? item.parentPerspectiveHi : item.parentPerspectiveEn}
@@ -139,7 +141,7 @@ const AgendaItemCard: React.FC<{
           >
             <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-success)] flex items-center gap-1">
               <CheckCircle2 className="w-3.5 h-3.5" />
-              Verified Regional Resolution
+              {t('jointRoom.verifiedResolution')}
             </span>
             <p className="text-xs text-[var(--color-text)] leading-relaxed font-medium">
               {lang === 'hi' ? item.verifiedResolutionHi : item.verifiedResolutionEn}
@@ -150,7 +152,7 @@ const AgendaItemCard: React.FC<{
           {item.recommendedActions && item.recommendedActions.length > 0 && (
             <div className="flex flex-col gap-1.5">
               <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--color-subtext)]">
-                Agreed Action Steps
+                {t('jointRoom.agreedActionSteps')}
               </span>
               <ul className="flex flex-col gap-1 pl-4 list-disc text-xs text-[var(--color-text)]">
                 {item.recommendedActions.map((act, i) => (
@@ -169,7 +171,7 @@ const AgendaItemCard: React.FC<{
 /* Main Joint Room Page                                               */
 /* ------------------------------------------------------------------ */
 export const JointRoomPage: React.FC = () => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const lang = i18n.language.startsWith('hi') ? 'hi' : 'en';
   const { user, household } = useSessionStore();
   const { isConnected, connect, disconnect, participants } = useJointRoomStore();
@@ -249,13 +251,11 @@ export const JointRoomPage: React.FC = () => {
           className="text-2xl sm:text-3xl font-bold text-[var(--color-text)] mb-2"
           style={{ fontFamily: 'var(--font-heading)' }}
         >
-          {lang === 'hi' ? 'संयुक्त परामर्श कक्ष' : 'Family Joint Counselling Room'}
+          {t('jointRoom.title')}
         </h1>
 
         <p className="text-sm text-[var(--color-subtext)] leading-relaxed max-w-2xl mb-4">
-          {lang === 'hi'
-            ? 'भविष्य इंजन द्वारा संश्लेषित कार्यसूची, वास्तविक समय पारिवारिक चैट और सत्यापित क्षेत्रीय व्यावसायिक डेटा के साथ मिलकर निर्णय लें।'
-            : 'A unified family space bridging student aspirations and parent worries with verified local career outcomes and grounded AI counselling.'}
+          {t('jointRoom.subtitle')}
         </p>
 
         {/* Household Context Tags */}
@@ -271,7 +271,7 @@ export const JointRoomPage: React.FC = () => {
           {agenda && (
             <span className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[var(--color-raised)] border border-[var(--color-border)]">
               <Activity className="w-3.5 h-3.5 text-[var(--color-success)]" />
-              Alignment Readiness: {agenda.readinessScore}%
+              {t('jointRoom.alignmentReadiness')}: {agenda.readinessScore}%
             </span>
           )}
         </div>
@@ -286,7 +286,7 @@ export const JointRoomPage: React.FC = () => {
             className="gap-2 shadow-sm"
           >
             <CheckCircle2 className="w-4 h-4" />
-            <span>{lang === 'hi' ? 'चिंता समाधान चेकपॉइंट' : 'Concerns Checkpoint'}</span>
+            <span>{t('jointRoom.concernsCheckpoint')}</span>
           </Button>
 
           <Button
@@ -297,7 +297,7 @@ export const JointRoomPage: React.FC = () => {
             className="gap-2 bg-[var(--color-surface)]"
           >
             <HeartHandshake className="w-4 h-4 text-[var(--color-primary)]" />
-            <span>{lang === 'hi' ? 'लाइव काउंसलर परामर्श (2G/3G समर्थित)' : 'Live Counsellor Call'}</span>
+            <span>{t('jointRoom.liveCounsellorCall')}</span>
           </Button>
         </div>
       </div>
@@ -316,7 +316,7 @@ export const JointRoomPage: React.FC = () => {
           )}
         >
           <BookOpen className="w-4 h-4" />
-          <span>{lang === 'hi' ? 'सत्र कार्यसूची' : 'Session Agenda'}</span>
+          <span>{t('jointRoom.sessionAgenda')}</span>
           {agenda && (
             <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-white/20">
               {agenda.agendaItems.length}
@@ -336,7 +336,7 @@ export const JointRoomPage: React.FC = () => {
           )}
         >
           <MessageSquare className="w-4 h-4" />
-          <span>{lang === 'hi' ? 'पारिवारिक चैट व एआई' : 'Live Chat & AI'}</span>
+          <span>{t('jointRoom.liveChatAi')}</span>
         </button>
 
         <button
@@ -351,7 +351,7 @@ export const JointRoomPage: React.FC = () => {
           )}
         >
           <Shield className="w-4 h-4" />
-          <span>{lang === 'hi' ? 'केवल साझा चिंताएं' : 'Shared Items'}</span>
+          <span>{t('jointRoom.sharedItems')}</span>
         </button>
 
         <button
@@ -366,7 +366,7 @@ export const JointRoomPage: React.FC = () => {
           )}
         >
           <TrendingUp className="w-4 h-4" />
-          <span>{lang === 'hi' ? 'एनएसक्यूएफ सीढ़ी' : 'NSQF Ladder'}</span>
+          <span>{t('jointRoom.nsqfLadder')}</span>
         </button>
       </div>
 
@@ -377,7 +377,7 @@ export const JointRoomPage: React.FC = () => {
             <div className="p-8 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col items-center gap-3 text-center animate-pulse">
               <Sparkles className="w-8 h-8 text-[var(--color-primary)] animate-spin" />
               <p className="text-sm font-semibold text-[var(--color-text)]">
-                Bhavishya Engine is synthesizing your joint agenda…
+                {t('jointRoom.loadingAgenda')}
               </p>
             </div>
           )}
@@ -386,7 +386,7 @@ export const JointRoomPage: React.FC = () => {
             <div className="p-6 rounded-2xl border border-[var(--color-error)] bg-[var(--color-error-bg)] text-center flex flex-col items-center gap-3">
               <AlertCircle className="w-8 h-8 text-[var(--color-error)]" />
               <p className="text-sm font-medium text-[var(--color-text)]">
-                Could not load synthesized agenda. Share at least one concern from your private window.
+                {t('jointRoom.agendaError')}
               </p>
               <button
                 type="button"
@@ -395,7 +395,7 @@ export const JointRoomPage: React.FC = () => {
                 className="px-4 py-2 rounded-xl text-xs font-bold text-white"
                 style={{ background: 'var(--color-primary)' }}
               >
-                Retry
+                {t('common.retry', 'Retry')}
               </button>
             </div>
           )}
@@ -406,11 +406,11 @@ export const JointRoomPage: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <BookOpen className="w-4 h-4 text-[var(--color-primary)]" />
                   <h2 className="text-base font-bold text-[var(--color-text)]">
-                    {lang === 'hi' ? 'तैयार चर्चा बिंदु' : 'Synthesized Session Agenda'}
+                    {t('jointRoom.synthesizedAgenda')}
                   </h2>
                 </div>
                 <span className="text-xs text-[var(--color-subtext)]">
-                  {agenda.agendaItems.length} {lang === 'hi' ? 'विषय' : 'topics structured'}
+                  {agenda.agendaItems.length} {t('jointRoom.topicsStructured')}
                 </span>
               </div>
 

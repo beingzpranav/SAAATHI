@@ -18,40 +18,34 @@ export const ConfidenceBadge: React.FC<ConfidenceBadgeProps> = ({
   className,
   showIcon = true,
 }) => {
-  const { i18n } = useTranslation();
-  const isHi = i18n.language === 'hi';
+  const { t } = useTranslation();
 
   const badgeConfig: Record<
     ConfidenceLabel,
     {
       variant: 'confidence-high' | 'confidence-medium' | 'confidence-low' | 'confidence-none';
-      textEn: string;
-      textHi: string;
+      key: string;
       Icon: React.ComponentType<{ className?: string }>;
     }
   > = {
     HIGH: {
       variant: 'confidence-high',
-      textEn: 'High Confidence',
-      textHi: 'उच्च विश्वसनीयता',
+      key: 'confidence.high',
       Icon: ShieldCheck,
     },
     MEDIUM: {
       variant: 'confidence-medium',
-      textEn: 'Medium Confidence',
-      textHi: 'मध्यम विश्वसनीयता',
+      key: 'confidence.medium',
       Icon: ShieldCheck,
     },
     LOW: {
       variant: 'confidence-low',
-      textEn: 'Indicative (Low)',
-      textHi: 'सांकेतिक (कम डेटा)',
+      key: 'confidence.low',
       Icon: ShieldAlert,
     },
     NONE: {
       variant: 'confidence-none',
-      textEn: 'No Verified Records',
-      textHi: 'रिकॉर्ड उपलब्ध नहीं',
+      key: 'confidence.none',
       Icon: HelpCircle,
     },
   };
@@ -65,7 +59,7 @@ export const ConfidenceBadge: React.FC<ConfidenceBadgeProps> = ({
       className={cn('inline-flex items-center gap-1.5 font-medium', className)}
     >
       {showIcon && <Icon className="w-3.5 h-3.5" aria-hidden="true" />}
-      <span>{isHi ? config.textHi : config.textEn}</span>
+      <span>{t(config.key)}</span>
       {geographicLevel && (
         <span className="text-[11px] opacity-75 font-mono">[{geographicLevel}]</span>
       )}
@@ -85,8 +79,7 @@ export const FallbackNotice: React.FC<FallbackNoticeProps> = ({
   reason,
   className,
 }) => {
-  const { i18n } = useTranslation();
-  const isHi = i18n.language === 'hi';
+  const { t } = useTranslation();
 
   return (
     <div
@@ -99,9 +92,7 @@ export const FallbackNotice: React.FC<FallbackNoticeProps> = ({
       <AlertTriangle className="w-4 h-4 text-[#EFA531] shrink-0 mt-0.5" aria-hidden="true" />
       <div className="flex-1">
         <span className="font-bold">
-          {isHi
-            ? `पारदर्शिता सूचना: ${actualLevel} स्तर का सत्यापित डेटा प्रदर्शित किया जा रहा है`
-            : `Transparency Notice: Showing ${actualLevel}-level verified data`}
+          {t('confidence.transparency', { level: actualLevel })}
         </span>
         {reason && <p className="mt-0.5 text-[#7A5A1B] dark:text-[#E2B774]">{reason}</p>}
       </div>

@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Plus } from 'lucide-react';
 import { apiClient } from '../../lib/apiClient.js';
 import { cn } from '../../lib/cn.js';
+import { TranslatedText } from '../../components/common/TranslatedText.js';
+import { useDynamicTranslate } from '../../lib/useDynamicTranslate.js';
 import type { ConcernCategory } from '@saathi/shared';
 
 /* ------------------------------------------------------------------ */
@@ -11,17 +14,21 @@ export const AddConcernForm: React.FC<{
   accentColor: string;
   onAddSuccess?: (concern: any) => void;
 }> = ({ accentColor, onAddSuccess }) => {
+  const { t } = useTranslation();
   const [text, setText] = useState('');
   const [category, setCategory] = useState<ConcernCategory | string>('FINANCIAL_WORRY');
   const [isAdding, setIsAdding] = useState(false);
+  const placeholder = useDynamicTranslate(t('concerns.placeholder'), 'app_ui');
+  const addLabel = useDynamicTranslate(t('concerns.add'), 'app_ui');
+  const addingLabel = useDynamicTranslate(t('concerns.adding'), 'app_ui');
   
-  const categories: { key: ConcernCategory; labelEn: string; labelHi: string }[] = [
-    { key: 'FINANCIAL_WORRY', labelEn: 'Financial', labelHi: 'वित्तीय' },
-    { key: 'CAREER_INTEREST', labelEn: 'Career', labelHi: 'करियर' },
-    { key: 'WORK_ENVIRONMENT', labelEn: 'Work Environment', labelHi: 'कार्य स्थल' },
-    { key: 'SOCIAL_RESPECT', labelEn: 'Social', labelHi: 'सामाजिक' },
-    { key: 'MIGRATION_DISTANCE', labelEn: 'Distance', labelHi: 'दूरी' },
-    { key: 'TIME_HORIZON', labelEn: 'Timeline', labelHi: 'समय' },
+  const categories: { key: ConcernCategory; label: string }[] = [
+    { key: 'FINANCIAL_WORRY', label: t('concerns.financial') },
+    { key: 'CAREER_INTEREST', label: t('concerns.career') },
+    { key: 'WORK_ENVIRONMENT', label: t('concerns.workEnvironment') },
+    { key: 'SOCIAL_RESPECT', label: t('concerns.social') },
+    { key: 'MIGRATION_DISTANCE', label: t('concerns.distance') },
+    { key: 'TIME_HORIZON', label: t('concerns.timeline') },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -53,7 +60,7 @@ export const AddConcernForm: React.FC<{
         id="new-concern-text"
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="Describe your concern or question..."
+        placeholder={placeholder.translatedText}
         rows={2}
         className="w-full bg-transparent text-sm text-[var(--color-text)] placeholder:text-[var(--color-subtext)] resize-none outline-none"
       />
@@ -76,7 +83,7 @@ export const AddConcernForm: React.FC<{
                   : {}
               }
             >
-              {cat.labelEn}
+              <TranslatedText text={cat.label} context="app_ui" />
             </button>
           ))}
         </div>
@@ -88,7 +95,7 @@ export const AddConcernForm: React.FC<{
           style={{ background: accentColor }}
         >
           <Plus className="w-3.5 h-3.5" />
-          {isAdding ? 'Adding...' : 'Add'}
+          {isAdding ? addingLabel.translatedText : addLabel.translatedText}
         </button>
       </div>
     </form>

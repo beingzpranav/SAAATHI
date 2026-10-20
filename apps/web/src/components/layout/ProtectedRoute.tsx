@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Navigate, useLocation } from 'react-router-dom';
 import type { UserRole } from '@saathi/shared';
 import { useSessionStore } from '../../stores/session.store.js';
@@ -13,6 +14,7 @@ interface ProtectedRouteProps {
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
   const { isAuthenticated, isLoading, user } = useSessionStore();
   const location = useLocation();
+  const { t } = useTranslation();
 
   if (isLoading) {
     return (
@@ -31,8 +33,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowe
     return (
       <div className="py-12">
         <ErrorState
-          title="Access Restricted"
-          description={`Your user role (${user.role}) is not authorized to access this private area.`}
+          title={t('common.accessRestricted')}
+          description={t('common.roleNotAuthorized', { role: user.role })}
         />
       </div>
     );

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, type RegisterInput, type UserProfile } from '@saathi/shared';
@@ -7,12 +8,14 @@ import { Button } from '../../../components/ui/Button.js';
 import { Input } from '../../../components/ui/Input.js';
 import { apiClient, ApiClientError } from '../../../lib/apiClient.js';
 import { useSessionStore } from '../../../stores/session.store.js';
+import { SUPPORTED_LANGUAGES } from '../../../lib/translationClient.js';
 
 interface RegisterFormProps {
   onSuccess: (user: UserProfile) => void;
 }
 
 export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
+  const { i18n } = useTranslation();
   const [serverError, setServerError] = useState<string | null>(null);
   const setUser = useSessionStore((state) => state.setUser);
 
@@ -44,6 +47,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
     try {
       const response = await apiClient.post<{ user: UserProfile }>('/auth/register', data);
       setUser(response.data.user);
+      await i18n.changeLanguage(data.language);
       onSuccess(response.data.user);
     } catch (err) {
       if (err instanceof ApiClientError) {
@@ -152,15 +156,21 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
         <label className="text-sm font-semibold text-[#3A2E2A] dark:text-[#F5EFEB]">
           Preferred Interface Language
         </label>
-        <div className="grid grid-cols-2 gap-3">
-          <label className="flex items-center gap-2 p-2.5 rounded-[8px] border border-[#E8DDD2] dark:border-[#3D3430] bg-white dark:bg-[#1F1A17] cursor-pointer">
-            <input type="radio" value="en" {...register('language')} className="text-[#C4562B]" />
-            <span className="text-sm font-medium">English</span>
-          </label>
-          <label className="flex items-center gap-2 p-2.5 rounded-[8px] border border-[#E8DDD2] dark:border-[#3D3430] bg-white dark:bg-[#1F1A17] cursor-pointer">
-            <input type="radio" value="hi" {...register('language')} className="text-[#C4562B]" />
-            <span className="text-sm font-medium">हिन्दी (Hindi)</span>
-          </label>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {Object.values(SUPPORTED_LANGUAGES).map((language) => (
+            <label
+              key={language.code}
+              className="flex items-center gap-2 p-2.5 rounded-[8px] border border-[#E8DDD2] dark:border-[#3D3430] bg-white dark:bg-[#1F1A17] cursor-pointer"
+            >
+              <input
+                type="radio"
+                value={language.code}
+                {...register('language')}
+                className="text-[#C4562B]"
+              />
+              <span className="text-sm font-medium">{language.native}</span>
+            </label>
+          ))}
         </div>
       </div>
 

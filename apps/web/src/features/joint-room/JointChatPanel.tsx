@@ -15,6 +15,7 @@ import type { GroundedCitation } from '@saathi/shared';
 import { useJointRoomStore } from '../../stores/jointRoom.store.js';
 import { useSessionStore } from '../../stores/session.store.js';
 import { cn } from '../../lib/cn.js';
+import { TranslatedText } from '../../components/common/TranslatedText.js';
 
 interface JointChatPanelProps {
   onSelectPrompt?: (prompt: string) => void;
@@ -36,6 +37,7 @@ const QUICK_PROMPTS = [
 ];
 
 const CitationPill: React.FC<{ citation: GroundedCitation }> = ({ citation }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   return (
@@ -59,11 +61,11 @@ const CitationPill: React.FC<{ citation: GroundedCitation }> = ({ citation }) =>
           )}
           {citation.verificationSource && (
             <p className="text-[10px] text-[var(--color-subtext)]">
-              Source: {citation.verificationSource}
+              {t('chat.source')} {citation.verificationSource}
             </p>
           )}
           <span className="text-[9px] uppercase tracking-wider font-bold text-[var(--color-success)]">
-            Verified Level: {citation.confidence}
+            {t('chat.verifiedLevel')} {citation.confidence}
           </span>
         </div>
       )}
@@ -72,7 +74,7 @@ const CitationPill: React.FC<{ citation: GroundedCitation }> = ({ citation }) =>
 };
 
 export const JointChatPanel: React.FC<JointChatPanelProps> = ({ onSelectPrompt }) => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const lang = i18n.language.startsWith('hi') ? 'hi' : 'en';
   const { user } = useSessionStore();
   const { messages, isConnected, sendMessage, sendTyping, typingUsers } = useJointRoomStore();
@@ -123,12 +125,12 @@ export const JointChatPanel: React.FC<JointChatPanelProps> = ({ onSelectPrompt }
             )}
           />
           <h3 className="text-sm font-semibold text-[var(--color-text)]">
-            {lang === 'hi' ? 'पारिवारिक लाइव चैट' : 'Family Real-Time Chat'}
+            {t('jointRoom.familyRealtimeChat')}
           </h3>
         </div>
         <span className="text-xs text-[var(--color-subtext)] flex items-center gap-1">
           <Sparkles className="w-3 h-3 text-[var(--color-primary)]" />
-          {lang === 'hi' ? 'साथी एआई सुगमकर्ता सक्रिय' : 'Saathi AI Grounded'}
+          {t('jointRoom.saathiAiGrounded')}
         </span>
       </div>
 
@@ -204,7 +206,7 @@ export const JointChatPanel: React.FC<JointChatPanelProps> = ({ onSelectPrompt }
                 </div>
 
                 <p className="whitespace-pre-line leading-relaxed text-xs sm:text-sm">
-                  {msg.text}
+                  <TranslatedText text={msg.text} context="message" />
                 </p>
 
                 {/* Citations list for grounded AI answers */}
@@ -225,7 +227,7 @@ export const JointChatPanel: React.FC<JointChatPanelProps> = ({ onSelectPrompt }
           <div className="flex items-center gap-2 text-xs text-[var(--color-subtext)] animate-pulse pl-9">
             <span className="inline-block w-2 h-2 rounded-full bg-[var(--color-primary)]" />
             <span>
-              {typingNames.join(', ')} {lang === 'hi' ? 'टाइप कर रहे हैं...' : 'typing…'}
+              {typingNames.join(', ')} {t('chat.typing')}
             </span>
           </div>
         )}
@@ -262,11 +264,7 @@ export const JointChatPanel: React.FC<JointChatPanelProps> = ({ onSelectPrompt }
           id="joint-chat-input"
           value={input}
           onChange={handleInputChange}
-          placeholder={
-            lang === 'hi'
-              ? 'संदेश लिखें या @ai से सवाल पूछें...'
-              : 'Type a message or ask @ai a vocational question…'
-          }
+          placeholder={t('chat.placeholder')}
           className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-raised)] px-3.5 py-2 text-sm text-[var(--color-text)] placeholder-[var(--color-subtext)] focus:outline-none focus:border-[var(--color-primary)] transition-colors"
         />
         <button
@@ -275,7 +273,7 @@ export const JointChatPanel: React.FC<JointChatPanelProps> = ({ onSelectPrompt }
           disabled={!input.trim() || !isConnected}
           className="w-9 h-9 rounded-xl flex items-center justify-center text-white disabled:opacity-50 transition-opacity shrink-0"
           style={{ background: 'var(--color-primary)' }}
-          aria-label="Send message"
+          aria-label={t('chat.send')}
         >
           <Send className="w-4 h-4" />
         </button>
