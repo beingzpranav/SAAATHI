@@ -203,7 +203,42 @@ export class TranslateService {
       );
       return translations;
     } catch {
-      // If no translation engine is running, return original texts
+      // Continue to the free public fallback when LibreTranslate is unavailable.
+    }
+
+    // 4. Use MyMemory as a free fallback when no self-hosted provider is configured.
+    // Keep this last so a configured/private provider always takes precedence.
+    const myMemoryUrl =
+      process.env.MYMEMORY_URL || 'https://api.mymemory.translated.net/get';
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+      const translations = await Promise.all(
+        texts.map(async (text) => {
+          const query = new URLSearchParams({
+            q: text,
+            langpair: `${source}|${target}`,
+          });
+          const response = await fetch(`${myMemoryUrl}?${query.toString()}`, {
+            signal: controller.signal,
+          });
+
+          if (!response.ok) {
+            return text;
+          }
+
+          const data = (await response.json()) as {
+            responseData?: { translatedText?: string };
+          };
+          return data.responseData?.translatedText || text;
+        })
+      );
+
+      clearTimeout(timeoutId);
+      return translations;
+    } catch {
+      // If all translation engines are unavailable, return original texts.
       return texts;
     }
   }
