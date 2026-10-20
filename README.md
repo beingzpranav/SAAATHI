@@ -141,7 +141,7 @@ The repository includes [render.yaml](./render.yaml) for a public demo deploymen
 1. Push the repository to GitHub.
 2. In Render, choose **New → Blueprint** and select the repository.
 3. Render creates:
-   - `saathi-api` — Dockerized Express API with Socket.IO
+   - `saathi-api` — free-tier native Node Express API with Socket.IO
    - `saathi-web` — Vite static frontend
    - Neon PostgreSQL — supplied through the API service's `DATABASE_URL` secret
 4. In the `saathi-api` service, set `DATABASE_URL` to your Neon connection string, including `sslmode=require`.
@@ -149,7 +149,7 @@ The repository includes [render.yaml](./render.yaml) for a public demo deploymen
 6. If Render assigns a URL different from `https://saathi-web.onrender.com`, update `VITE_API_URL` and `VITE_SOCKET_URL` in the web service and redeploy.
 7. Set `TRANSLATION_INTERNAL_SECRET` only if a private translation service is configured. The app falls back safely when it is not set.
 
-The API container runs `prisma db push` before starting because this repository currently has no committed Prisma migration directory. Replace this with `prisma migrate deploy` after adding and committing production migrations.
+The API service runs `prisma db push` before starting because this repository currently has no committed Prisma migration directory. Replace this with `prisma migrate deploy` after adding and committing production migrations. Render's free web service can sleep after inactivity, so the first request after idle time may take longer.
 
 ---
 

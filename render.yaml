@@ -1,9 +1,10 @@
 services:
   - type: web
     name: saathi-api
-    runtime: docker
-    dockerfilePath: ./apps/api/Dockerfile
-    dockerContext: .
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build --workspace=@saathi/shared && npm run build --workspace=@saathi/api
+    startCommand: npx prisma db push --schema apps/api/prisma/schema.prisma --skip-generate && npm run start --workspace=@saathi/api
     healthCheckPath: /health
     autoDeploy: true
     envVars:
