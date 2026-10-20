@@ -14,9 +14,7 @@ services:
       - key: API_BASE_URL
         value: https://saathi-api.onrender.com
       - key: DATABASE_URL
-        fromDatabase:
-          name: saathi-db
-          property: connectionString
+        sync: false
       - key: CORS_ORIGIN
         value: https://saathi-web.onrender.com
       - key: JWT_ACCESS_SECRET
@@ -30,8 +28,9 @@ services:
       - key: TRANSLATION_INTERNAL_SECRET
         sync: false
 
-  - type: static
+  - type: web
     name: saathi-web
+    runtime: static
     buildCommand: npm ci && npm run build --workspace=@saathi/shared && npm run build --workspace=@saathi/web
     staticPublishPath: ./apps/web/dist
     autoDeploy: true
@@ -44,9 +43,3 @@ services:
       - type: rewrite
         source: /*
         destination: /index.html
-
-databases:
-  - name: saathi-db
-    databaseName: saathi_db
-    user: saathi_user
-    plan: free

@@ -143,10 +143,11 @@ The repository includes [render.yaml](./render.yaml) for a public demo deploymen
 3. Render creates:
    - `saathi-api` — Dockerized Express API with Socket.IO
    - `saathi-web` — Vite static frontend
-   - `saathi-db` — managed PostgreSQL
-4. After the first deploy, copy the actual `saathi-web` URL into the API service's `CORS_ORIGIN`.
-5. If Render assigns a URL different from `https://saathi-web.onrender.com`, update `VITE_API_URL` and `VITE_SOCKET_URL` in the web service and redeploy.
-6. Set `TRANSLATION_INTERNAL_SECRET` only if a private translation service is configured. The app falls back safely when it is not set.
+   - Neon PostgreSQL — supplied through the API service's `DATABASE_URL` secret
+4. In the `saathi-api` service, set `DATABASE_URL` to your Neon connection string, including `sslmode=require`.
+5. After the first deploy, copy the actual `saathi-web` URL into the API service's `CORS_ORIGIN`.
+6. If Render assigns a URL different from `https://saathi-web.onrender.com`, update `VITE_API_URL` and `VITE_SOCKET_URL` in the web service and redeploy.
+7. Set `TRANSLATION_INTERNAL_SECRET` only if a private translation service is configured. The app falls back safely when it is not set.
 
 The API container runs `prisma db push` before starting because this repository currently has no committed Prisma migration directory. Replace this with `prisma migrate deploy` after adding and committing production migrations.
 
