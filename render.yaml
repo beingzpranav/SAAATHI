@@ -25,8 +25,12 @@ services:
       - key: LOG_LEVEL
         value: info
       - key: TRANSLATION_SERVICE_URL
-        value: http://localhost:8000
+        sync: false
       - key: TRANSLATION_INTERNAL_SECRET
+        sync: false
+      - key: GOOGLE_TRANSLATE_API_KEY
+        sync: false
+      - key: LIBRETRANSLATE_URL
         sync: false
 
   - type: web
