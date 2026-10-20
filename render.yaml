@@ -4,7 +4,7 @@ services:
     runtime: node
     plan: free
     buildCommand: npm ci --include=dev && npm run build --workspace=@saathi/shared && npm run build --workspace=@saathi/api
-    startCommand: npx prisma db push --schema apps/api/prisma/schema.prisma --skip-generate && npm run start --workspace=@saathi/api
+    startCommand: npx prisma db push --schema apps/api/prisma/schema.prisma --skip-generate && npm run prisma:seed --workspace=@saathi/api && npm run start --workspace=@saathi/api
     healthCheckPath: /health
     autoDeploy: true
     envVars:
