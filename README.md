@@ -145,8 +145,8 @@ The repository includes [render.yaml](./render.yaml) for a public demo deploymen
    - `saathi-web` — Vite static frontend
    - Neon PostgreSQL — supplied through the API service's `DATABASE_URL` secret
 4. In the `saathi-api` service, set `DATABASE_URL` to your Neon connection string, including `sslmode=require`.
-5. After the first deploy, copy the actual `saathi-web` URL into the API service's `CORS_ORIGIN`.
-6. If Render assigns a URL different from `https://saathi-web.onrender.com`, update `VITE_API_URL` and `VITE_SOCKET_URL` in the web service and redeploy.
+5. Set the API service's `CORS_ORIGIN` to the exact deployed frontend origin, currently `https://saathi-web-j2qr.onrender.com`.
+6. If Render assigns a different frontend URL, update `CORS_ORIGIN`, `VITE_API_URL`, and `VITE_SOCKET_URL` and redeploy.
 7. Set `TRANSLATION_INTERNAL_SECRET` only if a private translation service is configured. The app falls back safely when it is not set.
 
 The Render build commands use `npm ci --include=dev` because TypeScript compilation currently includes API test files and needs the declaration packages. The running service remains production-only at runtime. The API service runs `prisma db push` before starting because this repository currently has no committed Prisma migration directory. Replace this with `prisma migrate deploy` after adding and committing production migrations. Render's free web service can sleep after inactivity, so the first request after idle time may take longer.
