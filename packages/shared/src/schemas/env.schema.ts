@@ -28,6 +28,7 @@ export type ApiEnv = z.infer<typeof apiEnvSchema>;
  */
 export const webEnvSchema = z.object({
   VITE_API_URL: z.string().url('VITE_API_URL must be a valid URL'),
+  VITE_SOCKET_URL: z.string().url('VITE_SOCKET_URL must be a valid URL'),
   MODE: z.string().optional(),
   DEV: z.boolean().optional(),
   PROD: z.boolean().optional(),

@@ -7,6 +7,7 @@ import { webEnvSchema, type WebEnv } from '@saathi/shared';
 function loadWebEnv(): WebEnv {
   const envSource = {
     VITE_API_URL: import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1',
+    VITE_SOCKET_URL: import.meta.env.VITE_SOCKET_URL || window.location.origin,
     MODE: import.meta.env.MODE,
     DEV: import.meta.env.DEV,
     PROD: import.meta.env.PROD,

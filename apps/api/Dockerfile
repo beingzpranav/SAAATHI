@@ -32,14 +32,15 @@ COPY package*.json ./
 COPY packages/shared/package*.json ./packages/shared/
 COPY apps/api/package*.json ./apps/api/
 
-RUN npm ci --omit=dev
+RUN npm ci
 
 # Copy compiled files
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
+COPY --from=builder /app/apps/api/prisma ./apps/api/prisma
 
 USER node
 
 EXPOSE 4000
 
-CMD ["node", "apps/api/dist/server.js"]
+CMD ["sh", "-c", "npx prisma db push --skip-generate && node apps/api/dist/server.js"]

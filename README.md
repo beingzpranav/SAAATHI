@@ -134,6 +134,22 @@ npm run dev:api    # Express API on port 4000
 npm run dev:web    # Vite React on port 3000
 ```
 
+## Deploy on Render
+
+The repository includes [render.yaml](./render.yaml) for a public demo deployment:
+
+1. Push the repository to GitHub.
+2. In Render, choose **New → Blueprint** and select the repository.
+3. Render creates:
+   - `saathi-api` — Dockerized Express API with Socket.IO
+   - `saathi-web` — Vite static frontend
+   - `saathi-db` — managed PostgreSQL
+4. After the first deploy, copy the actual `saathi-web` URL into the API service's `CORS_ORIGIN`.
+5. If Render assigns a URL different from `https://saathi-web.onrender.com`, update `VITE_API_URL` and `VITE_SOCKET_URL` in the web service and redeploy.
+6. Set `TRANSLATION_INTERNAL_SECRET` only if a private translation service is configured. The app falls back safely when it is not set.
+
+The API container runs `prisma db push` before starting because this repository currently has no committed Prisma migration directory. Replace this with `prisma migrate deploy` after adding and committing production migrations.
+
 ---
 
 ## Verification & Testing

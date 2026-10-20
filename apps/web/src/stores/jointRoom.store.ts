@@ -6,6 +6,7 @@ import type {
   UserTypingEvent,
   UserProfile,
 } from '@saathi/shared';
+import { env } from '../config/env.js';
 
 interface JointRoomState {
   socket: Socket | null;
@@ -43,8 +44,7 @@ export const useJointRoomStore = create<JointRoomState>((set, get) => ({
 
     set({ isConnecting: true, householdId });
 
-    // Use current origin in dev/prod proxy
-    const socket = io('/', {
+    const socket = io(env.VITE_SOCKET_URL, {
       path: '/socket.io',
       withCredentials: true,
       auth: {
