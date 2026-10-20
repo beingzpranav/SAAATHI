@@ -13,7 +13,7 @@ services:
       - key: PORT
         value: 4000
       - key: API_BASE_URL
-        value: https://saathi-api.onrender.com
+        value: https://saathi-api-fuuy.onrender.com
       - key: DATABASE_URL
         sync: false
       - key: CORS_ORIGIN
@@ -37,9 +37,9 @@ services:
     autoDeploy: true
     envVars:
       - key: VITE_API_URL
-        value: https://saathi-api.onrender.com/api/v1
+        value: https://saathi-api-fuuy.onrender.com/api/v1
       - key: VITE_SOCKET_URL
-        value: https://saathi-api.onrender.com
+        value: https://saathi-api-fuuy.onrender.com
     routes:
       - type: rewrite
         source: /*
