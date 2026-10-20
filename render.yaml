@@ -3,7 +3,7 @@ services:
     name: saathi-api
     runtime: node
     plan: free
-    buildCommand: npm ci && npm run build --workspace=@saathi/shared && npm run build --workspace=@saathi/api
+    buildCommand: npm ci --include=dev && npm run build --workspace=@saathi/shared && npm run build --workspace=@saathi/api
     startCommand: npx prisma db push --schema apps/api/prisma/schema.prisma --skip-generate && npm run start --workspace=@saathi/api
     healthCheckPath: /health
     autoDeploy: true
@@ -32,7 +32,7 @@ services:
   - type: web
     name: saathi-web
     runtime: static
-    buildCommand: npm ci && npm run build --workspace=@saathi/shared && npm run build --workspace=@saathi/web
+    buildCommand: npm ci --include=dev && npm run build --workspace=@saathi/shared && npm run build --workspace=@saathi/web
     staticPublishPath: ./apps/web/dist
     autoDeploy: true
     envVars:

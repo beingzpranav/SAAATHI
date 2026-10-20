@@ -149,7 +149,7 @@ The repository includes [render.yaml](./render.yaml) for a public demo deploymen
 6. If Render assigns a URL different from `https://saathi-web.onrender.com`, update `VITE_API_URL` and `VITE_SOCKET_URL` in the web service and redeploy.
 7. Set `TRANSLATION_INTERNAL_SECRET` only if a private translation service is configured. The app falls back safely when it is not set.
 
-The API service runs `prisma db push` before starting because this repository currently has no committed Prisma migration directory. Replace this with `prisma migrate deploy` after adding and committing production migrations. Render's free web service can sleep after inactivity, so the first request after idle time may take longer.
+The Render build commands use `npm ci --include=dev` because TypeScript compilation currently includes API test files and needs the declaration packages. The running service remains production-only at runtime. The API service runs `prisma db push` before starting because this repository currently has no committed Prisma migration directory. Replace this with `prisma migrate deploy` after adding and committing production migrations. Render's free web service can sleep after inactivity, so the first request after idle time may take longer.
 
 ---
 
